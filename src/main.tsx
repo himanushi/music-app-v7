@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { setupIonicReact } from "@ionic/react";
 
-setupIonicReact({ mode: "ios" });
+setupIonicReact({ mode: "md" });
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
