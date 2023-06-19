@@ -18,7 +18,8 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 
-import { Albums } from "./pages/albums/albums";
+import { NotFound } from "@/not-found";
+import { Albums } from "@/pages/albums/albums";
 
 function App() {
   return (
@@ -26,7 +27,9 @@ function App() {
       <IonPage>
         <IonReactRouter>
           <IonRouterOutlet>
-            <Route path="/" component={Albums} />
+            <Route path="/*/" component={NotFound} />
+            <Route path="/albums" component={Albums} />
+            <Route exact path="/" component={Albums} />
           </IonRouterOutlet>
         </IonReactRouter>
       </IonPage>
