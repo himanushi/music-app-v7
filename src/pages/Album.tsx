@@ -4,6 +4,10 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
+  IonImg,
+  IonCol,
+  IonGrid,
+  IonRow,
 } from "@ionic/react";
 
 export const Album = () => {
@@ -15,7 +19,20 @@ export const Album = () => {
             <IonTitle>Album</IonTitle>
           </IonToolbar>
         </IonHeader>
-        album
+        <IonGrid>
+          <IonRow>
+            <IonCol>
+              <IonImg
+                style={{
+                  maxWidth: "400px",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+                src="https://picsum.photos/seed/picsum/600/600"
+              />
+            </IonCol>
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );
