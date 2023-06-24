@@ -1,14 +1,22 @@
-import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/react";
+import {
+  IonPage,
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
 
 export const Album = () => {
   return (
-    <IonContent>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Album</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      album
-    </IonContent>
+    <IonPage>
+      <IonContent>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Album</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        album
+      </IonContent>
+    </IonPage>
   );
 };
