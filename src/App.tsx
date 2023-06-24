@@ -3,9 +3,12 @@ import { IonReactRouter } from "@ionic/react-router";
 import { Route } from "react-router-dom";
 import { Albums } from "~/pages/Albums";
 import { Album } from "~/pages/Album";
+import { setupIonicReact } from "@ionic/react";
 
 import "@ionic/react/css/core.css";
 import "~/theme/variables.css";
+
+setupIonicReact({ mode: "ios" });
 
 function App() {
   return (

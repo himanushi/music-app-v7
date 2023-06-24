@@ -28,7 +28,7 @@ export const Albums = () => {
           totalCount={100}
           itemContent={(index) => {
             return (
-              <div style={{ height: "56px" }}>
+              <div style={{ height: "44px" }}>
                 <IonItem onClick={() => history.push(`/albums/${index}`)}>
                   <IonAvatar slot="start">
                     <img src="https://picsum.photos/seed/picsum/40/40" />
