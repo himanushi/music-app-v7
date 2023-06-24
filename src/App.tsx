@@ -1,8 +1,8 @@
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route } from "react-router-dom";
-import { Albums } from "~/pages/albums/Albums";
-import { Album } from "~/pages/album/Album";
+import { Albums } from "~/pages/Albums";
+import { Album } from "~/pages/Album";
 
 import "@ionic/react/css/core.css";
 import "~/theme/variables.css";
