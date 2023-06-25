@@ -19,7 +19,7 @@ export const Albums = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>aaaa</IonTitle>
+          <IonTitle>Albums</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
