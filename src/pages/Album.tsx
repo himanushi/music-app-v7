@@ -13,13 +13,12 @@ import {
   IonItem,
   IonLabel,
   IonNote,
-  IonAvatar,
 } from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 
 export const Album = () => {
-  const contentElement = useRef<HTMLIonContentElement>();
+  const contentElement = useRef<HTMLIonContentElement>(null);
   const [scrollElement, setScrollElement] = useState<HTMLElement>();
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export const Album = () => {
           <IonTitle>Album</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent ref={contentElement as any}>
+      <IonContent ref={contentElement}>
         <IonGrid class="">
           <IonRow>
             <IonCol>
@@ -53,7 +52,7 @@ export const Album = () => {
           </IonRow>
         </IonGrid>
         <IonList>
-          <IonItemDivider>Album</IonItemDivider>
+          <IonItemDivider sticky>Album</IonItemDivider>
           <IonItem className="ion-text-wrap">
             タイトルタイトルタイトルタイトルタイトルタイトルタイトル
           </IonItem>
@@ -71,25 +70,22 @@ export const Album = () => {
             <IonNote>1時間</IonNote>
           </IonItem>
         </IonList>
-
-        <Virtuoso
-          useWindowScroll
-          customScrollParent={scrollElement}
-          style={{ height: "100%" }}
-          totalCount={100}
-          itemContent={(index) => {
-            return (
-              <div style={{ height: "44px" }}>
+        <IonList>
+          <IonItemDivider sticky>Tracks</IonItemDivider>
+          <Virtuoso
+            useWindowScroll
+            customScrollParent={scrollElement}
+            style={{ height: "100%" }}
+            totalCount={50}
+            itemContent={(index) => {
+              return (
                 <IonItem>
-                  <IonAvatar slot="start">
-                    <img src="https://picsum.photos/seed/picsum/40/40" />
-                  </IonAvatar>
                   <IonLabel>{index}</IonLabel>
                 </IonItem>
-              </div>
-            );
-          }}
-        />
+              );
+            }}
+          />
+        </IonList>
       </IonContent>
     </IonPage>
   );
