@@ -11,7 +11,7 @@ export const SquareImage = ({ src: imgSrc }: { src?: string }) => {
         width: "100%",
         marginLeft: "auto",
         marginRight: "auto",
-        maxWidth: "500px",
+        maxWidth: "400px",
       }}
     />
   );
