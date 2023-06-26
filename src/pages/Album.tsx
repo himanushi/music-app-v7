@@ -36,7 +36,6 @@ export const Album = () => {
           </IonRow>
         </IonGrid>
         <IonList>
-          <IonItemDivider sticky>Album</IonItemDivider>
           <IonItem className="ion-text-wrap">
             タイトルタイトルタイトルタイトルタイトルタイトルタイトル
           </IonItem>
@@ -49,32 +48,61 @@ export const Album = () => {
             <IonLabel>曲数</IonLabel>
             <IonNote>100曲</IonNote>
           </IonItem>
-          <IonItem>
+          <IonItem lines="none">
             <IonLabel>再生時間</IonLabel>
             <IonNote>1時間</IonNote>
           </IonItem>
         </IonList>
-        <IonList>
-          <IonItemDivider sticky>Tracks</IonItemDivider>
+        <AlbumTracks scrollElement={scrollElement} />
+        <IonItem lines="none" />
+      </IonContent>
+    </IonPage>
+  );
+};
+
+type Track = {
+  name: string;
+  trackNumber: number;
+};
+
+const AlbumTracks = ({
+  scrollElement,
+}: {
+  scrollElement: HTMLElement | undefined;
+}) => {
+  const tracks: Track[] = [...Array(100)].map((_, i) => ({
+    name: `Track ${(i % 12) + 1}`,
+    trackNumber: (i % 12) + 1,
+  }));
+  const discTracks = tracks.reduce(
+    (discs: Track[][], track) =>
+      track.trackNumber === 1
+        ? [...discs, [track]]
+        : [...discs.slice(0, -1), [...discs[discs.length - 1], track]],
+    []
+  );
+
+  return (
+    <IonList>
+      {discTracks.map((tracks, i) => (
+        <>
+          <IonItemDivider key={i} style={{ height: "44.5px" }} sticky>
+            Disc {i + 1}
+          </IonItemDivider>
           <Virtuoso
             useWindowScroll
             customScrollParent={scrollElement}
-            style={{ height: "100%" }}
-            totalCount={50}
-            itemContent={(index) => {
-              return (
-                <IonItem style={{ height: "45px" }}>
-                  <IonNote slot="start">{index + 1}</IonNote>
-                  <IonLabel>
-                    {index + 1}
-                    タイトル
-                  </IonLabel>
-                </IonItem>
-              );
-            }}
+            style={{ height: "44.5px" }}
+            totalCount={tracks.length}
+            itemContent={(index) => (
+              <IonItem key={`${i}_${index}`} style={{ height: "45px" }}>
+                <IonNote slot="start">{tracks[index].trackNumber}</IonNote>
+                <IonLabel>{tracks[index].name}</IonLabel>
+              </IonItem>
+            )}
           />
-        </IonList>
-      </IonContent>
-    </IonPage>
+        </>
+      ))}
+    </IonList>
   );
 };
