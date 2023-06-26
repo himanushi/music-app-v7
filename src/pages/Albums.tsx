@@ -1,18 +1,20 @@
 import {
-  IonAvatar,
   IonContent,
   IonFooter,
   IonHeader,
   IonItem,
   IonLabel,
   IonPage,
+  IonThumbnail,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
+import { useScrollElement } from "~/hooks";
 
 export const Albums = () => {
+  const { contentRef, scrollElement } = useScrollElement();
   const history = useHistory();
 
   return (
@@ -22,22 +24,20 @@ export const Albums = () => {
           <IonTitle>Albums</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent ref={contentRef}>
         <Virtuoso
+          useWindowScroll
+          customScrollParent={scrollElement}
           style={{ height: "100%" }}
-          totalCount={100}
-          itemContent={(index) => {
-            return (
-              <div style={{ height: "44px" }}>
-                <IonItem onClick={() => history.push(`/albums/${index}`)}>
-                  <IonAvatar slot="start">
-                    <img src="https://picsum.photos/seed/picsum/40/40" />
-                  </IonAvatar>
-                  <IonLabel>{index}</IonLabel>
-                </IonItem>
-              </div>
-            );
-          }}
+          totalCount={50}
+          itemContent={(index) => (
+            <IonItem button onClick={() => history.push(`/albums/${index}`)}>
+              <IonThumbnail slot="start">
+                <img src={`https://picsum.photos/id/${index}/300`} />
+              </IonThumbnail>
+              <IonLabel>{index} アルバム名</IonLabel>
+            </IonItem>
+          )}
         />
       </IonContent>
       <IonFooter>

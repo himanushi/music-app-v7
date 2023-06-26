@@ -12,9 +12,12 @@ import {
   IonItem,
   IonLabel,
   IonNote,
+  IonButtons,
+  IonButton,
 } from "@ionic/react";
+import { Fragment } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { SquareImage } from "~/components";
+import { Icon, SquareImage } from "~/components";
 import { useScrollElement } from "~/hooks";
 
 export const Album = () => {
@@ -48,12 +51,13 @@ export const Album = () => {
             <IonLabel>曲数</IonLabel>
             <IonNote>100曲</IonNote>
           </IonItem>
-          <IonItem lines="none">
+          <IonItem>
             <IonLabel>再生時間</IonLabel>
             <IonNote>1時間</IonNote>
           </IonItem>
         </IonList>
         <AlbumTracks scrollElement={scrollElement} />
+        <AlbumArtists scrollElement={scrollElement} />
         <IonItem lines="none" />
       </IonContent>
     </IonPage>
@@ -85,7 +89,7 @@ const AlbumTracks = ({
   return (
     <IonList>
       {discTracks.map((tracks, i) => (
-        <>
+        <Fragment key={i}>
           <IonItemDivider key={i} style={{ height: "44.5px" }} sticky>
             Disc {i + 1}
           </IonItemDivider>
@@ -95,14 +99,55 @@ const AlbumTracks = ({
             style={{ height: "44.5px" }}
             totalCount={tracks.length}
             itemContent={(index) => (
-              <IonItem key={`${i}_${index}`} style={{ height: "45px" }}>
+              <IonItem button>
                 <IonNote slot="start">{tracks[index].trackNumber}</IonNote>
                 <IonLabel>{tracks[index].name}</IonLabel>
+                <IonButtons slot="end">
+                  {/* <IonButton> */}
+                  <Icon name="123" />
+                  {/* </IonButton> */}
+                </IonButtons>
               </IonItem>
             )}
           />
-        </>
+        </Fragment>
       ))}
+    </IonList>
+  );
+};
+
+type Artist = {
+  name: string;
+};
+
+const AlbumArtists = ({
+  scrollElement,
+}: {
+  scrollElement: HTMLElement | undefined;
+}) => {
+  const artists: Artist[] = [...Array(10)].map((_, i) => ({
+    name: `Artist ${(i % 12) + 1}`,
+  }));
+
+  return (
+    <IonList>
+      <IonItemDivider style={{ height: "44.5px" }} sticky>
+        Artists
+      </IonItemDivider>
+      <Virtuoso
+        useWindowScroll
+        customScrollParent={scrollElement}
+        style={{ height: "44.5px" }}
+        totalCount={artists.length}
+        itemContent={(index) => (
+          <IonItem button>
+            <IonLabel>{artists[index].name}</IonLabel>
+            <IonButtons slot="end">
+              <IonButton></IonButton>
+            </IonButtons>
+          </IonItem>
+        )}
+      />
     </IonList>
   );
 };
