@@ -1,1 +1,1 @@
-export { useScrollElement } from "./useScrollElement";
+export * from "./useScrollElement";

@@ -4,7 +4,6 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonImg,
   IonCol,
   IonGrid,
   IonRow,
@@ -15,6 +14,7 @@ import {
   IonNote,
 } from "@ionic/react";
 import { Virtuoso } from "react-virtuoso";
+import { SquareImage } from "~/components";
 import { useScrollElement } from "~/hooks";
 
 export const Album = () => {
@@ -31,14 +31,7 @@ export const Album = () => {
         <IonGrid>
           <IonRow>
             <IonCol>
-              <IonImg
-                style={{
-                  maxWidth: "400px",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                }}
-                src="https://picsum.photos/seed/picsum/600/600"
-              />
+              <SquareImage src="https://picsum.photos/seed/picsum/600/600" />
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -70,7 +63,7 @@ export const Album = () => {
             totalCount={50}
             itemContent={(index) => {
               return (
-                <IonItem>
+                <IonItem style={{ height: "45px" }}>
                   <IonNote slot="start">{index + 1}</IonNote>
                   <IonLabel>
                     {index + 1}
