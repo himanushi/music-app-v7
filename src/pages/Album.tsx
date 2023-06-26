@@ -14,20 +14,11 @@ import {
   IonLabel,
   IonNote,
 } from "@ionic/react";
-import { useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
+import { useScrollElement } from "~/hooks";
 
 export const Album = () => {
-  const contentElement = useRef<HTMLIonContentElement>(null);
-  const [scrollElement, setScrollElement] = useState<HTMLElement>();
-
-  useEffect(() => {
-    (async () => {
-      if (contentElement.current) {
-        setScrollElement(await contentElement.current.getScrollElement());
-      }
-    })();
-  }, [contentElement]);
+  const { contentRef, scrollElement } = useScrollElement();
 
   return (
     <IonPage>
@@ -36,8 +27,8 @@ export const Album = () => {
           <IonTitle>Album</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent ref={contentElement}>
-        <IonGrid class="">
+      <IonContent ref={contentRef}>
+        <IonGrid>
           <IonRow>
             <IonCol>
               <IonImg
@@ -80,7 +71,11 @@ export const Album = () => {
             itemContent={(index) => {
               return (
                 <IonItem>
-                  <IonLabel>{index}</IonLabel>
+                  <IonNote slot="start">{index + 1}</IonNote>
+                  <IonLabel>
+                    {index + 1}
+                    タイトル
+                  </IonLabel>
                 </IonItem>
               );
             }}
