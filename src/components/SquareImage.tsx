@@ -9,6 +9,8 @@ export const SquareImage = ({ src: imgSrc }: { src?: string }) => {
         aspectRatio: "auto 1 / 1",
         height: "100%",
         width: "100%",
+        marginLeft: "auto",
+        marginRight: "auto",
         maxWidth: "500px",
       }}
     />
