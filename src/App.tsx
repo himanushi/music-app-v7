@@ -7,6 +7,7 @@ import { setupIonicReact } from "@ionic/react";
 
 import "@ionic/react/css/core.css";
 import "~/theme/variables.css";
+import "~/theme/custom.css";
 
 setupIonicReact({ mode: "ios" });
 
