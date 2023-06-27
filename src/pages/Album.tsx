@@ -75,7 +75,9 @@ const AlbumTracks = ({
   scrollElement: HTMLElement | undefined;
 }) => {
   const tracks: Track[] = [...Array(100)].map((_, i) => ({
-    name: `Track ${(i % 12) + 1}`,
+    name: `Track ${(i % 12) + 1} ${
+      i % 4 === 0 ? " (feat. Artist Artist Artist Artist Artist Artist)" : ""
+    }`,
     trackNumber: (i % 12) + 1,
   }));
   const discTracks = tracks.reduce(
@@ -90,7 +92,7 @@ const AlbumTracks = ({
     <IonList>
       {discTracks.map((tracks, i) => (
         <Fragment key={i}>
-          <IonItemDivider key={i} style={{ height: "44.5px" }} sticky>
+          <IonItemDivider key={i} sticky>
             Disc {i + 1}
           </IonItemDivider>
           <Virtuoso
@@ -99,13 +101,18 @@ const AlbumTracks = ({
             style={{ height: "44.5px" }}
             totalCount={tracks.length}
             itemContent={(index) => (
-              <IonItem button>
+              <IonItem button detail={false}>
                 <IonNote slot="start">{tracks[index].trackNumber}</IonNote>
-                <IonLabel>{tracks[index].name}</IonLabel>
+                <IonLabel class="ion-text-wrap">{tracks[index].name}</IonLabel>
                 <IonButtons slot="end">
-                  {/* <IonButton> */}
-                  <Icon name="123" />
-                  {/* </IonButton> */}
+                  <IonButton>
+                    <Icon
+                      size="s"
+                      color="red"
+                      slot="icon-only"
+                      name="favorite"
+                    />
+                  </IonButton>
                 </IonButtons>
               </IonItem>
             )}
@@ -131,19 +138,19 @@ const AlbumArtists = ({
 
   return (
     <IonList>
-      <IonItemDivider style={{ height: "44.5px" }} sticky>
-        Artists
-      </IonItemDivider>
+      <IonItemDivider sticky>Artists</IonItemDivider>
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
         style={{ height: "44.5px" }}
         totalCount={artists.length}
         itemContent={(index) => (
-          <IonItem button>
+          <IonItem button detail={false}>
             <IonLabel>{artists[index].name}</IonLabel>
             <IonButtons slot="end">
-              <IonButton></IonButton>
+              <IonButton>
+                <Icon size="s" color="red" slot="icon-only" name="favorite" />
+              </IonButton>
             </IonButtons>
           </IonItem>
         )}
