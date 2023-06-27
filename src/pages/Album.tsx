@@ -55,7 +55,7 @@ export const Album: React.FC<
 
   return (
     <IonPage>
-      <IonHeader translucent>
+      <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>

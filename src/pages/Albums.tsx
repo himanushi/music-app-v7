@@ -22,7 +22,7 @@ export const Albums = () => {
 
   return (
     <IonPage>
-      <IonHeader translucent>
+      <IonHeader translucent class="ion-no-border">
         <IonToolbar>
           <IonTitle>アルバム</IonTitle>
           <IonButtons slot="end">
