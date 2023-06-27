@@ -13,6 +13,7 @@ import {
   IonNote,
   IonButtons,
   IonButton,
+  IonAvatar,
 } from "@ionic/react";
 import { Fragment } from "react";
 import { RouteComponentProps } from "react-router-dom";
@@ -156,6 +157,9 @@ const AlbumArtists = ({
         totalCount={artists.length}
         itemContent={(index) => (
           <IonItem button detail={false}>
+            <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
+              <img src={`https://picsum.photos/id/${index + 100}/600`} />
+            </IonAvatar>
             <IonLabel>{artists[index].name}</IonLabel>
             <IonButtons slot="end">
               <IonButton>
