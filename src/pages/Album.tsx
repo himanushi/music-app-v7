@@ -2,7 +2,6 @@ import {
   IonPage,
   IonContent,
   IonHeader,
-  IonTitle,
   IonToolbar,
   IonCol,
   IonGrid,
@@ -55,12 +54,10 @@ export const Album: React.FC<
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Album</IonTitle>
-        </IonToolbar>
+      <IonHeader translucent>
+        <IonToolbar />
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <IonGrid>
           <IonRow>
             <IonCol>
@@ -71,21 +68,14 @@ export const Album: React.FC<
           </IonRow>
         </IonGrid>
         <IonList>
-          <IonItem className="ion-text-wrap">
+          <IonItem className="ion-text-wrap text-select" lines="none">
             タイトルタイトルタイトルタイトルタイトルタイトルタイトル
           </IonItem>
-          <IonItem className="ion-text-wrap">会社名</IonItem>
-          <IonItem>
-            <IonLabel>配信日</IonLabel>
-            <IonNote>2023年6月23日</IonNote>
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonNote slot="end">会社名</IonNote>
           </IonItem>
-          <IonItem>
-            <IonLabel>曲数</IonLabel>
-            <IonNote>100曲</IonNote>
-          </IonItem>
-          <IonItem>
-            <IonLabel>再生時間</IonLabel>
-            <IonNote>1時間</IonNote>
+          <IonItem className="ion-text-wrap text-select">
+            <IonNote slot="end">2023年6月23日, 100曲, 1時間</IonNote>
           </IonItem>
         </IonList>
         <AlbumTracks tracks={tracks} scrollElement={scrollElement} />
@@ -117,9 +107,9 @@ const AlbumTracks = ({
       {discTracks.map((tracks, i) => (
         <Fragment key={i}>
           {discTracks.length >= 2 ? (
-            <IonItemDivider sticky>Disc {i + 1}</IonItemDivider>
+            <IonItemDivider sticky>ディスク {i + 1}</IonItemDivider>
           ) : (
-            <IonItemDivider sticky>Tracks</IonItemDivider>
+            <IonItemDivider sticky>トラック</IonItemDivider>
           )}
           <Virtuoso
             useWindowScroll
@@ -158,7 +148,7 @@ const AlbumArtists = ({
 }) => {
   return (
     <IonList>
-      <IonItemDivider sticky>Artists</IonItemDivider>
+      <IonItemDivider sticky>アーティスト</IonItemDivider>
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
