@@ -16,12 +16,42 @@ import {
   IonButton,
 } from "@ionic/react";
 import { Fragment } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { Icon, SquareImage } from "~/components";
 import { useScrollElement } from "~/hooks";
 
-export const Album = () => {
+type Track = {
+  name: string;
+  trackNumber: number;
+};
+
+type Artist = {
+  name: string;
+};
+
+export const Album: React.FC<
+  RouteComponentProps<{
+    albumId: string;
+  }>
+> = ({ match }) => {
   const { contentRef, scrollElement } = useScrollElement();
+  const tracks: Track[] = [...Array(parseInt(match.params.albumId))].map(
+    (_, i) => ({
+      name: `Track ${(i % 12) + 1} ${
+        i % 4 === 0
+          ? " (feat. Artist Artist Artist Artist Artist Artist Artist Artist Artist)"
+          : ""
+      }`,
+      trackNumber: (i % 12) + 1,
+    })
+  );
+
+  const artists: Artist[] = [...Array(parseInt(match.params.albumId))].map(
+    (_, i) => ({
+      name: `Artist ${(i % 12) + 1}`,
+    })
+  );
 
   return (
     <IonPage>
@@ -34,7 +64,9 @@ export const Album = () => {
         <IonGrid>
           <IonRow>
             <IonCol>
-              <SquareImage src="https://picsum.photos/seed/picsum/600/600" />
+              <SquareImage
+                src={`https://picsum.photos/id/${match.params.albumId}/600`}
+              />
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -56,32 +88,21 @@ export const Album = () => {
             <IonNote>1時間</IonNote>
           </IonItem>
         </IonList>
-        <AlbumTracks scrollElement={scrollElement} />
-        <AlbumArtists scrollElement={scrollElement} />
+        <AlbumTracks tracks={tracks} scrollElement={scrollElement} />
+        <AlbumArtists artists={artists} scrollElement={scrollElement} />
         <IonItem lines="none" />
       </IonContent>
     </IonPage>
   );
 };
 
-type Track = {
-  name: string;
-  trackNumber: number;
-};
-
 const AlbumTracks = ({
+  tracks,
   scrollElement,
 }: {
+  tracks: Track[];
   scrollElement: HTMLElement | undefined;
 }) => {
-  const tracks: Track[] = [...Array(100)].map((_, i) => ({
-    name: `Track ${(i % 12) + 1} ${
-      i % 4 === 0
-        ? " (feat. Artist Artist Artist Artist Artist Artist Artist Artist Artist)"
-        : ""
-    }`,
-    trackNumber: (i % 12) + 1,
-  }));
   const discTracks = tracks.reduce(
     (discs: Track[][], track) =>
       track.trackNumber === 1
@@ -125,19 +146,13 @@ const AlbumTracks = ({
   );
 };
 
-type Artist = {
-  name: string;
-};
-
 const AlbumArtists = ({
+  artists,
   scrollElement,
 }: {
+  artists: Artist[];
   scrollElement: HTMLElement | undefined;
 }) => {
-  const artists: Artist[] = [...Array(10)].map((_, i) => ({
-    name: `Artist ${(i % 12) + 1}`,
-  }));
-
   return (
     <IonList>
       <IonItemDivider sticky>Artists</IonItemDivider>
