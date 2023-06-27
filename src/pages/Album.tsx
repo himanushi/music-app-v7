@@ -76,7 +76,9 @@ const AlbumTracks = ({
 }) => {
   const tracks: Track[] = [...Array(100)].map((_, i) => ({
     name: `Track ${(i % 12) + 1} ${
-      i % 4 === 0 ? " (feat. Artist Artist Artist Artist Artist Artist)" : ""
+      i % 4 === 0
+        ? " (feat. Artist Artist Artist Artist Artist Artist Artist Artist Artist)"
+        : ""
     }`,
     trackNumber: (i % 12) + 1,
   }));
