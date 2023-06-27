@@ -8,6 +8,8 @@ import {
   IonPage,
   IonSearchbar,
   IonThumbnail,
+  IonTitle,
+  IonToolbar,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
@@ -21,7 +23,15 @@ export const Albums = () => {
   return (
     <IonPage>
       <IonHeader translucent>
-        <IonSearchbar placeholder="アルバムで検索"></IonSearchbar>
+        <IonToolbar>
+          <IonTitle>アルバム</IonTitle>
+          <IonButtons slot="end">
+            <IonButton color="main">並び替え</IonButton>
+          </IonButtons>
+        </IonToolbar>
+        <IonToolbar>
+          <IonSearchbar placeholder="アルバムで検索"></IonSearchbar>
+        </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Virtuoso
@@ -37,11 +47,14 @@ export const Albums = () => {
             >
               <IonThumbnail
                 slot="start"
-                style={{ height: "100px", width: "100px" }}
+                style={{ height: "110px", width: "110px" }}
               >
                 <img src={`https://picsum.photos/id/${index}/300`} />
               </IonThumbnail>
-              <IonLabel>{index} アルバム名</IonLabel>
+              <IonLabel class="ion-text-wrap">
+                {index}
+                アルバム名アルバム名アルバム名アルバム名
+              </IonLabel>
               <IonButtons slot="end">
                 <IonButton>
                   <Icon size="s" color="red" slot="icon-only" name="favorite" />
