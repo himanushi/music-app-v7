@@ -32,7 +32,10 @@ export const Albums = () => {
           totalCount={50}
           itemContent={(index) => (
             <IonItem button onClick={() => history.push(`/albums/${index}`)}>
-              <IonThumbnail slot="start">
+              <IonThumbnail
+                slot="start"
+                style={{ height: "80px", width: "80px" }}
+              >
                 <img src={`https://picsum.photos/id/${index}/300`} />
               </IonThumbnail>
               <IonLabel>{index} アルバム名</IonLabel>
