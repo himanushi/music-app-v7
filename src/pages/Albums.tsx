@@ -1,4 +1,5 @@
 import {
+  IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
@@ -13,7 +14,7 @@ import {
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { Icon } from "~/components";
+import { Footer, Icon } from "~/components";
 import { useScrollElement } from "~/hooks";
 
 export const Albums = () => {
@@ -55,11 +56,7 @@ export const Albums = () => {
           )}
         />
       </IonContent>
-      <IonFooter>
-        <IonToolbar>
-          <IonTitle>aaaa</IonTitle>
-        </IonToolbar>
-      </IonFooter>
+      <Footer />
     </IonPage>
   );
 };
