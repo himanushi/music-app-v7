@@ -8,6 +8,7 @@ import { setupIonicReact } from "@ionic/react";
 import "@ionic/react/css/core.css";
 import "~/theme/variables.css";
 import "~/theme/custom.css";
+import { FooterModal } from "./components";
 
 setupIonicReact({ mode: "ios" });
 
@@ -21,6 +22,7 @@ function App() {
           <Route exact path="/" component={Albums} />
         </IonRouterOutlet>
       </IonReactRouter>
+      <FooterModal />
     </IonApp>
   );
 }

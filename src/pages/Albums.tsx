@@ -13,7 +13,7 @@ import {
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { Footer, Icon } from "~/components";
+import { Icon } from "~/components";
 import { useScrollElement } from "~/hooks";
 
 export const Albums = () => {
@@ -64,7 +64,6 @@ export const Albums = () => {
           )}
         />
       </IonContent>
-      <Footer />
     </IonPage>
   );
 };

@@ -18,7 +18,7 @@ import {
 import { Fragment } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { Footer, Icon, SquareImage } from "~/components";
+import { Icon, SquareImage } from "~/components";
 import { useScrollElement } from "~/hooks";
 
 type Track = {
@@ -83,7 +83,6 @@ export const Album: React.FC<
         <AlbumArtists artists={artists} scrollElement={scrollElement} />
         <IonItem lines="none" />
       </IonContent>
-      <Footer />
     </IonPage>
   );
 };

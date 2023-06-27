@@ -1,3 +1,3 @@
 export * from "./SquareImage";
 export * from "./Icon";
-export * from "./Footer";
+export * from "./FooterModal";
