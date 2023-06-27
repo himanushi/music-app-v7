@@ -31,6 +31,22 @@
   -webkit-font-smoothing: antialiased;
 }
 
+.player-seek-bar {
+  padding: 0 20px;
+  --height: 60px;
+  --bar-border-radius: 2px;
+  --bar-background-active: #14b8a6;
+  --bar-height: 20px;
+  --knob-size: 20px;
+  --knob-background: #14b8a6;
+  --knob-box-shadow: none;
+  --knob-border-radius: 2px;
+
+  &::part(pin) {
+    top: -40px;
+  }
+}
+
 body.dark,
 :root {
   --ion-color-main: #14b8a6;

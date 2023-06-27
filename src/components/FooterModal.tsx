@@ -5,7 +5,10 @@ import {
   IonContent,
   IonGrid,
   IonItem,
+  IonLabel,
   IonModal,
+  IonNote,
+  IonRange,
   IonRow,
   IonThumbnail,
   IonTitle,
@@ -94,11 +97,15 @@ const OpenPlayer = () => {
       <IonRow>
         <SquareImage src={`https://picsum.photos/id/101/600`} />
       </IonRow>
-      <IonItem color="black" lines="none" className="ion-no-margin">
-        <h4 style={{ textAlign: "center" }} className="text-select">
+      <IonItem color="black" lines="none">
+        <IonLabel
+          style={{ textAlign: "center" }}
+          className="text-select ion-text-wrap"
+        >
           タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
-        </h4>
+        </IonLabel>
       </IonItem>
+      <PlayerSeekBar />
       <IonGrid>
         <IonRow>
           <IonCol style={{ textAlign: "center" }}>
@@ -135,6 +142,18 @@ const OpenPlayer = () => {
           </IonCol>
         </IonRow>
       </IonGrid>
+    </>
+  );
+};
+
+const PlayerSeekBar = () => {
+  return (
+    <>
+      <IonItem color="black" lines="none">
+        <IonNote slot="start">00:00</IonNote>
+        <IonNote slot="end">05:30</IonNote>
+      </IonItem>
+      <IonRange class="player-seek-bar" value={50} max={100} min={0} pin />
     </>
   );
 };
