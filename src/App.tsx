@@ -10,7 +10,7 @@ import "~/theme/variables.css";
 import "~/theme/custom.css";
 import { FooterModal } from "./components";
 
-setupIonicReact({ mode: "ios" });
+setupIonicReact({ mode: "ios", animated: false });
 
 function App() {
   return (
