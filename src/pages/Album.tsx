@@ -59,7 +59,7 @@ export const Album: React.FC<
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
-        <IonGrid>
+        <IonGrid class="ion-no-padding">
           <IonRow>
             <IonCol>
               <SquareImage

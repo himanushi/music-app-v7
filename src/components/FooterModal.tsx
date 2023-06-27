@@ -94,7 +94,7 @@ const ClosePlayer = ({
 const OpenPlayer = () => {
   return (
     <>
-      <IonRow>
+      <IonRow style={{ height: "calc(100vh - 400px)", maxHeight: "400px" }}>
         <SquareImage src={`https://picsum.photos/id/101/600`} />
       </IonRow>
       <IonItem color="black" lines="none">
@@ -109,35 +109,18 @@ const OpenPlayer = () => {
       <IonGrid>
         <IonRow>
           <IonCol style={{ textAlign: "center" }}>
-            <IonButton color="black" size="large">
-              <Icon name="fast_forward" size="l" slot="icon-only" />
+            <IonButton color="black">
+              <Icon name="fast_rewind" size="l" slot="icon-only" />
             </IonButton>
           </IonCol>
           <IonCol style={{ textAlign: "center" }}>
-            <IonButton color="black" size="large">
+            <IonButton color="black">
               <Icon name="play_arrow" size="l" slot="icon-only" />
             </IonButton>
           </IonCol>
           <IonCol style={{ textAlign: "center" }}>
-            <IonButton color="black" size="large">
+            <IonButton color="black">
               <Icon name="fast_forward" size="l" slot="icon-only" />
-            </IonButton>
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol style={{ textAlign: "center" }}>
-            <IonButton color="black" size="large">
-              <Icon name="favorite" color="red" size="l" slot="icon-only" />
-            </IonButton>
-          </IonCol>
-          <IonCol style={{ textAlign: "center" }}>
-            <IonButton color="black" size="large">
-              <Icon name="repeat" size="l" slot="icon-only" />
-            </IonButton>
-          </IonCol>
-          <IonCol style={{ textAlign: "center" }}>
-            <IonButton color="black" size="large">
-              <Icon name="shuffle" color="main" size="l" slot="icon-only" />
             </IonButton>
           </IonCol>
         </IonRow>
