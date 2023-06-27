@@ -116,9 +116,11 @@ const AlbumTracks = ({
     <IonList>
       {discTracks.map((tracks, i) => (
         <Fragment key={i}>
-          <IonItemDivider key={i} sticky>
-            Disc {i + 1}
-          </IonItemDivider>
+          {discTracks.length >= 2 ? (
+            <IonItemDivider sticky>Disc {i + 1}</IonItemDivider>
+          ) : (
+            <IonItemDivider sticky>Tracks</IonItemDivider>
+          )}
           <Virtuoso
             useWindowScroll
             customScrollParent={scrollElement}
