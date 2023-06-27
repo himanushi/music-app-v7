@@ -1,4 +1,6 @@
 import {
+  IonButton,
+  IonButtons,
   IonContent,
   IonFooter,
   IonHeader,
@@ -11,6 +13,7 @@ import {
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
+import { Icon } from "~/components";
 import { useScrollElement } from "~/hooks";
 
 export const Albums = () => {
@@ -31,14 +34,23 @@ export const Albums = () => {
           style={{ height: "100%" }}
           totalCount={50}
           itemContent={(index) => (
-            <IonItem button onClick={() => history.push(`/albums/${index}`)}>
+            <IonItem
+              button
+              detail={false}
+              onClick={() => history.push(`/albums/${index}`)}
+            >
               <IonThumbnail
                 slot="start"
-                style={{ height: "80px", width: "80px" }}
+                style={{ height: "100px", width: "100px" }}
               >
                 <img src={`https://picsum.photos/id/${index}/300`} />
               </IonThumbnail>
               <IonLabel>{index} アルバム名</IonLabel>
+              <IonButtons slot="end">
+                <IonButton>
+                  <Icon size="s" color="red" slot="icon-only" name="favorite" />
+                </IonButton>
+              </IonButtons>
             </IonItem>
           )}
         />
