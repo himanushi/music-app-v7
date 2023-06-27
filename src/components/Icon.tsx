@@ -8,10 +8,12 @@ const sizeMap = {
 
 export const Icon = ({
   name,
+  color = "white",
   size = "m",
   slot,
 }: {
   name: IconNames;
+  color?: string;
   size?: "s" | "m" | "l";
   slot?: string;
 }) => {
@@ -25,7 +27,7 @@ export const Icon = ({
         height: "1em",
         fontSize: `${sizeMap[size]}px`,
       }}
-      color="primary"
+      color={color}
     >
       {name}
     </IonLabel>
