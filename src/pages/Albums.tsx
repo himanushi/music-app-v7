@@ -1,9 +1,7 @@
 import {
-  IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
-  IonFooter,
   IonHeader,
   IonItem,
   IonLabel,
