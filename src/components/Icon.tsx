@@ -15,7 +15,7 @@ export const Icon = ({
   name: IconNames;
   color?: string;
   size?: "s" | "m" | "l";
-  slot?: string;
+  slot?: "start" | "end" | "icon-only";
 }) => {
   return (
     <IonLabel
