@@ -6,9 +6,8 @@ import {
   IonItem,
   IonLabel,
   IonPage,
+  IonSearchbar,
   IonThumbnail,
-  IonTitle,
-  IonToolbar,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
@@ -21,12 +20,10 @@ export const Albums = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Albums</IonTitle>
-        </IonToolbar>
+      <IonHeader translucent>
+        <IonSearchbar placeholder="アルバムで検索"></IonSearchbar>
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <Virtuoso
           useWindowScroll
           customScrollParent={scrollElement}
