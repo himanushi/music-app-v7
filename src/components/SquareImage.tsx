@@ -2,7 +2,7 @@ import { IonImg } from "@ionic/react";
 
 export const SquareImage = ({
   src: imgSrc,
-  maxWidth = "400px",
+  maxWidth = "500px",
 }: {
   src?: string;
   maxWidth?: string;
