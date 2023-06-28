@@ -3,6 +3,7 @@ import {
   IonButtons,
   IonCol,
   IonContent,
+  IonFooter,
   IonGrid,
   IonItem,
   IonLabel,
@@ -12,6 +13,7 @@ import {
   IonRow,
   IonThumbnail,
   IonTitle,
+  IonToolbar,
 } from "@ionic/react";
 import { Icon, SquareImage } from ".";
 import { useCallback, useRef, useState } from "react";
@@ -49,49 +51,59 @@ export const FooterModal = () => {
       backdropBreakpoint={max}
       onIonBreakpointDidChange={bcreakpointDidChange}
     >
-      <IonContent forceOverscroll={false}>
-        {open ? (
-          <OpenPlayer />
-        ) : (
-          <ClosePlayer switchBreakpoint={switchBreakpoint} />
-        )}
-      </IonContent>
+      {open ? (
+        <OpenModal />
+      ) : (
+        <CloseModal switchBreakpoint={switchBreakpoint} />
+      )}
     </IonModal>
   );
 };
 
-const ClosePlayer = ({
-  switchBreakpoint,
-}: {
-  switchBreakpoint: () => void;
-}) => {
+const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
   return (
-    <IonItem
-      button
-      detail={false}
-      onClick={switchBreakpoint}
-      color="black"
-      lines="none"
-    >
-      <IonThumbnail>
-        <img src={`https://picsum.photos/id/101/300`} />
-      </IonThumbnail>
-      <IonTitle>
-        タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
-      </IonTitle>
-      <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
-        <IonButton>
-          <Icon size="s" color="white" slot="icon-only" name="play_arrow" />
-        </IonButton>
-        <IonButton>
-          <Icon size="s" color="white" slot="icon-only" name="fast_forward" />
-        </IonButton>
-      </IonButtons>
-    </IonItem>
+    <IonContent forceOverscroll={false}>
+      <IonItem
+        button
+        detail={false}
+        onClick={switchBreakpoint}
+        color="black"
+        lines="none"
+      >
+        <IonThumbnail>
+          <img src={`https://picsum.photos/id/101/300`} />
+        </IonThumbnail>
+        <IonTitle>
+          タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
+        </IonTitle>
+        <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
+          <IonButton>
+            <Icon size="s" color="white" slot="icon-only" name="play_arrow" />
+          </IonButton>
+          <IonButton>
+            <Icon size="s" color="white" slot="icon-only" name="fast_forward" />
+          </IonButton>
+        </IonButtons>
+      </IonItem>
+    </IonContent>
   );
 };
 
-const OpenPlayer = () => {
+const OpenModal = () => {
+  return (
+    <>
+      <IonContent>
+        <Player />
+      </IonContent>
+      <IonFooter>
+        <IonToolbar></IonToolbar>
+        <IonToolbar />
+      </IonFooter>
+    </>
+  );
+};
+
+const Player = () => {
   return (
     <>
       <IonRow style={{ height: "calc(100vh - 400px)", maxHeight: "400px" }}>
@@ -136,7 +148,24 @@ const PlayerSeekBar = () => {
         <IonNote slot="start">00:00</IonNote>
         <IonNote slot="end">05:30</IonNote>
       </IonItem>
-      <IonRange class="player-seek-bar" value={50} max={100} min={0} pin />
+      <IonRange
+        pinFormatter={toMMSS}
+        class="player-seek-bar"
+        value={15000}
+        max={30000}
+        min={0}
+        pin
+      />
     </>
   );
+};
+
+const toMMSS = (duration: number) => {
+  const sec = Math.floor(duration / 1000);
+  const minutes = Math.floor(sec / 60);
+  const seconds = sec - minutes * 60;
+
+  const padding = (num: number) => `0${num}`.slice(-2);
+
+  return `${padding(minutes)}:${padding(seconds)}`;
 };
