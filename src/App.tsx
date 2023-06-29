@@ -4,11 +4,11 @@ import { Route } from "react-router-dom";
 import { Albums } from "~/pages/Albums";
 import { Album } from "~/pages/Album";
 import { setupIonicReact } from "@ionic/react";
+import { FooterModal } from "./components";
 
 import "@ionic/react/css/core.css";
 import "~/theme/variables.css";
 import "~/theme/custom.css";
-import { FooterModal } from "./components";
 
 setupIonicReact({ mode: "ios", animated: false });
 

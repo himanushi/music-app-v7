@@ -6,7 +6,6 @@ import {
   IonFooter,
   IonGrid,
   IonItem,
-  IonItemDivider,
   IonLabel,
   IonModal,
   IonNote,
@@ -108,22 +107,21 @@ const OpenModal = () => {
 
 const Player = () => {
   return (
-    <IonGrid>
-      <IonRow style={{ height: "calc(100vh - 60vh)", maxHeight: "500px" }}>
+    <IonGrid style={{ height: "100%" }}>
+      <IonRow style={{ height: "40%", maxHeight: "500px" }}>
         <SquareImage src={`https://picsum.photos/id/101/600`} />
       </IonRow>
       <IonRow style={{ height: "10%" }}>
         <IonItem color="black" lines="none">
-          <IonLabel
-            style={{ textAlign: "center" }}
-            className="text-select ion-text-wrap"
-          >
+          <IonLabel className="text-select ion-text-wrap">
             タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
           </IonLabel>
         </IonItem>
       </IonRow>
-      <PlayerSeekBar />
-      <IonRow>
+      <div style={{ height: "20%" }}>
+        <PlayerSeekBar />
+      </div>
+      <IonRow style={{ height: "15%" }}>
         <IonCol>
           <IonButton color="black" expand="full">
             <Icon name="fast_rewind" size="l" slot="icon-only" />
@@ -143,12 +141,12 @@ const Player = () => {
       <IonRow>
         <IonCol>
           <IonButton color="black" expand="full">
-            <Icon name="favorite" size="l" slot="icon-only" />
+            <Icon name="favorite" color="red" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
         <IonCol>
           <IonButton color="black" expand="full">
-            <Icon name="repeat" size="l" slot="icon-only" />
+            <Icon name="repeat" color="main" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
       </IonRow>
