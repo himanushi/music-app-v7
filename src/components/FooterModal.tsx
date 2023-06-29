@@ -5,12 +5,15 @@ import {
   IonContent,
   IonFooter,
   IonGrid,
+  IonHeader,
   IonItem,
   IonLabel,
   IonModal,
   IonNote,
   IonRange,
+  IonRippleEffect,
   IonRow,
+  IonSegmentButton,
   IonThumbnail,
   IonTitle,
   IonToolbar,
@@ -63,29 +66,30 @@ export const FooterModal = () => {
 
 const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
   return (
-    <IonContent forceOverscroll={false}>
-      <IonItem
-        button
-        detail={false}
-        onClick={switchBreakpoint}
-        color="black"
-        lines="none"
-      >
-        <IonThumbnail>
-          <img src={`https://picsum.photos/id/101/300`} />
-        </IonThumbnail>
-        <IonTitle>
-          タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
-        </IonTitle>
-        <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
-          <IonButton>
-            <Icon size="s" color="white" slot="icon-only" name="play_arrow" />
-          </IonButton>
-          <IonButton>
-            <Icon size="s" color="white" slot="icon-only" name="fast_forward" />
-          </IonButton>
-        </IonButtons>
-      </IonItem>
+    <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
+      <IonHeader class="ion-no-border">
+        <IonToolbar onClick={switchBreakpoint} color="dark-gray">
+          <IonThumbnail>
+            <img src={`https://picsum.photos/id/101/300`} />
+          </IonThumbnail>
+          <IonTitle>
+            タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
+          </IonTitle>
+          <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
+            <IonButton>
+              <Icon size="s" color="white" slot="icon-only" name="play_arrow" />
+            </IonButton>
+            <IonButton>
+              <Icon
+                size="s"
+                color="white"
+                slot="icon-only"
+                name="fast_forward"
+              />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
     </IonContent>
   );
 };
@@ -93,12 +97,38 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
 const OpenModal = () => {
   return (
     <>
-      <IonContent scrollY={false} forceOverscroll={false}>
+      <IonContent color="dark-gray" scrollY={false} forceOverscroll={false}>
         <Player />
       </IonContent>
       <IonFooter>
         <IonToolbar>
-          <IonButtons></IonButtons>
+          <IonButtons>
+            <IonSegmentButton
+              className="ion-activatable"
+              layout="icon-top"
+              value="default"
+            >
+              <Icon name="queue_music" slot="start" color="white" />
+              <IonLabel>aa</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton
+              value="segment"
+              class="ion-activatable ripple-parent rectangle"
+            >
+              <Icon name="music_note" color="red" size="s" />
+              aa
+            </IonSegmentButton>
+            <IonSegmentButton value="aa">
+              <IonButton
+                className="ion-activatable"
+                color="dark-gray"
+                size="small"
+              >
+                <Icon name="queue_music" color="white" />
+                <IonRippleEffect type="unbounded" />
+              </IonButton>
+            </IonSegmentButton>
+          </IonButtons>
         </IonToolbar>
       </IonFooter>
     </>
@@ -112,7 +142,7 @@ const Player = () => {
         <SquareImage src={`https://picsum.photos/id/101/600`} />
       </IonRow>
       <IonRow style={{ height: "10%" }}>
-        <IonItem color="black" lines="none">
+        <IonItem color="dark-gray" lines="none">
           <IonLabel className="text-select ion-text-wrap">
             タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
           </IonLabel>
@@ -123,29 +153,29 @@ const Player = () => {
       </div>
       <IonRow style={{ height: "15%" }}>
         <IonCol>
-          <IonButton color="black" expand="full">
-            <Icon name="fast_rewind" size="l" slot="icon-only" />
+          <IonButton color="dark-gray" expand="block">
+            <Icon name="fast_rewind" size="l" slot="icon-only" color="white" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="black" expand="full">
+          <IonButton color="dark-gray" expand="block">
             <Icon name="play_arrow" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="black" expand="full">
+          <IonButton color="dark-gray" expand="block">
             <Icon name="fast_forward" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
       </IonRow>
       <IonRow>
         <IonCol>
-          <IonButton color="black" expand="full">
+          <IonButton color="dark-gray" expand="block">
             <Icon name="favorite" color="red" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="black" expand="full">
+          <IonButton color="dark-gray" expand="block">
             <Icon name="repeat" color="main" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
@@ -157,7 +187,7 @@ const Player = () => {
 const PlayerSeekBar = () => {
   return (
     <>
-      <IonItem color="black" lines="none">
+      <IonItem color="dark-gray" lines="none">
         <IonNote slot="start">00:00</IonNote>
         <IonNote slot="end">00:30</IonNote>
       </IonItem>
