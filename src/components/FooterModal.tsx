@@ -135,34 +135,34 @@ const Player = () => {
           </IonLabel>
         </IonItem>
       </IonRow>
-      <div style={{ height: "20%" }}>
+      <div style={{ height: "18%" }}>
         <PlayerSeekBar />
       </div>
       <IonRow style={{ height: "15%" }} class="ion-text-center">
         <IonCol>
-          <IonButton color="dark-gray">
+          <IonButton color="dark-gray" size="large">
             <Icon name="fast_rewind" size="l" slot="icon-only" color="white" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray">
+          <IonButton color="dark-gray" size="large">
             <Icon name="play_arrow" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray">
+          <IonButton color="dark-gray" size="large">
             <Icon name="fast_forward" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
       </IonRow>
       <IonRow class="ion-text-center">
         <IonCol>
-          <IonButton color="dark-gray">
+          <IonButton color="dark-gray" size="large">
             <Icon name="favorite" color="red" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray">
+          <IonButton color="dark-gray" size="large">
             <Icon name="repeat" color="main" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
