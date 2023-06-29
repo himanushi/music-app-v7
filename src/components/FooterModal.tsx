@@ -103,27 +103,14 @@ const OpenModal = () => {
       <IonFooter>
         <IonToolbar>
           <IonButtons>
-            <IonSegmentButton
-              className="ion-activatable"
-              layout="icon-top"
-              value="default"
-            >
+            <IonSegmentButton layout="icon-top" value="default">
               <Icon name="queue_music" slot="start" color="white" />
-              <IonLabel>aa</IonLabel>
             </IonSegmentButton>
-            <IonSegmentButton
-              value="segment"
-              class="ion-activatable ripple-parent rectangle"
-            >
+            <IonSegmentButton value="segment">
               <Icon name="music_note" color="red" size="s" />
-              aa
             </IonSegmentButton>
             <IonSegmentButton value="aa">
-              <IonButton
-                className="ion-activatable"
-                color="dark-gray"
-                size="small"
-              >
+              <IonButton color="dark-gray" size="small">
                 <Icon name="queue_music" color="white" />
                 <IonRippleEffect type="unbounded" />
               </IonButton>
@@ -151,31 +138,31 @@ const Player = () => {
       <div style={{ height: "20%" }}>
         <PlayerSeekBar />
       </div>
-      <IonRow style={{ height: "15%" }}>
+      <IonRow style={{ height: "15%" }} class="ion-text-center">
         <IonCol>
-          <IonButton color="dark-gray" expand="block">
+          <IonButton color="dark-gray">
             <Icon name="fast_rewind" size="l" slot="icon-only" color="white" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray" expand="block">
+          <IonButton color="dark-gray">
             <Icon name="play_arrow" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray" expand="block">
+          <IonButton color="dark-gray">
             <Icon name="fast_forward" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
       </IonRow>
-      <IonRow>
+      <IonRow class="ion-text-center">
         <IonCol>
-          <IonButton color="dark-gray" expand="block">
+          <IonButton color="dark-gray">
             <Icon name="favorite" color="red" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray" expand="block">
+          <IonButton color="dark-gray">
             <Icon name="repeat" color="main" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
