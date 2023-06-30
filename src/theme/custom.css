@@ -33,7 +33,7 @@
 
 .player-seek-bar {
   padding: 0 20px;
-  --height: 60px;
+  --height: 20px;
   --bar-border-radius: 2px;
   --bar-background-active: #14b8a6;
   --bar-height: 20px;

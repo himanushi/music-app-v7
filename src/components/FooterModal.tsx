@@ -17,9 +17,17 @@ import {
   IonThumbnail,
   IonTitle,
   IonToolbar,
+  RangeKnobMoveStartEventDetail,
 } from "@ionic/react";
 import { Icon, SquareImage } from ".";
-import { useCallback, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type {
   IonModalCustomEvent,
   ModalBreakpointChangeEventDetail,
@@ -72,7 +80,7 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
           <IonThumbnail>
             <img src={`https://picsum.photos/id/101/300`} />
           </IonThumbnail>
-          <IonTitle>
+          <IonTitle className="label-long-text">
             タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
           </IonTitle>
           <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
@@ -125,20 +133,20 @@ const OpenModal = () => {
 const Player = () => {
   return (
     <IonGrid style={{ height: "100%" }}>
-      <IonRow style={{ height: "40%", maxHeight: "500px" }}>
+      <IonRow style={{ height: "50%", maxHeight: "500px" }} class="ion-padding">
         <SquareImage src={`https://picsum.photos/id/101/600`} />
       </IonRow>
-      <IonRow style={{ height: "10%" }}>
+      <IonRow>
         <IonItem color="dark-gray" lines="none">
-          <IonLabel className="text-select ion-text-wrap">
-            タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
+          <IonLabel class="ion-text-wrap">
+            タイトルタイトルタイトルタイトルタイトルタイトルタイトル
           </IonLabel>
         </IonItem>
       </IonRow>
-      <div style={{ height: "18%" }}>
+      <div style={{ height: "13%" }}>
         <PlayerSeekBar />
       </div>
-      <IonRow style={{ height: "15%" }} class="ion-text-center">
+      <IonRow style={{ height: "13%" }} class="ion-text-center">
         <IonCol>
           <IonButton color="dark-gray" size="large">
             <Icon name="fast_rewind" size="l" slot="icon-only" color="white" />
@@ -172,20 +180,73 @@ const Player = () => {
 };
 
 const PlayerSeekBar = () => {
-  return (
-    <>
+  const [seek, setSeek] = useState(0);
+  const [seeking, setSeeking] = useState(false);
+  const [seekValue, setSeekValue] = useState(0);
+
+  useLayoutEffect(() => {
+    const interval = setInterval(() => {
+      setSeek((prevSeek) => prevSeek + 1000);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (seeking) return;
+    setSeekValue(seek);
+  }, [seeking, seek]);
+
+  const onStart = useCallback(
+    (event: CustomEvent<RangeKnobMoveStartEventDetail>) => {
+      setSeeking(true);
+
+      if (typeof event.detail.value === "number") {
+        setSeekValue(event.detail.value);
+      }
+    },
+    []
+  );
+
+  const onStop = useCallback(
+    (event: CustomEvent<RangeKnobMoveStartEventDetail>) => {
+      setSeeking(false);
+
+      if (typeof event.detail.value === "number") {
+        setSeek(event.detail.value);
+      }
+    },
+    []
+  );
+
+  const Range = useMemo(
+    () => (
+      <IonRange
+        pinFormatter={toMMSS}
+        class="player-seek-bar ion-no-padding"
+        value={seekValue}
+        max={60000}
+        min={0}
+        pin
+        onIonKnobMoveStart={onStart}
+        onIonKnobMoveEnd={onStop}
+      />
+    ),
+    [onStart, onStop, seekValue]
+  );
+
+  const Time = useMemo(() => {
+    return (
       <IonItem color="dark-gray" lines="none">
         <IonNote slot="start">00:00</IonNote>
         <IonNote slot="end">00:30</IonNote>
       </IonItem>
-      <IonRange
-        pinFormatter={toMMSS}
-        class="player-seek-bar"
-        value={15000}
-        max={30000}
-        min={0}
-        pin
-      />
+    );
+  }, []);
+
+  return (
+    <>
+      {Time}
+      {Range}
     </>
   );
 };
