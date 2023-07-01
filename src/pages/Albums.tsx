@@ -3,6 +3,8 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
   IonItem,
   IonLabel,
   IonPage,
@@ -11,6 +13,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
@@ -19,6 +22,33 @@ import { useScrollElement } from "~/hooks";
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
   const history = useHistory();
+
+  const [albums, setAlbums] = useState<{ name: string }[]>(
+    [...Array(50)].map((_, i) => ({ name: `${i}` }))
+  );
+  const generateItems = useCallback(() => {
+    const newItems = [];
+    for (let i = 0; i < 50; i++) {
+      newItems.push({ name: `${1 + albums.length + i}` });
+    }
+    setAlbums([...albums, ...newItems]);
+  }, [albums]);
+
+  const Footer = useCallback(
+    () => (
+      <IonInfiniteScroll
+        onIonInfinite={(ev) => {
+          setTimeout(() => {
+            generateItems();
+            ev.target.complete();
+          }, 5000);
+        }}
+      >
+        <IonInfiniteScrollContent></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
+    ),
+    [generateItems]
+  );
 
   return (
     <IonPage>
@@ -38,7 +68,7 @@ export const Albums = () => {
           useWindowScroll
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
-          totalCount={50}
+          totalCount={albums.length}
           itemContent={(index) => (
             <IonItem
               button
@@ -51,10 +81,7 @@ export const Albums = () => {
               >
                 <img src={`https://picsum.photos/id/${index}/300`} />
               </IonThumbnail>
-              <IonLabel class="ion-text-wrap">
-                {index}
-                アルバム名アルバム名アルバム名アルバム名
-              </IonLabel>
+              <IonLabel class="ion-text-wrap">{albums[index].name}</IonLabel>
               <IonButtons slot="end">
                 <IonButton>
                   <Icon size="s" color="red" slot="icon-only" name="favorite" />
@@ -62,6 +89,7 @@ export const Albums = () => {
               </IonButtons>
             </IonItem>
           )}
+          components={{ Footer }}
         />
         <FooterPadding />
       </IonContent>
