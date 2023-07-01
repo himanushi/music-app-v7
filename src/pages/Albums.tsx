@@ -41,7 +41,7 @@ export const Albums = () => {
           setTimeout(() => {
             generateItems();
             ev.target.complete();
-          }, 5000);
+          }, 1000);
         }}
       >
         <IonInfiniteScrollContent></IonInfiniteScrollContent>
