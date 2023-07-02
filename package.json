@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "generate": "graphql-codegen"
   },
   "dependencies": {
     "@apollo/client": "^3.7.16",
@@ -21,6 +23,9 @@
     "react-virtuoso": "^4.3.10"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^4.0.1",
+    "@graphql-codegen/client-preset": "^4.0.1",
+    "@graphql-codegen/introspection": "4.0.0",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@types/react-router-dom": "^5.3.3",
@@ -30,7 +35,8 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
-    "typescript": "^5.0.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6",
     "vite": "^4.3.9",
     "vite-tsconfig-paths": "^4.2.0"
   }
