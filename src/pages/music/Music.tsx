@@ -25,7 +25,7 @@ export const Music = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <IonItem button>
+          <IonItem button routerLink="/artists">
             <Icon name="group" slot="start" color="main" />
             <IonLabel>アーティスト</IonLabel>
           </IonItem>
