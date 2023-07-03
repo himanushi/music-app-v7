@@ -12,7 +12,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
@@ -24,7 +24,7 @@ export const Albums = () => {
   const history = useHistory();
 
   const [offset, setOffset] = useState(50);
-  const { data, loading, fetchMore } = useQuery(AlbumsDocument, {
+  const { data, fetchMore } = useQuery(AlbumsDocument, {
     variables: {
       conditions: {},
       cursor: { limit: 50, offset: 0 },
@@ -33,17 +33,19 @@ export const Albums = () => {
     fetchPolicy: "cache-first",
   });
 
-  const albums = data?.items ?? [];
+  const albums = useMemo(() => data?.items ?? [], [data?.items]);
 
-  const fetchItems = useCallback(() => {
-    if (loading) return;
-    setOffset((prevOffset) => prevOffset + 50);
-    fetchMore({
-      variables: {
-        cursor: { limit: 50, offset: offset },
-      },
-    });
-  }, [fetchMore, offset, loading]);
+  const fetchItems = useCallback(
+    (offset: number) => {
+      setOffset((prevOffset) => prevOffset + 50);
+      fetchMore({
+        variables: {
+          cursor: { limit: 50, offset: offset },
+        },
+      });
+    },
+    [fetchMore]
+  );
 
   return (
     <IonPage>
@@ -64,7 +66,7 @@ export const Albums = () => {
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
           totalCount={albums.length}
-          endReached={() => fetchItems()}
+          endReached={() => fetchItems(offset)}
           itemContent={(index) => (
             <IonItem
               button
