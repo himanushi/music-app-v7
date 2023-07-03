@@ -1,8 +1,7 @@
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route } from "react-router-dom";
-import { Albums } from "~/pages/music/Albums";
-import { Album } from "~/pages/music/Album";
+import { Music, Albums, Album } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
 import { ApolloProvider } from "@apollo/client";
@@ -36,12 +35,13 @@ function App() {
       <IonApp>
         <IonReactRouter>
           <IonRouterOutlet>
-            <Route path="/albums" component={Albums} />
+            <Route path="/music" component={Music} />
             <Route path="/albums/:albumId" component={Album} />
+            <Route path="/albums" exact component={Albums} />
             <Route exact path="/" component={Albums} />
           </IonRouterOutlet>
+          <FooterModal />
         </IonReactRouter>
-        <FooterModal />
       </IonApp>
     </ApolloProvider>
   );

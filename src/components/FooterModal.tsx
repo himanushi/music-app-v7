@@ -32,6 +32,7 @@ import type {
   IonModalCustomEvent,
   ModalBreakpointChangeEventDetail,
 } from "@ionic/core";
+import { useHistory } from "react-router-dom";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
@@ -73,6 +74,8 @@ export const FooterModal = () => {
 };
 
 const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
+  const history = useHistory();
+
   return (
     <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
       <IonHeader class="ion-no-border">
@@ -99,7 +102,11 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
         </IonToolbar>
         <IonToolbar color="dark-gray">
           <IonButtons>
-            <IonSegmentButton>
+            <IonSegmentButton
+              onClick={() =>
+                history.location.pathname !== "/music" && history.push("/music")
+              }
+            >
               <IonButton>
                 <Icon name="music_note" slot="start" color="main" />
               </IonButton>

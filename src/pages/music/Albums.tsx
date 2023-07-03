@@ -13,7 +13,6 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useCallback, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
 import { AlbumsDocument } from "~/graphql/types";
@@ -23,8 +22,6 @@ const limit = 50;
 
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
-
-  const history = useHistory();
 
   const [offset, setOffset] = useState(50);
 
@@ -75,7 +72,7 @@ export const Albums = () => {
             <IonItem
               button
               detail={false}
-              onClick={() => history.push(`/albums/${albums[index].id}`)}
+              routerLink={`/albums/${albums[index].id}`}
             >
               <IonThumbnail
                 slot="start"
@@ -87,6 +84,9 @@ export const Albums = () => {
               <IonButtons slot="end">
                 <IonButton>
                   <Icon size="s" color="red" slot="icon-only" name="favorite" />
+                </IonButton>
+                <IonButton>
+                  <Icon size="m" slot="icon-only" name="more_horiz" />
                 </IonButton>
               </IonButtons>
             </IonItem>
