@@ -16,11 +16,15 @@
     "@capacitor/preferences": "^5.0.5",
     "@ionic/react": "^7.0.14",
     "@ionic/react-router": "^7.0.14",
+    "@types/lodash.merge": "^4.6.7",
+    "@xstate/react": "^3.2.2",
     "graphql": "^16.7.1",
+    "lodash.merge": "^4.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.3.4",
-    "react-virtuoso": "^4.3.10"
+    "react-virtuoso": "^4.3.10",
+    "xstate": "^4.38.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^4.0.1",
