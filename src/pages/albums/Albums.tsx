@@ -19,33 +19,37 @@ import { FooterPadding, Icon } from "~/components";
 import { AlbumsDocument } from "~/graphql/types";
 import { useScrollElement } from "~/hooks";
 
+const limit = 50;
+
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
+
   const history = useHistory();
 
   const [offset, setOffset] = useState(50);
+
   const { data, fetchMore } = useQuery(AlbumsDocument, {
     variables: {
-      conditions: {},
-      cursor: { limit: 50, offset: 0 },
+      conditions: { name: "final" },
+      cursor: { limit, offset: 0 },
       sort: { direction: "DESC", order: "RELEASE" },
     },
     fetchPolicy: "cache-first",
   });
 
-  const albums = useMemo(() => data?.items ?? [], [data?.items]);
-
   const fetchItems = useCallback(
     (offset: number) => {
-      setOffset((prevOffset) => prevOffset + 50);
+      setOffset((prevOffset) => prevOffset + limit);
       fetchMore({
         variables: {
-          cursor: { limit: 50, offset: offset },
+          cursor: { limit, offset: offset },
         },
       });
     },
     [fetchMore]
   );
+
+  const albums = useMemo(() => data?.items ?? [], [data?.items]);
 
   return (
     <IonPage>
