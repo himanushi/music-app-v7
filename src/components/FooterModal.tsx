@@ -35,7 +35,7 @@ import type {
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
-const min = 0.1;
+const min = 0.15;
 
 export const FooterModal = () => {
   const modal = useRef<HTMLIonModalElement>(null);
@@ -95,6 +95,28 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
                 name="fast_forward"
               />
             </IonButton>
+          </IonButtons>
+        </IonToolbar>
+        <IonToolbar color="dark-gray">
+          <IonButtons>
+            <IonSegmentButton>
+              <IonButton>
+                <Icon name="music_note" slot="start" color="main" />
+              </IonButton>
+              ゲーム音楽
+            </IonSegmentButton>
+            <IonSegmentButton>
+              <IonButton>
+                <Icon name="library_music" slot="start" color="white" />
+              </IonButton>
+              ライブラリ
+            </IonSegmentButton>
+            <IonSegmentButton>
+              <IonButton>
+                <Icon name="settings" slot="start" color="white" />
+              </IonButton>
+              設定
+            </IonSegmentButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
