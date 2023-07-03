@@ -112,19 +112,19 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
               }
             >
               <IonButton>
-                <Icon name="music_note" slot="start" color="main" />
+                <Icon name="music_note" slot="start" />
               </IonButton>
               ゲーム音楽
             </IonSegmentButton>
             <IonSegmentButton>
               <IonButton>
-                <Icon name="library_music" slot="start" color="white" />
+                <Icon name="library_music" slot="start" />
               </IonButton>
               ライブラリ
             </IonSegmentButton>
             <IonSegmentButton>
               <IonButton>
-                <Icon name="settings" slot="start" color="white" />
+                <Icon name="settings" slot="start" />
               </IonButton>
               設定
             </IonSegmentButton>
