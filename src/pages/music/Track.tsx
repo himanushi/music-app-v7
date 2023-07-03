@@ -147,29 +147,31 @@ const TrackArtists = ({
   const artists = useMemo(() => data?.items ?? [], [data?.items]);
 
   return (
-    <IonList>
-      <IonItemDivider sticky>アーティスト</IonItemDivider>
-      <Virtuoso
-        useWindowScroll
-        customScrollParent={scrollElement}
-        style={{ height: "44.5px" }}
-        totalCount={artists.length}
-        endReached={() => fetchItems(offset)}
-        itemContent={(index) => (
-          <IonItem button detail={false}>
-            <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
-              <img src={`https://picsum.photos/id/${index + 100}/600`} />
-            </IonAvatar>
-            <IonLabel>{artists[index].name}</IonLabel>
-            <IonButtons slot="end">
-              <IonButton>
-                <Icon size="s" color="red" slot="icon-only" name="favorite" />
-              </IonButton>
-            </IonButtons>
-          </IonItem>
-        )}
-      />
-    </IonList>
+    artists.length > 0 && (
+      <IonList>
+        <IonItemDivider sticky>アーティスト</IonItemDivider>
+        <Virtuoso
+          useWindowScroll
+          customScrollParent={scrollElement}
+          style={{ height: "44.5px" }}
+          totalCount={artists.length}
+          endReached={() => fetchItems(offset)}
+          itemContent={(index) => (
+            <IonItem button detail={false}>
+              <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
+                <img src={`https://picsum.photos/id/${index + 100}/600`} />
+              </IonAvatar>
+              <IonLabel>{artists[index].name}</IonLabel>
+              <IonButtons slot="end">
+                <IonButton>
+                  <Icon size="s" color="red" slot="icon-only" name="favorite" />
+                </IonButton>
+              </IonButtons>
+            </IonItem>
+          )}
+        />
+      </IonList>
+    )
   );
 };
 
@@ -208,31 +210,33 @@ const TrackAlbums = ({
   const artists = useMemo(() => data?.items ?? [], [data?.items]);
 
   return (
-    <IonList>
-      <IonItemDivider sticky>アルバム</IonItemDivider>
-      <Virtuoso
-        useWindowScroll
-        customScrollParent={scrollElement}
-        style={{ height: "44.5px" }}
-        totalCount={artists.length}
-        endReached={() => fetchItems(offset)}
-        itemContent={(index) => (
-          <IonItem button detail={false}>
-            <IonThumbnail
-              slot="start"
-              style={{ height: "110px", width: "110px" }}
-            >
-              <img src={artists[index].artworkM?.url} />
-            </IonThumbnail>
-            <IonLabel>{artists[index].name}</IonLabel>
-            <IonButtons slot="end">
-              <IonButton>
-                <Icon size="s" color="red" slot="icon-only" name="favorite" />
-              </IonButton>
-            </IonButtons>
-          </IonItem>
-        )}
-      />
-    </IonList>
+    artists.length > 0 && (
+      <IonList>
+        <IonItemDivider sticky>アルバム</IonItemDivider>
+        <Virtuoso
+          useWindowScroll
+          customScrollParent={scrollElement}
+          style={{ height: "44.5px" }}
+          totalCount={artists.length}
+          endReached={() => fetchItems(offset)}
+          itemContent={(index) => (
+            <IonItem button detail={false}>
+              <IonThumbnail
+                slot="start"
+                style={{ height: "110px", width: "110px" }}
+              >
+                <img src={artists[index].artworkM?.url} />
+              </IonThumbnail>
+              <IonLabel>{artists[index].name}</IonLabel>
+              <IonButtons slot="end">
+                <IonButton>
+                  <Icon size="s" color="red" slot="icon-only" name="favorite" />
+                </IonButton>
+              </IonButtons>
+            </IonItem>
+          )}
+        />
+      </IonList>
+    )
   );
 };
