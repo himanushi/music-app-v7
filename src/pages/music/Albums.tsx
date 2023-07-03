@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import {
   IonButton,
   IonButtons,
@@ -12,41 +11,25 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback, useMemo, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
 import { AlbumsDocument } from "~/graphql/types";
-import { useScrollElement } from "~/hooks";
+import { useFetchItems, useScrollElement } from "~/hooks";
 
 const limit = 50;
 
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
 
-  const [offset, setOffset] = useState(50);
-
-  const { data, fetchMore } = useQuery(AlbumsDocument, {
+  const { items: albums, fetchMore } = useFetchItems({
+    limit,
+    doc: AlbumsDocument,
     variables: {
       conditions: { name: "final" },
       cursor: { limit, offset: 0 },
       sort: { direction: "DESC", order: "RELEASE" },
     },
-    fetchPolicy: "cache-first",
   });
-
-  const fetchItems = useCallback(
-    (offset: number) => {
-      setOffset((prevOffset) => prevOffset + limit);
-      fetchMore({
-        variables: {
-          cursor: { limit, offset: offset },
-        },
-      });
-    },
-    [fetchMore]
-  );
-
-  const albums = useMemo(() => data?.items ?? [], [data?.items]);
 
   return (
     <IonPage>
@@ -67,7 +50,7 @@ export const Albums = () => {
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
           totalCount={albums.length}
-          endReached={() => fetchItems(offset)}
+          endReached={() => fetchMore()}
           itemContent={(index) => (
             <IonItem
               button

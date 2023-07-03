@@ -17,12 +17,12 @@ import {
   IonAvatar,
   IonSkeletonText,
 } from "@ionic/react";
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon, SquareImage } from "~/components";
 import { AlbumDocument, ArtistsDocument, TrackObject } from "~/graphql/types";
-import { useScrollElement } from "~/hooks";
+import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
 
 export const Album: React.FC<
@@ -165,6 +165,8 @@ const AlbumTracks = ({
   );
 };
 
+const limit = 50;
+
 const AlbumArtists = ({
   albumId,
   scrollElement,
@@ -172,32 +174,15 @@ const AlbumArtists = ({
   albumId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const limit = 10;
-
-  const [offset, setOffset] = useState(limit);
-
-  const { data, fetchMore } = useQuery(ArtistsDocument, {
+  const { items: artists, fetchMore } = useFetchItems({
+    limit,
+    doc: ArtistsDocument,
     variables: {
       conditions: { albumIds: [albumId] },
       cursor: { limit, offset: 0 },
       sort: { direction: "DESC", order: "POPULARITY" },
     },
-    fetchPolicy: "cache-first",
   });
-
-  const fetchItems = useCallback(
-    (offset: number) => {
-      setOffset((prevOffset) => prevOffset + limit);
-      fetchMore({
-        variables: {
-          cursor: { limit, offset: offset },
-        },
-      });
-    },
-    [fetchMore]
-  );
-
-  const artists = useMemo(() => data?.items ?? [], [data?.items]);
 
   return (
     <IonList>
@@ -207,7 +192,7 @@ const AlbumArtists = ({
         customScrollParent={scrollElement}
         style={{ height: "44.5px" }}
         totalCount={artists.length}
-        endReached={() => fetchItems(offset)}
+        endReached={() => fetchMore()}
         itemContent={(index) => (
           <IonItem button detail={false}>
             <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>

@@ -18,7 +18,7 @@ import {
   IonSkeletonText,
   IonThumbnail,
 } from "@ionic/react";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon, SquareImage } from "~/components";
@@ -27,7 +27,7 @@ import {
   ArtistsDocument,
   TrackDocument,
 } from "~/graphql/types";
-import { useScrollElement } from "~/hooks";
+import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertImageUrl, convertTime, toMs } from "~/lib";
 
 export const Track: React.FC<
@@ -112,6 +112,8 @@ export const Track: React.FC<
   );
 };
 
+const limit = 50;
+
 const TrackArtists = ({
   trackId,
   scrollElement,
@@ -119,32 +121,15 @@ const TrackArtists = ({
   trackId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const limit = 50;
-
-  const [offset, setOffset] = useState(limit);
-
-  const { data, fetchMore } = useQuery(ArtistsDocument, {
+  const { items: artists, fetchMore } = useFetchItems({
+    limit,
+    doc: ArtistsDocument,
     variables: {
       conditions: { trackIds: [trackId] },
       cursor: { limit, offset: 0 },
       sort: { direction: "DESC", order: "POPULARITY" },
     },
-    fetchPolicy: "cache-first",
   });
-
-  const fetchItems = useCallback(
-    (offset: number) => {
-      setOffset((prevOffset) => prevOffset + limit);
-      fetchMore({
-        variables: {
-          cursor: { limit, offset: offset },
-        },
-      });
-    },
-    [fetchMore]
-  );
-
-  const artists = useMemo(() => data?.items ?? [], [data?.items]);
 
   return (
     artists.length > 0 && (
@@ -155,7 +140,7 @@ const TrackArtists = ({
           customScrollParent={scrollElement}
           style={{ height: "44.5px" }}
           totalCount={artists.length}
-          endReached={() => fetchItems(offset)}
+          endReached={() => fetchMore()}
           itemContent={(index) => (
             <IonItem button detail={false}>
               <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
@@ -182,52 +167,35 @@ const TrackAlbums = ({
   trackId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const limit = 50;
-
-  const [offset, setOffset] = useState(limit);
-
-  const { data, fetchMore } = useQuery(AlbumsDocument, {
+  const { items: albums, fetchMore } = useFetchItems({
+    limit,
+    doc: AlbumsDocument,
     variables: {
       conditions: { trackIds: [trackId] },
       cursor: { limit, offset: 0 },
       sort: { direction: "DESC", order: "POPULARITY" },
     },
-    fetchPolicy: "cache-first",
   });
 
-  const fetchItems = useCallback(
-    (offset: number) => {
-      setOffset((prevOffset) => prevOffset + limit);
-      fetchMore({
-        variables: {
-          cursor: { limit, offset: offset },
-        },
-      });
-    },
-    [fetchMore]
-  );
-
-  const artists = useMemo(() => data?.items ?? [], [data?.items]);
-
   return (
-    artists.length > 0 && (
+    albums.length > 0 && (
       <IonList>
         <IonItemDivider sticky>アルバム</IonItemDivider>
         <Virtuoso
           useWindowScroll
           customScrollParent={scrollElement}
           style={{ height: "44.5px" }}
-          totalCount={artists.length}
-          endReached={() => fetchItems(offset)}
+          totalCount={albums.length}
+          endReached={() => fetchMore()}
           itemContent={(index) => (
             <IonItem button detail={false}>
               <IonThumbnail
                 slot="start"
                 style={{ height: "110px", width: "110px" }}
               >
-                <img src={artists[index].artworkM?.url} />
+                <img src={albums[index].artworkM?.url} />
               </IonThumbnail>
-              <IonLabel>{artists[index].name}</IonLabel>
+              <IonLabel>{albums[index].name}</IonLabel>
               <IonButtons slot="end">
                 <IonButton>
                   <Icon size="s" color="red" slot="icon-only" name="favorite" />
