@@ -2,6 +2,10 @@
 /* ref: https://tailwindcss.com/docs/customizing-colors */
 /* color theme ref: https://material.io/resources/color */
 
+.clickable {
+  cursor: pointer;
+}
+
 .text-select {
   -webkit-user-select: text;
   -moz-user-select: text;

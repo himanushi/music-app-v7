@@ -79,7 +79,11 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
   return (
     <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
       <IonHeader class="ion-no-border">
-        <IonToolbar onClick={switchBreakpoint} color="dark-gray">
+        <IonToolbar
+          onClick={switchBreakpoint}
+          color="dark-gray"
+          class="clickable"
+        >
           <IonThumbnail>
             <img src={`https://picsum.photos/id/101/300`} />
           </IonThumbnail>
