@@ -1,0 +1,18 @@
+query Albums(
+  $cursor: CursorInputObject
+  $sort: AlbumsSortInputObject
+  $conditions: AlbumsConditionsInputObject
+) {
+  items: albums(cursor: $cursor, sort: $sort, conditions: $conditions) {
+    id
+    name
+    status
+    artworkM {
+      url
+      width
+      height
+    }
+    appleMusicId
+    appleMusicPlayable
+  }
+}
