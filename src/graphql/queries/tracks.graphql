@@ -1,0 +1,9 @@
+query Tracks(
+  $cursor: CursorInputObject
+  $sort: TracksSortInputObject
+  $conditions: TracksConditionsInputObject
+) {
+  items: tracks(cursor: $cursor, sort: $sort, conditions: $conditions) {
+    ...TrackFields
+  }
+}
