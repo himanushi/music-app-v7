@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import {
   IonPage,
   IonContent,
@@ -14,21 +15,15 @@ import {
   IonButtons,
   IonButton,
   IonAvatar,
+  IonSkeletonText,
 } from "@ionic/react";
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon, SquareImage } from "~/components";
+import { AlbumDocument, TrackObject } from "~/graphql/types";
 import { useScrollElement } from "~/hooks";
-
-type Track = {
-  name: string;
-  trackNumber: number;
-};
-
-type Artist = {
-  name: string;
-};
+import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -36,22 +31,12 @@ export const Album: React.FC<
   }>
 > = ({ match }) => {
   const { contentRef, scrollElement } = useScrollElement();
-  const tracks: Track[] = [...Array(parseInt(match.params.albumId))].map(
-    (_, i) => ({
-      name: `Track ${(i % 12) + 1} ${
-        i % 4 === 0
-          ? " (feat. Artist Artist Artist Artist Artist Artist Artist Artist Artist)"
-          : ""
-      }`,
-      trackNumber: (i % 12) + 1,
-    })
-  );
-
-  const artists: Artist[] = [...Array(parseInt(match.params.albumId))].map(
-    (_, i) => ({
-      name: `Artist ${(i % 12) + 1}`,
-    })
-  );
+  const { data } = useQuery(AlbumDocument, {
+    variables: { id: match.params.albumId },
+    fetchPolicy: "cache-first",
+  });
+  const album = useMemo(() => data?.album, [data?.album]);
+  const tracks = useMemo(() => album?.tracks ?? [], [album?.tracks]);
 
   return (
     <IonPage>
@@ -63,24 +48,41 @@ export const Album: React.FC<
           <IonRow>
             <IonCol>
               <SquareImage
-                src={`https://picsum.photos/id/${match.params.albumId}/600`}
+                src={convertImageUrl({
+                  px: 300,
+                  url: album?.artworkL?.url,
+                })}
               />
             </IonCol>
           </IonRow>
         </IonGrid>
         <IonList>
           <IonItem className="ion-text-wrap text-select" lines="none">
-            タイトルタイトルタイトルタイトルタイトルタイトルタイトル
+            {album ? <IonLabel>{album.name}</IonLabel> : <IonSkeletonText />}
           </IonItem>
           <IonItem className="ion-text-wrap text-select" lines="none">
-            <IonNote slot="end">会社名</IonNote>
+            {album ? (
+              <IonNote slot="end">{album?.copyright}</IonNote>
+            ) : (
+              <IonSkeletonText />
+            )}
           </IonItem>
           <IonItem className="ion-text-wrap text-select">
-            <IonNote slot="end">2023年6月23日, 100曲, 1時間</IonNote>
+            {album ? (
+              <IonNote slot="end">
+                {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
+                {convertTime(toMs(album.tracks))}
+              </IonNote>
+            ) : (
+              <IonSkeletonText />
+            )}
           </IonItem>
         </IonList>
-        <AlbumTracks tracks={tracks} scrollElement={scrollElement} />
-        <AlbumArtists artists={artists} scrollElement={scrollElement} />
+        <AlbumTracks
+          tracks={tracks as TrackObject[]}
+          scrollElement={scrollElement}
+        />
+        {/* <AlbumArtists artists={artists} scrollElement={scrollElement} /> */}
         <FooterPadding />
       </IonContent>
     </IonPage>
@@ -91,11 +93,11 @@ const AlbumTracks = ({
   tracks,
   scrollElement,
 }: {
-  tracks: Track[];
+  tracks: TrackObject[];
   scrollElement: HTMLElement | undefined;
 }) => {
   const discTracks = tracks.reduce(
-    (discs: Track[][], track) =>
+    (discs: TrackObject[][], track) =>
       track.trackNumber === 1
         ? [...discs, [track]]
         : [...discs.slice(0, -1), [...discs[discs.length - 1], track]],
@@ -139,35 +141,35 @@ const AlbumTracks = ({
   );
 };
 
-const AlbumArtists = ({
-  artists,
-  scrollElement,
-}: {
-  artists: Artist[];
-  scrollElement: HTMLElement | undefined;
-}) => {
-  return (
-    <IonList>
-      <IonItemDivider sticky>アーティスト</IonItemDivider>
-      <Virtuoso
-        useWindowScroll
-        customScrollParent={scrollElement}
-        style={{ height: "44.5px" }}
-        totalCount={artists.length}
-        itemContent={(index) => (
-          <IonItem button detail={false}>
-            <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
-              <img src={`https://picsum.photos/id/${index + 100}/600`} />
-            </IonAvatar>
-            <IonLabel>{artists[index].name}</IonLabel>
-            <IonButtons slot="end">
-              <IonButton>
-                <Icon size="s" color="red" slot="icon-only" name="favorite" />
-              </IonButton>
-            </IonButtons>
-          </IonItem>
-        )}
-      />
-    </IonList>
-  );
-};
+// const AlbumArtists = ({
+//   artists,
+//   scrollElement,
+// }: {
+//   artists: Artist[];
+//   scrollElement: HTMLElement | undefined;
+// }) => {
+//   return (
+//     <IonList>
+//       <IonItemDivider sticky>アーティスト</IonItemDivider>
+//       <Virtuoso
+//         useWindowScroll
+//         customScrollParent={scrollElement}
+//         style={{ height: "44.5px" }}
+//         totalCount={artists.length}
+//         itemContent={(index) => (
+//           <IonItem button detail={false}>
+//             <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
+//               <img src={`https://picsum.photos/id/${index + 100}/600`} />
+//             </IonAvatar>
+//             <IonLabel>{artists[index].name}</IonLabel>
+//             <IonButtons slot="end">
+//               <IonButton>
+//                 <Icon size="s" color="red" slot="icon-only" name="favorite" />
+//               </IonButton>
+//             </IonButtons>
+//           </IonItem>
+//         )}
+//       />
+//     </IonList>
+//   );
+// };
