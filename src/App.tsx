@@ -5,7 +5,7 @@ import { Albums } from "~/pages/albums/Albums";
 import { Album } from "~/pages/albums/Album";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { client } from "./graphql/client";
 
 /* Ionic Framework css */

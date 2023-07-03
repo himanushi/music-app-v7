@@ -1,10 +1,9 @@
+import { useQuery } from "@apollo/client";
 import {
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
   IonItem,
   IonLabel,
   IonPage,
@@ -17,38 +16,34 @@ import { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
+import { AlbumsDocument } from "~/graphql/types";
 import { useScrollElement } from "~/hooks";
 
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
   const history = useHistory();
 
-  const [albums, setAlbums] = useState<{ name: string }[]>(
-    [...Array(50)].map((_, i) => ({ name: `${i}` }))
-  );
-  const generateItems = useCallback(() => {
-    const newItems = [];
-    for (let i = 0; i < 50; i++) {
-      newItems.push({ name: `${1 + albums.length + i}` });
-    }
-    setAlbums([...albums, ...newItems]);
-  }, [albums]);
+  const [offset, setOffset] = useState(50);
+  const { data, loading, fetchMore } = useQuery(AlbumsDocument, {
+    variables: {
+      conditions: {},
+      cursor: { limit: 50, offset: 0 },
+      sort: { direction: "DESC", order: "RELEASE" },
+    },
+    fetchPolicy: "cache-first",
+  });
 
-  const Footer = useCallback(
-    () => (
-      <IonInfiniteScroll
-        onIonInfinite={(ev) => {
-          setTimeout(() => {
-            generateItems();
-            ev.target.complete();
-          }, 1000);
-        }}
-      >
-        <IonInfiniteScrollContent></IonInfiniteScrollContent>
-      </IonInfiniteScroll>
-    ),
-    [generateItems]
-  );
+  const albums = data?.items ?? [];
+
+  const fetchItems = useCallback(() => {
+    if (loading) return;
+    setOffset((prevOffset) => prevOffset + 50);
+    fetchMore({
+      variables: {
+        cursor: { limit: 50, offset: offset },
+      },
+    });
+  }, [fetchMore, offset, loading]);
 
   return (
     <IonPage>
@@ -69,6 +64,7 @@ export const Albums = () => {
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
           totalCount={albums.length}
+          endReached={() => fetchItems()}
           itemContent={(index) => (
             <IonItem
               button
@@ -79,7 +75,7 @@ export const Albums = () => {
                 slot="start"
                 style={{ height: "110px", width: "110px" }}
               >
-                <img src={`https://picsum.photos/id/${index}/300`} />
+                <img src={albums[index].artworkM?.url} />
               </IonThumbnail>
               <IonLabel class="ion-text-wrap">{albums[index].name}</IonLabel>
               <IonButtons slot="end">
@@ -89,7 +85,6 @@ export const Albums = () => {
               </IonButtons>
             </IonItem>
           )}
-          components={{ Footer }}
         />
         <FooterPadding />
       </IonContent>
