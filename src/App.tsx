@@ -1,8 +1,8 @@
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route } from "react-router-dom";
-import { Albums } from "~/pages/albums/Albums";
-import { Album } from "~/pages/albums/Album";
+import { Albums } from "~/pages/music/Albums";
+import { Album } from "~/pages/music/Album";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
 import { ApolloProvider } from "@apollo/client";
