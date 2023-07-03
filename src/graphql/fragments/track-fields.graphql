@@ -1,0 +1,23 @@
+fragment TrackFields on TrackObject {
+  id
+  isrc
+  name
+  status
+  discNumber
+  trackNumber
+  durationMs
+  previewUrl
+  popularity
+  artworkL {
+    url
+    width
+    height
+  }
+  artworkM {
+    url
+    width
+    height
+  }
+  appleMusicId
+  appleMusicPlayable
+}

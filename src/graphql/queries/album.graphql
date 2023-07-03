@@ -1,0 +1,26 @@
+query Album($id: String!) {
+  album(id: $id) {
+    id
+    totalTracks
+    name
+    status
+    releaseDate
+    recordLabel
+    copyright
+    artworkL {
+      url
+      width
+      height
+    }
+    artworkM {
+      url
+      width
+      height
+    }
+    appleMusicId
+    appleMusicPlayable
+    tracks {
+      ...TrackFields
+    }
+  }
+}
