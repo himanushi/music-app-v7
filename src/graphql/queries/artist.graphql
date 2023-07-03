@@ -1,0 +1,12 @@
+query Artist($id: String!) {
+  artist(id: $id) {
+    id
+    name
+    status
+    artworkL {
+      url
+      width
+      height
+    }
+  }
+}

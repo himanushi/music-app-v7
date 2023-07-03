@@ -72,7 +72,7 @@ export const Artists = () => {
             <IonItem
               button
               detail={false}
-              routerLink={`/albums/${artists[index].id}`}
+              routerLink={`/artists/${artists[index].id}`}
             >
               <IonThumbnail
                 slot="start"
