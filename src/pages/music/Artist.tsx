@@ -26,13 +26,13 @@ import { convertImageUrl } from "~/lib";
 
 export const Artist: React.FC<
   RouteComponentProps<{
-    albumId: string;
+    artistId: string;
   }>
 > = ({ match }) => {
   const { contentRef, scrollElement } = useScrollElement();
 
   const { data } = useQuery(ArtistDocument, {
-    variables: { id: match.params.albumId },
+    variables: { id: match.params.artistId },
     fetchPolicy: "cache-first",
   });
 

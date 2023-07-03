@@ -46,7 +46,7 @@ export const Tracks = () => {
     [fetchMore]
   );
 
-  const items = useMemo(() => data?.items ?? [], [data?.items]);
+  const tracks = useMemo(() => data?.items ?? [], [data?.items]);
 
   return (
     <IonPage>
@@ -66,18 +66,18 @@ export const Tracks = () => {
           useWindowScroll
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
-          totalCount={items.length}
+          totalCount={tracks.length}
           endReached={() => fetchItems(offset)}
           itemContent={(index) => (
             <IonItem
               button
               detail={false}
-              routerLink={`/tracks/${items[index].id}`}
+              routerLink={`/tracks/${tracks[index].id}`}
             >
               <IonThumbnail slot="start">
-                <img src={items[index].artworkM?.url} />
+                <img src={tracks[index].artworkM?.url} />
               </IonThumbnail>
-              <IonLabel class="ion-text-wrap">{items[index].name}</IonLabel>
+              <IonLabel class="ion-text-wrap">{tracks[index].name}</IonLabel>
               <IonButtons slot="end">
                 <IonButton>
                   <Icon size="s" color="red" slot="icon-only" name="favorite" />
