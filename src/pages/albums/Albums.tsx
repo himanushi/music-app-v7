@@ -71,7 +71,7 @@ export const Albums = () => {
             <IonItem
               button
               detail={false}
-              onClick={() => history.push(`/albums/${index}`)}
+              onClick={() => history.push(`/albums/${albums[index].id}`)}
             >
               <IonThumbnail
                 slot="start"
