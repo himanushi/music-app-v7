@@ -4,7 +4,9 @@ import { Route } from "react-router-dom";
 import { Albums } from "~/pages/albums/Albums";
 import { Album } from "~/pages/albums/Album";
 import { setupIonicReact } from "@ionic/react";
-import { FooterModal } from "./components";
+import { FooterModal } from "~/components";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { client } from "./graphql/client";
 
 /* Ionic Framework css */
 /* Core css */
@@ -30,16 +32,18 @@ setupIonicReact({ mode: "ios", animated: false });
 
 function App() {
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonRouterOutlet>
-          <Route path="/albums" component={Albums} />
-          <Route path="/albums/:albumId" component={Album} />
-          <Route exact path="/" component={Albums} />
-        </IonRouterOutlet>
-      </IonReactRouter>
-      <FooterModal />
-    </IonApp>
+    <ApolloProvider client={client}>
+      <IonApp>
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route path="/albums" component={Albums} />
+            <Route path="/albums/:albumId" component={Album} />
+            <Route exact path="/" component={Albums} />
+          </IonRouterOutlet>
+        </IonReactRouter>
+        <FooterModal />
+      </IonApp>
+    </ApolloProvider>
   );
 }
 
