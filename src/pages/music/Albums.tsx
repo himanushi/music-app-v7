@@ -11,9 +11,10 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useCallback, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
-import { AlbumsDocument } from "~/graphql/types";
+import { AlbumsDocument, AlbumsQueryVariables } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 
 const limit = 50;
@@ -21,19 +22,40 @@ const limit = 50;
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
 
-  const { items: albums, fetchMore } = useFetchItems({
+  const [variables, setVariables] = useState<AlbumsQueryVariables>({
+    conditions: {},
+    cursor: { limit, offset: 0 },
+    sort: { direction: "DESC", order: "RELEASE" },
+  });
+
+  const {
+    items: albums,
+    fetchMore,
+    resetOffset,
+  } = useFetchItems({
     limit,
     doc: AlbumsDocument,
-    variables: {
-      conditions: { name: "final" },
-      cursor: { limit, offset: 0 },
-      sort: { direction: "DESC", order: "RELEASE" },
-    },
+    variables,
   });
+
+  const handleInput = useCallback(
+    (event: Event) => {
+      let query = "";
+      const target = event.target as HTMLIonSearchbarElement;
+      if (target.value) query = target.value.toLowerCase();
+      setVariables({
+        ...variables,
+        ...{ conditions: query ? { name: query } : {} },
+      });
+      resetOffset();
+      scrollElement?.scrollTo({ top: 0 });
+    },
+    [resetOffset, scrollElement, variables]
+  );
 
   return (
     <IonPage>
-      <IonHeader translucent class="ion-no-border">
+      <IonHeader translucent className="ion-no-border">
         <IonToolbar>
           <IonTitle>アルバム</IonTitle>
           <IonButtons slot="end">
@@ -41,7 +63,11 @@ export const Albums = () => {
           </IonButtons>
         </IonToolbar>
         <IonToolbar>
-          <IonSearchbar placeholder="アルバムで検索"></IonSearchbar>
+          <IonSearchbar
+            placeholder="アルバムで検索"
+            debounce={2000}
+            onIonInput={(ev) => handleInput(ev)}
+          ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>

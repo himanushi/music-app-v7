@@ -79,6 +79,13 @@ export const Album: React.FC<
               <IonSkeletonText />
             )}
           </IonItem>
+          <IonItem button detail={false}>
+            <IonButtons slot="end">
+              <IonButton>
+                <Icon size="s" color="red" slot="icon-only" name="favorite" />
+              </IonButton>
+            </IonButtons>
+          </IonItem>
         </IonList>
         {album ? (
           <AlbumTracks

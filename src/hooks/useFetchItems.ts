@@ -27,5 +27,7 @@ export const useFetchItems = <V extends { [key: string]: any }>({
 
   const items = useMemo(() => data?.items ?? [], [data?.items]);
 
-  return { items, fetchMore };
+  const resetOffset = useCallback(() => setOffset(0), []);
+
+  return { items, fetchMore, resetOffset };
 };
