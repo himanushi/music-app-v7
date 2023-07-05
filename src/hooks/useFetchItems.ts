@@ -13,7 +13,7 @@ export const useFetchItems = <V extends { [key: string]: any }>({
   doc,
   variables,
 }: UseFetchItemsOptions<V>) => {
-  const [offset, setOffset] = useState(50);
+  const [offset, setOffset] = useState(0);
 
   const { data, fetchMore: fetchMoreQuery } = useQuery(doc, {
     variables,
