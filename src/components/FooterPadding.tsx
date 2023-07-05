@@ -6,6 +6,7 @@ export const FooterPadding = () => {
       <IonItem lines="none" />
       <IonItem lines="none" />
       <IonItem lines="none" />
+      <IonItem lines="none" />
     </>
   );
 };
