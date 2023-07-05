@@ -8,7 +8,10 @@ interface UseFetchItemsOptions<V extends { [key: string]: any }> {
   variables: V;
 }
 
-export const useFetchItems = <V extends { [key: string]: any }>({
+export const useFetchItems = <
+  T,
+  V extends { [key: string]: any } = { [key: string]: any }
+>({
   limit,
   doc,
   variables,
@@ -29,5 +32,5 @@ export const useFetchItems = <V extends { [key: string]: any }>({
 
   const resetOffset = useCallback(() => setOffset(0), []);
 
-  return { items, fetchMore, resetOffset };
+  return { items: items as T[], fetchMore, resetOffset };
 };

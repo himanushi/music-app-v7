@@ -17,6 +17,7 @@ import { useCallback, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
 import {
+  AlbumObject,
   AlbumsDocument,
   AlbumsQueryVariables,
   AlbumsSortInputObject,
@@ -24,6 +25,14 @@ import {
 import { useFetchItems, useScrollElement } from "~/hooks";
 
 const limit = 50;
+
+const sortOptions = [
+  ["配信日新しい順", "RELEASE.DESC"],
+  ["配信日古い順", "RELEASE.ASC"],
+  ["追加日新しい順", "NEW.DESC"],
+  ["追加日古い順", "NEW.ASC"],
+  ["人気順", "POPULARITY.DESC"],
+];
 
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
@@ -38,7 +47,7 @@ export const Albums = () => {
     items: albums,
     fetchMore,
     resetOffset,
-  } = useFetchItems({
+  } = useFetchItems<AlbumObject>({
     limit,
     doc: AlbumsDocument,
     variables,
@@ -46,13 +55,9 @@ export const Albums = () => {
 
   const handleInput = useCallback(
     (event: Event) => {
-      let query = "";
       const target = event.target as HTMLIonSearchbarElement;
-      if (target.value) query = target.value.toLowerCase();
-      setVariables({
-        ...variables,
-        ...{ conditions: query ? { name: query } : {} },
-      });
+      const query = target.value ? target.value.toLowerCase() : "";
+      setVariables({ ...variables, conditions: query ? { name: query } : {} });
       resetOffset();
       scrollElement?.scrollTo({ top: 0 });
     },
@@ -89,41 +94,16 @@ export const Albums = () => {
               dismissOnSelect={true}
             >
               <IonList>
-                <IonItem
-                  button
-                  detail={false}
-                  onClick={() => handleSort("RELEASE.DESC")}
-                >
-                  配信日新しい順
-                </IonItem>
-                <IonItem
-                  button
-                  detail={false}
-                  onClick={() => handleSort("RELEASE.ASC")}
-                >
-                  配信日古い順
-                </IonItem>
-                <IonItem
-                  button
-                  detail={false}
-                  onClick={() => handleSort("NEW.DESC")}
-                >
-                  追加日新しい順
-                </IonItem>
-                <IonItem
-                  button
-                  detail={false}
-                  onClick={() => handleSort("NEW.ASC")}
-                >
-                  追加日古い順
-                </IonItem>
-                <IonItem
-                  button
-                  detail={false}
-                  onClick={() => handleSort("POPULARITY.DESC")}
-                >
-                  人気順
-                </IonItem>
+                {sortOptions.map((sort, index) => (
+                  <IonItem
+                    button
+                    detail={false}
+                    key={index}
+                    onClick={() => handleSort(sort[1])}
+                  >
+                    {sort[0]}
+                  </IonItem>
+                ))}
               </IonList>
             </IonPopover>
           </IonButtons>
