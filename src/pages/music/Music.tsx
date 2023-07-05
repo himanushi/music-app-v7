@@ -20,7 +20,7 @@ export const Music = () => {
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle style={{ paddingBottom: "0px" }} size="large">
-              ゲーム音楽
+              見つける
             </IonTitle>
           </IonToolbar>
         </IonHeader>

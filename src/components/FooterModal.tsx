@@ -114,15 +114,25 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
               <IonButton>
                 <Icon name="music_note" slot="start" />
               </IonButton>
-              ゲーム音楽
+              見つける
             </IonSegmentButton>
-            <IonSegmentButton>
+            <IonSegmentButton
+              onClick={() =>
+                history.location.pathname !== "/library" &&
+                history.push("/library")
+              }
+            >
               <IonButton>
                 <Icon name="library_music" slot="start" />
               </IonButton>
               ライブラリ
             </IonSegmentButton>
-            <IonSegmentButton>
+            <IonSegmentButton
+              onClick={() =>
+                history.location.pathname !== "/settings" &&
+                history.push("/settings")
+              }
+            >
               <IonButton>
                 <Icon name="settings" slot="start" />
               </IonButton>
