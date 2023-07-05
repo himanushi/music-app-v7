@@ -23,7 +23,12 @@ import {
   AlbumsDocument,
   AlbumsQueryVariables,
 } from "~/graphql/types";
-import { useFetchItems, useNestedState, useScrollElement } from "~/hooks";
+import {
+  useFetchItems,
+  useMe,
+  useNestedState,
+  useScrollElement,
+} from "~/hooks";
 
 const limit = 50;
 
@@ -35,8 +40,15 @@ const sortOptions = [
   ["人気順", "POPULARITY.DESC"],
 ];
 
+const statusOptions = [
+  ["有効のみ表示", "ACTIVE"],
+  ["保留のみ表示", "PENDING"],
+  ["除外のみ表示", "IGNORE"],
+];
+
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
+  const { isAllowed } = useMe();
 
   const [variables, setNestedState] = useNestedState<AlbumsQueryVariables>({
     conditions: {},
@@ -54,35 +66,45 @@ export const Albums = () => {
     variables,
   });
 
+  const reset = useCallback(() => {
+    resetOffset();
+    scrollElement?.scrollTo({ top: 0 });
+  }, [resetOffset, scrollElement]);
+
   const handleInput = useCallback(
     (event: Event) => {
+      reset();
       const target = event.target as HTMLIonSearchbarElement;
       const query = target.value ? target.value.toLowerCase() : "";
       setNestedState("conditions", "name", query ? query : undefined);
-      resetOffset();
-      scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement, setNestedState]
+    [reset, setNestedState]
   );
 
   const handleSort = useCallback(
     (sort: string) => {
+      reset();
       const [order, direction] = sort.split(".");
       setNestedState("sort", "order", order);
       setNestedState("sort", "direction", direction);
-      resetOffset();
-      scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement, setNestedState]
+    [reset, setNestedState]
   );
 
-  const handleChangeCheck = useCallback(
+  const handleChangeFavorite = useCallback(
     (event: CustomEvent<CheckboxChangeEventDetail>) => {
+      reset();
       setNestedState("conditions", "favorite", event.detail.checked);
-      resetOffset();
-      scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement, setNestedState]
+    [reset, setNestedState]
+  );
+
+  const handleChangeStatus = useCallback(
+    (status: string) => {
+      reset();
+      setNestedState("conditions", "status", status);
+    },
+    [reset, setNestedState]
   );
 
   return (
@@ -99,17 +121,32 @@ export const Albums = () => {
               trigger="album-filter-button"
               side="bottom"
               alignment="start"
+              dismissOnSelect={true}
             >
               <IonList>
                 <IonItem button detail={false}>
                   <IonCheckbox
                     color="main"
                     checked={!!variables.conditions?.favorite}
-                    onIonChange={handleChangeCheck}
+                    onIonChange={handleChangeFavorite}
                   >
                     お気に入り
                   </IonCheckbox>
                 </IonItem>
+                {isAllowed("changeAlbumStatus") && (
+                  <>
+                    {statusOptions.map((status, index) => (
+                      <IonItem
+                        button
+                        detail={false}
+                        key={index}
+                        onClick={() => handleChangeStatus(status[1])}
+                      >
+                        {status[0]}
+                      </IonItem>
+                    ))}
+                  </>
+                )}
               </IonList>
             </IonPopover>
           </IonButtons>
@@ -155,7 +192,7 @@ export const Albums = () => {
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
           totalCount={albums.length}
-          endReached={() => fetchMore()}
+          endReached={() => albums.length >= limit && fetchMore()}
           itemContent={(index) => (
             <IonItem
               button
