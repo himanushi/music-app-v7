@@ -5,7 +5,9 @@ import {
   IonHeader,
   IonItem,
   IonLabel,
+  IonList,
   IonPage,
+  IonPopover,
   IonSearchbar,
   IonThumbnail,
   IonTitle,
@@ -14,7 +16,11 @@ import {
 import { useCallback, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
-import { AlbumsDocument, AlbumsQueryVariables } from "~/graphql/types";
+import {
+  AlbumsDocument,
+  AlbumsQueryVariables,
+  AlbumsSortInputObject,
+} from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 
 const limit = 50;
@@ -25,7 +31,7 @@ export const Albums = () => {
   const [variables, setVariables] = useState<AlbumsQueryVariables>({
     conditions: {},
     cursor: { limit, offset: 0 },
-    sort: { direction: "DESC", order: "RELEASE" },
+    sort: { order: "RELEASE", direction: "DESC" },
   });
 
   const {
@@ -53,13 +59,73 @@ export const Albums = () => {
     [resetOffset, scrollElement, variables]
   );
 
+  const handleSort = useCallback(
+    (sort: string) => {
+      const [order, direction] = sort.split(".");
+      setVariables({
+        ...variables,
+        ...({ sort: { order, direction } } as AlbumsSortInputObject),
+      });
+      resetOffset();
+      scrollElement?.scrollTo({ top: 0 });
+    },
+    [resetOffset, scrollElement, variables]
+  );
+
   return (
     <IonPage>
       <IonHeader translucent className="ion-no-border">
         <IonToolbar>
           <IonTitle>アルバム</IonTitle>
           <IonButtons slot="end">
-            <IonButton color="main">並び替え</IonButton>
+            <IonButton id="album-sort-button" color="main">
+              並び替え
+            </IonButton>
+            <IonPopover
+              arrow={false}
+              trigger="album-sort-button"
+              side="bottom"
+              alignment="start"
+              dismissOnSelect={true}
+            >
+              <IonList>
+                <IonItem
+                  button
+                  detail={false}
+                  onClick={() => handleSort("RELEASE.DESC")}
+                >
+                  配信日新しい順
+                </IonItem>
+                <IonItem
+                  button
+                  detail={false}
+                  onClick={() => handleSort("RELEASE.ASC")}
+                >
+                  配信日古い順
+                </IonItem>
+                <IonItem
+                  button
+                  detail={false}
+                  onClick={() => handleSort("NEW.DESC")}
+                >
+                  追加日新しい順
+                </IonItem>
+                <IonItem
+                  button
+                  detail={false}
+                  onClick={() => handleSort("NEW.ASC")}
+                >
+                  追加日古い順
+                </IonItem>
+                <IonItem
+                  button
+                  detail={false}
+                  onClick={() => handleSort("POPULARITY.DESC")}
+                >
+                  人気順
+                </IonItem>
+              </IonList>
+            </IonPopover>
           </IonButtons>
         </IonToolbar>
         <IonToolbar>
