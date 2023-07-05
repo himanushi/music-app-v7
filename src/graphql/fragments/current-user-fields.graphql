@@ -1,0 +1,18 @@
+fragment CurrentUserFields on CurrentUserObject {
+  id
+  name
+  username
+  registered
+  role {
+    id
+    name
+    description
+    allowedActions
+  }
+  favorite {
+    albumIds
+    artistIds
+    trackIds
+    playlistIds
+  }
+}
