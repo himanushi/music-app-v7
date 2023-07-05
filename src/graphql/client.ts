@@ -59,7 +59,7 @@ const offsetLimitPagination = {
       "random",
     ],
     "sort",
-    ["order", "type"],
+    ["order", "direction"],
   ],
 
   merge(existing = [], incoming = []) {
