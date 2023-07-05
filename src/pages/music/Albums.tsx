@@ -1,6 +1,8 @@
 import {
+  CheckboxChangeEventDetail,
   IonButton,
   IonButtons,
+  IonCheckbox,
   IonContent,
   IonHeader,
   IonItem,
@@ -57,24 +59,42 @@ export const Albums = () => {
     (event: Event) => {
       const target = event.target as HTMLIonSearchbarElement;
       const query = target.value ? target.value.toLowerCase() : "";
-      setVariables({ ...variables, conditions: query ? { name: query } : {} });
+      setVariables((prevVariables) => ({
+        ...prevVariables,
+        conditions: query ? { name: query } : {},
+      }));
       resetOffset();
       scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement, variables]
+    [resetOffset, scrollElement]
   );
 
   const handleSort = useCallback(
     (sort: string) => {
       const [order, direction] = sort.split(".");
-      setVariables({
-        ...variables,
-        ...({ sort: { order, direction } } as AlbumsSortInputObject),
-      });
+      setVariables((prevVariables) => ({
+        ...prevVariables,
+        sort: { order, direction } as AlbumsSortInputObject,
+      }));
       resetOffset();
       scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement, variables]
+    [resetOffset, scrollElement]
+  );
+
+  const handleChangeCheck = useCallback(
+    (event: CustomEvent<CheckboxChangeEventDetail>) => {
+      setVariables((prevVariables) => ({
+        ...prevVariables,
+        conditions: {
+          ...prevVariables.conditions,
+          favorite: event.detail.checked,
+        },
+      }));
+      resetOffset();
+      scrollElement?.scrollTo({ top: 0 });
+    },
+    [resetOffset, scrollElement]
   );
 
   return (
@@ -82,6 +102,29 @@ export const Albums = () => {
       <IonHeader translucent className="ion-no-border">
         <IonToolbar>
           <IonTitle>アルバム</IonTitle>
+          <IonButtons slot="start">
+            <IonButton id="album-filter-button" color="main">
+              フィルター
+            </IonButton>
+            <IonPopover
+              arrow={false}
+              trigger="album-filter-button"
+              side="bottom"
+              alignment="start"
+            >
+              <IonList>
+                <IonItem button detail={false}>
+                  <IonCheckbox
+                    color="main"
+                    checked={!!variables.conditions?.favorite}
+                    onIonChange={handleChangeCheck}
+                  >
+                    お気に入り
+                  </IonCheckbox>
+                </IonItem>
+              </IonList>
+            </IonPopover>
+          </IonButtons>
           <IonButtons slot="end">
             <IonButton id="album-sort-button" color="main">
               並び替え
