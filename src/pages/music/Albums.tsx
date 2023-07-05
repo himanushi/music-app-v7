@@ -15,16 +15,15 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
   AlbumsQueryVariables,
-  AlbumsSortInputObject,
 } from "~/graphql/types";
-import { useFetchItems, useScrollElement } from "~/hooks";
+import { useFetchItems, useNestedState, useScrollElement } from "~/hooks";
 
 const limit = 50;
 
@@ -39,7 +38,7 @@ const sortOptions = [
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
 
-  const [variables, setVariables] = useState<AlbumsQueryVariables>({
+  const [variables, setNestedState] = useNestedState<AlbumsQueryVariables>({
     conditions: {},
     cursor: { limit, offset: 0 },
     sort: { order: "RELEASE", direction: "DESC" },
@@ -59,42 +58,31 @@ export const Albums = () => {
     (event: Event) => {
       const target = event.target as HTMLIonSearchbarElement;
       const query = target.value ? target.value.toLowerCase() : "";
-      setVariables((prevVariables) => ({
-        ...prevVariables,
-        conditions: query ? { name: query } : {},
-      }));
+      setNestedState("conditions", "name", query ? query : undefined);
       resetOffset();
       scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement]
+    [resetOffset, scrollElement, setNestedState]
   );
 
   const handleSort = useCallback(
     (sort: string) => {
       const [order, direction] = sort.split(".");
-      setVariables((prevVariables) => ({
-        ...prevVariables,
-        sort: { order, direction } as AlbumsSortInputObject,
-      }));
+      setNestedState("sort", "order", order);
+      setNestedState("sort", "direction", direction);
       resetOffset();
       scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement]
+    [resetOffset, scrollElement, setNestedState]
   );
 
   const handleChangeCheck = useCallback(
     (event: CustomEvent<CheckboxChangeEventDetail>) => {
-      setVariables((prevVariables) => ({
-        ...prevVariables,
-        conditions: {
-          ...prevVariables.conditions,
-          favorite: event.detail.checked,
-        },
-      }));
+      setNestedState("conditions", "favorite", event.detail.checked);
       resetOffset();
       scrollElement?.scrollTo({ top: 0 });
     },
-    [resetOffset, scrollElement]
+    [resetOffset, scrollElement, setNestedState]
   );
 
   return (
@@ -161,6 +149,8 @@ export const Albums = () => {
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Virtuoso
+          // 更新されないことがあるため key で更新させる
+          key={albums[0]?.id}
           useWindowScroll
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
