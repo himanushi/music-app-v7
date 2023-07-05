@@ -13,7 +13,7 @@ import {
 } from "@ionic/react";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon } from "~/components";
-import { TracksDocument } from "~/graphql/types";
+import { TrackObject, TracksDocument } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 
 const limit = 50;
@@ -21,7 +21,7 @@ const limit = 50;
 export const Tracks = () => {
   const { contentRef, scrollElement } = useScrollElement();
 
-  const { items: tracks, fetchMore } = useFetchItems({
+  const { items: tracks, fetchMore } = useFetchItems<TrackObject>({
     limit,
     doc: TracksDocument,
     variables: {

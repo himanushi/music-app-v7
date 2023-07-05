@@ -20,7 +20,7 @@ import { useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon, SquareImage } from "~/components";
-import { AlbumsDocument, ArtistDocument } from "~/graphql/types";
+import { AlbumsDocument, ArtistDocument, ArtistObject } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
 
@@ -88,7 +88,7 @@ const ArtistAlbums = ({
   artistId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: albums, fetchMore } = useFetchItems({
+  const { items: albums, fetchMore } = useFetchItems<ArtistObject>({
     limit,
     doc: AlbumsDocument,
     variables: {

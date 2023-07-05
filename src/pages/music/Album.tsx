@@ -21,7 +21,12 @@ import { Fragment, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon, SquareImage } from "~/components";
-import { AlbumDocument, ArtistsDocument, TrackObject } from "~/graphql/types";
+import {
+  AlbumDocument,
+  ArtistObject,
+  ArtistsDocument,
+  TrackObject,
+} from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
 
@@ -181,7 +186,7 @@ const AlbumArtists = ({
   albumId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: artists, fetchMore } = useFetchItems({
+  const { items: artists, fetchMore } = useFetchItems<ArtistObject>({
     limit,
     doc: ArtistsDocument,
     variables: {

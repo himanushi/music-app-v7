@@ -23,7 +23,9 @@ import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, Icon, SquareImage } from "~/components";
 import {
+  AlbumObject,
   AlbumsDocument,
+  ArtistObject,
   ArtistsDocument,
   TrackDocument,
 } from "~/graphql/types";
@@ -121,7 +123,7 @@ const TrackArtists = ({
   trackId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: artists, fetchMore } = useFetchItems({
+  const { items: artists, fetchMore } = useFetchItems<ArtistObject>({
     limit,
     doc: ArtistsDocument,
     variables: {
@@ -167,7 +169,7 @@ const TrackAlbums = ({
   trackId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: albums, fetchMore } = useFetchItems({
+  const { items: albums, fetchMore } = useFetchItems<AlbumObject>({
     limit,
     doc: AlbumsDocument,
     variables: {
