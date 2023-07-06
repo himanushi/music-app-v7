@@ -16,7 +16,7 @@ export const useFetchItems = <
   doc,
   variables,
 }: UseFetchItemsOptions<V>) => {
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useState(limit);
 
   const { data, fetchMore: fetchMoreQuery } = useQuery(doc, {
     variables,
@@ -30,7 +30,7 @@ export const useFetchItems = <
 
   const items = useMemo(() => data?.items ?? [], [data?.items]);
 
-  const resetOffset = useCallback(() => setOffset(0), []);
+  const resetOffset = useCallback(() => setOffset(limit), [limit]);
 
   return { items: items as T[], fetchMore, resetOffset };
 };
