@@ -48,7 +48,7 @@ const statusOptions = [
 
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
-  const { isAllowed } = useMe();
+  const { isAllowed, isFavorite } = useMe();
 
   const [variables, setNestedState] = useNestedState<AlbumsQueryVariables>({
     conditions: {},
@@ -142,7 +142,19 @@ export const Albums = () => {
                         key={index}
                         onClick={() => handleChangeStatus(status[1])}
                       >
-                        {status[0]}
+                        <IonCheckbox
+                          color="main"
+                          checked={
+                            variables.conditions?.status?.includes(
+                              status[1] as any
+                            ) ||
+                            (status[1] === "ACTIVE" &&
+                              variables.conditions?.status === undefined)
+                          }
+                          onIonChange={handleChangeFavorite}
+                        >
+                          {status[0]}
+                        </IonCheckbox>
                       </IonItem>
                     ))}
                   </>
@@ -208,7 +220,12 @@ export const Albums = () => {
               <IonLabel class="ion-text-wrap">{albums[index].name}</IonLabel>
               <IonButtons slot="end">
                 <IonButton>
-                  <Icon size="s" color="red" slot="icon-only" name="favorite" />
+                  <Icon
+                    size="s"
+                    color={isFavorite(albums[index].id) ? "red" : "dark"}
+                    slot="icon-only"
+                    name="favorite"
+                  />
                 </IonButton>
                 <IonButton>
                   <Icon size="m" slot="icon-only" name="more_horiz" />
