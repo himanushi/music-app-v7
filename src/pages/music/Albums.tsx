@@ -14,6 +14,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useCallback, useRef } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, Icon } from "~/components";
 import {
@@ -164,34 +165,55 @@ export const Albums = () => {
           style={{ height: "100%" }}
           totalCount={albums.length}
           endReached={() => albums.length >= limit && fetchMore()}
-          itemContent={(index) => (
-            <IonItem
-              button
-              detail={false}
-              routerLink={`/albums/${albums[index].id}`}
-            >
-              <IonThumbnail
-                slot="start"
-                style={{ height: "110px", width: "110px" }}
-              >
-                <img src={albums[index].artworkM?.url} />
-              </IonThumbnail>
-              <IonLabel class="ion-text-wrap">{albums[index].name}</IonLabel>
-              <IonButtons slot="end">
-                <FavoriteButton
-                  type="albumIds"
-                  id={albums[index].id}
-                  size="s"
-                />
-                <IonButton>
-                  <Icon size="m" slot="icon-only" name="more_horiz" />
-                </IonButton>
-              </IonButtons>
-            </IonItem>
-          )}
+          itemContent={(index) => <AlbumItem album={albums[index]} />}
         />
         <FooterPadding />
       </IonContent>
     </IonPage>
+  );
+};
+
+export const AlbumItem = ({ album }: { album: AlbumObject }) => {
+  const popover = useRef<HTMLIonPopoverElement>(null);
+  const open = useCallback(
+    (event: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (popover.current) {
+        popover.current.event = event;
+        popover.current.present();
+      }
+    },
+    []
+  );
+  const close = useCallback(() => popover.current?.dismiss(), []);
+
+  return (
+    <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
+      <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
+        <img src={album.artworkM?.url} />
+      </IonThumbnail>
+      <IonLabel class="ion-text-wrap">{album.name}</IonLabel>
+      <IonButtons slot="end">
+        <FavoriteButton type="albumIds" id={album.id} size="s" />
+        <IonButton onClick={open}>
+          <Icon name="more_horiz" slot="icon-only" />
+        </IonButton>
+        <IonPopover ref={popover} style={{ "--width": "250px" }} side="left">
+          <IonContent>
+            <IonList onClick={close}>
+              <IonItem color="dark" button detail={false}>
+                <Icon name="playlist_add_check" slot="end" />
+                <IonLabel>プレイリストに追加</IonLabel>
+              </IonItem>
+              <IonItem color="dark" button detail={false}>
+                <Icon name="play_arrow" slot="end" />
+                <IonLabel>再生</IonLabel>
+              </IonItem>
+            </IonList>
+          </IonContent>
+        </IonPopover>
+      </IonButtons>
+    </IonItem>
   );
 };
