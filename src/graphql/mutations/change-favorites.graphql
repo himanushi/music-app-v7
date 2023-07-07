@@ -1,0 +1,7 @@
+mutation ChangeFavorites($input: ChangeFavoritesInput!) {
+  changeFavorites(input: $input) {
+    currentUser {
+      ...CurrentUserFields
+    }
+  }
+}
