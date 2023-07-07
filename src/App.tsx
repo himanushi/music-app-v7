@@ -37,6 +37,7 @@ import "@ionic/react/css/display.css";
 
 import "~/theme/variables.css";
 import "~/theme/custom.css";
+import { Playlists } from "./pages/music/Playlists";
 
 setupIonicReact({ mode: "ios", animated: false });
 
@@ -53,6 +54,7 @@ function App() {
             <Route path="/albums" exact component={Albums} />
             <Route path="/tracks/:trackId" component={Track} />
             <Route path="/tracks" exact component={Tracks} />
+            <Route path="/playlists" exact component={Playlists} />
 
             <Route path="/settings" component={Settings} />
             <Route path="/me" component={Me} />

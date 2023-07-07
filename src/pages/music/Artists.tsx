@@ -212,7 +212,6 @@ export const Artists = () => {
               <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
                 <img src={artists[index].artworkM?.url} />
               </IonAvatar>
-
               <IonLabel class="ion-text-wrap">{artists[index].name}</IonLabel>
               <IonButtons slot="end">
                 <FavoriteButton

@@ -140,17 +140,21 @@ const AlbumTracks = ({
         customScrollParent={scrollElement}
         style={{ height: "44.5px" }}
         totalCount={tracks.length}
-        itemContent={(index) => (
-          <IonItem button detail={false}>
-            <IonNote slot="start">{tracks[index].trackNumber}</IonNote>
-            <IonLabel class="ion-text-wrap">{tracks[index].name}</IonLabel>
-            <IonButtons slot="end">
-              <FavoriteButton type="trackIds" id={tracks[index].id} size="s" />
-            </IonButtons>
-          </IonItem>
-        )}
+        itemContent={(index) => <AlbumTrackItem track={tracks[index]} />}
       />
     </IonList>
+  );
+};
+
+const AlbumTrackItem = ({ track }: { track: TrackObject }) => {
+  return (
+    <IonItem button detail={false}>
+      <IonNote slot="start">{track.trackNumber}</IonNote>
+      <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
+      <IonButtons slot="end">
+        <FavoriteButton type="trackIds" id={track.id} size="s" />
+      </IonButtons>
+    </IonItem>
   );
 };
 
@@ -175,6 +179,7 @@ const AlbumArtists = ({
 
   return (
     <IonList>
+      <IonItem />
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}

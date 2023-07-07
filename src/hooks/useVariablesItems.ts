@@ -55,5 +55,19 @@ export const useVariablesItems = ({
     [reset, setNestedState]
   );
 
-  return { changeInput, changeSort, changeFavorite, changeStatus };
+  const changeIsMine = useCallback(
+    (mine: boolean) => {
+      reset();
+      setNestedState("conditions", "isMine", mine);
+    },
+    [reset, setNestedState]
+  );
+
+  return {
+    changeInput,
+    changeSort,
+    changeFavorite,
+    changeStatus,
+    changeIsMine,
+  };
 };

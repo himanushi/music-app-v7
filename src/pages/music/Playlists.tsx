@@ -18,14 +18,12 @@ import { useCallback, useRef } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, Icon } from "~/components";
 import {
-  AlbumObject,
-  AlbumsDocument,
-  AlbumsQueryVariables,
-  StatusEnum,
+  PlaylistObject,
+  PlaylistsDocument,
+  PlaylistsQueryVariables,
 } from "~/graphql/types";
 import {
   useFetchItems,
-  useMe,
   useNestedState,
   useScrollElement,
   useVariablesItems,
@@ -34,51 +32,43 @@ import {
 const limit = 50;
 
 const sortOptions = [
-  ["配信日新しい順", "RELEASE.DESC"],
-  ["配信日古い順", "RELEASE.ASC"],
+  ["更新日新しい順", "UPDATE.DESC"],
+  ["更新日古い順", "UPDATE.ASC"],
   ["追加日新しい順", "NEW.DESC"],
   ["追加日古い順", "NEW.ASC"],
   ["人気順", "POPULARITY.DESC"],
 ];
 
-const statusOptions: [string, StatusEnum][] = [
-  ["有効のみ表示", "ACTIVE"],
-  ["保留のみ表示", "PENDING"],
-  ["除外のみ表示", "IGNORE"],
-];
-
-export const Albums = () => {
+export const Playlists = () => {
   const { contentRef, scrollElement } = useScrollElement();
-  const { isAllowed } = useMe();
 
-  const [variables, setNestedState] = useNestedState<AlbumsQueryVariables>({
+  const [variables, setNestedState] = useNestedState<PlaylistsQueryVariables>({
     conditions: {},
     cursor: { limit, offset: 0 },
-    sort: { order: "RELEASE", direction: "DESC" },
+    sort: { order: "UPDATE", direction: "DESC" },
   });
 
   const {
-    items: albums,
+    items: playlists,
     fetchMore,
     resetOffset,
-  } = useFetchItems<AlbumObject>({
+  } = useFetchItems<PlaylistObject>({
     limit,
-    doc: AlbumsDocument,
+    doc: PlaylistsDocument,
     variables,
   });
 
-  const { changeInput, changeFavorite, changeSort, changeStatus } =
-    useVariablesItems({
-      resetOffset,
-      scrollElement,
-      setNestedState,
-    });
+  const { changeInput, changeFavorite, changeSort } = useVariablesItems({
+    resetOffset,
+    scrollElement,
+    setNestedState,
+  });
 
   return (
     <IonPage>
       <IonHeader translucent className="ion-no-border">
         <IonToolbar>
-          <IonTitle>アルバム</IonTitle>
+          <IonTitle>プレイリスト</IonTitle>
           <IonButtons slot="start">
             <IonButton id="album-filter-button" color="main">
               フィルター
@@ -100,30 +90,6 @@ export const Albums = () => {
                     お気に入り
                   </IonCheckbox>
                 </IonItem>
-                {isAllowed("changeAlbumStatus") && (
-                  <>
-                    {statusOptions.map((status, index) => (
-                      <IonItem
-                        button
-                        detail={false}
-                        key={index}
-                        onClick={() => changeStatus(status[1])}
-                      >
-                        <IonCheckbox
-                          color="main"
-                          checked={
-                            variables.conditions?.status?.includes(status[1]) ||
-                            (status[1] === "ACTIVE" &&
-                              variables.conditions?.status === undefined)
-                          }
-                          onIonChange={changeFavorite}
-                        >
-                          {status[0]}
-                        </IonCheckbox>
-                      </IonItem>
-                    ))}
-                  </>
-                )}
               </IonList>
             </IonPopover>
           </IonButtons>
@@ -155,7 +121,7 @@ export const Albums = () => {
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar
-            placeholder="アルバムで検索"
+            placeholder="プレイリストで検索"
             debounce={2000}
             onIonInput={(ev) => changeInput(ev)}
           ></IonSearchbar>
@@ -163,13 +129,13 @@ export const Albums = () => {
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Virtuoso
-          key={albums[0]?.id}
+          key={playlists[0]?.id}
           useWindowScroll
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
-          totalCount={albums.length}
-          endReached={() => albums.length >= limit && fetchMore()}
-          itemContent={(index) => <AlbumItem album={albums[index]} />}
+          totalCount={playlists.length}
+          endReached={() => playlists.length >= limit && fetchMore()}
+          itemContent={(index) => <PlaylistItem playlist={playlists[index]} />}
         />
         <FooterPadding />
       </IonContent>
@@ -177,7 +143,7 @@ export const Albums = () => {
   );
 };
 
-export const AlbumItem = ({ album }: { album: AlbumObject }) => {
+export const PlaylistItem = ({ playlist }: { playlist: PlaylistObject }) => {
   const popover = useRef<HTMLIonPopoverElement>(null);
   const open = useCallback(
     (event: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) => {
@@ -193,13 +159,13 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
   const close = useCallback(() => popover.current?.dismiss(), []);
 
   return (
-    <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
+    <IonItem button detail={false} routerLink={`/playlists/${playlist.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
-        <img src={album.artworkM?.url} />
+        <img src={playlist.track?.artworkM?.url} />
       </IonThumbnail>
-      <IonLabel class="ion-text-wrap">{album.name}</IonLabel>
+      <IonLabel class="ion-text-wrap">{playlist.name}</IonLabel>
       <IonButtons slot="end">
-        <FavoriteButton type="albumIds" id={album.id} size="s" />
+        <FavoriteButton type="playlistIds" id={playlist.id} size="s" />
         <IonButton onClick={open}>
           <Icon name="more_horiz" slot="icon-only" />
         </IonButton>
