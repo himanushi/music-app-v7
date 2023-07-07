@@ -17,7 +17,7 @@ import {
 } from "@ionic/react";
 import { useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, Icon } from "~/components";
+import { FavoriteButton, FooterPadding, Icon } from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -48,7 +48,7 @@ const statusOptions = [
 
 export const Albums = () => {
   const { contentRef, scrollElement } = useScrollElement();
-  const { isAllowed, isFavorite } = useMe();
+  const { isAllowed } = useMe();
 
   const [variables, setNestedState] = useNestedState<AlbumsQueryVariables>({
     conditions: {},
@@ -198,7 +198,6 @@ export const Albums = () => {
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Virtuoso
-          // 更新されないことがあるため key で更新させる
           key={albums[0]?.id}
           useWindowScroll
           customScrollParent={scrollElement}
@@ -219,14 +218,7 @@ export const Albums = () => {
               </IonThumbnail>
               <IonLabel class="ion-text-wrap">{albums[index].name}</IonLabel>
               <IonButtons slot="end">
-                <IonButton>
-                  <Icon
-                    size="s"
-                    color={isFavorite(albums[index].id) ? "red" : "dark"}
-                    slot="icon-only"
-                    name="favorite"
-                  />
-                </IonButton>
+                <FavoriteButton id={albums[index].id} size="s" />
                 <IonButton>
                   <Icon size="m" slot="icon-only" name="more_horiz" />
                 </IonButton>
