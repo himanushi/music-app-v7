@@ -218,7 +218,11 @@ export const Albums = () => {
               </IonThumbnail>
               <IonLabel class="ion-text-wrap">{albums[index].name}</IonLabel>
               <IonButtons slot="end">
-                <FavoriteButton id={albums[index].id} size="s" />
+                <FavoriteButton
+                  type="albumIds"
+                  id={albums[index].id}
+                  size="s"
+                />
                 <IonButton>
                   <Icon size="m" slot="icon-only" name="more_horiz" />
                 </IonButton>

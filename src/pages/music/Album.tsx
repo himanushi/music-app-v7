@@ -13,14 +13,13 @@ import {
   IonLabel,
   IonNote,
   IonButtons,
-  IonButton,
   IonAvatar,
   IonSkeletonText,
 } from "@ionic/react";
 import { Fragment, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, Icon, SquareImage } from "~/components";
+import { FavoriteButton, FooterPadding, SquareImage } from "~/components";
 import {
   AlbumDocument,
   ArtistObject,
@@ -85,11 +84,13 @@ export const Album: React.FC<
             )}
           </IonItem>
           <IonItem button detail={false}>
-            <IonButtons slot="end">
-              <IonButton>
-                <Icon size="s" color="red" slot="icon-only" name="favorite" />
-              </IonButton>
-            </IonButtons>
+            {album ? (
+              <IonButtons slot="end">
+                <FavoriteButton type="albumIds" id={album?.id} size="s" />
+              </IonButtons>
+            ) : (
+              <IonSkeletonText />
+            )}
           </IonItem>
         </IonList>
         {album ? (
@@ -159,14 +160,11 @@ const AlbumTracks = ({
                 <IonNote slot="start">{tracks[index].trackNumber}</IonNote>
                 <IonLabel class="ion-text-wrap">{tracks[index].name}</IonLabel>
                 <IonButtons slot="end">
-                  <IonButton>
-                    <Icon
-                      size="s"
-                      color="red"
-                      slot="icon-only"
-                      name="favorite"
-                    />
-                  </IonButton>
+                  <FavoriteButton
+                    type="trackIds"
+                    id={tracks[index].id}
+                    size="s"
+                  />
                 </IonButtons>
               </IonItem>
             )}
@@ -212,9 +210,11 @@ const AlbumArtists = ({
             </IonAvatar>
             <IonLabel>{artists[index].name}</IonLabel>
             <IonButtons slot="end">
-              <IonButton>
-                <Icon size="s" color="red" slot="icon-only" name="favorite" />
-              </IonButton>
+              <FavoriteButton
+                type="artistIds"
+                id={artists[index].id}
+                size="s"
+              />
             </IonButtons>
           </IonItem>
         )}
