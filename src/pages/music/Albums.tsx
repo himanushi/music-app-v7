@@ -22,6 +22,7 @@ import {
   AlbumObject,
   AlbumsDocument,
   AlbumsQueryVariables,
+  StatusEnum,
 } from "~/graphql/types";
 import {
   useFetchItems,
@@ -40,7 +41,7 @@ const sortOptions = [
   ["人気順", "POPULARITY.DESC"],
 ];
 
-const statusOptions = [
+const statusOptions: [string, StatusEnum][] = [
   ["有効のみ表示", "ACTIVE"],
   ["保留のみ表示", "PENDING"],
   ["除外のみ表示", "IGNORE"],
@@ -145,9 +146,7 @@ export const Albums = () => {
                         <IonCheckbox
                           color="main"
                           checked={
-                            variables.conditions?.status?.includes(
-                              status[1] as any
-                            ) ||
+                            variables.conditions?.status?.includes(status[1]) ||
                             (status[1] === "ACTIVE" &&
                               variables.conditions?.status === undefined)
                           }
