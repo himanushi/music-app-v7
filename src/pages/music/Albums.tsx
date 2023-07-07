@@ -1,5 +1,4 @@
 import {
-  CheckboxChangeEventDetail,
   IonButton,
   IonButtons,
   IonCheckbox,
@@ -15,7 +14,6 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, Icon } from "~/components";
 import {
@@ -29,6 +27,7 @@ import {
   useMe,
   useNestedState,
   useScrollElement,
+  useVariablesItems,
 } from "~/hooks";
 
 const limit = 50;
@@ -67,46 +66,8 @@ export const Albums = () => {
     variables,
   });
 
-  const reset = useCallback(() => {
-    resetOffset();
-    scrollElement?.scrollTo({ top: 0 });
-  }, [resetOffset, scrollElement]);
-
-  const handleInput = useCallback(
-    (event: Event) => {
-      reset();
-      const target = event.target as HTMLIonSearchbarElement;
-      const query = target.value ? target.value.toLowerCase() : "";
-      setNestedState("conditions", "name", query ? query : undefined);
-    },
-    [reset, setNestedState]
-  );
-
-  const handleSort = useCallback(
-    (sort: string) => {
-      reset();
-      const [order, direction] = sort.split(".");
-      setNestedState("sort", "order", order);
-      setNestedState("sort", "direction", direction);
-    },
-    [reset, setNestedState]
-  );
-
-  const handleChangeFavorite = useCallback(
-    (event: CustomEvent<CheckboxChangeEventDetail>) => {
-      reset();
-      setNestedState("conditions", "favorite", event.detail.checked);
-    },
-    [reset, setNestedState]
-  );
-
-  const handleChangeStatus = useCallback(
-    (status: string) => {
-      reset();
-      setNestedState("conditions", "status", status);
-    },
-    [reset, setNestedState]
-  );
+  const { changeInput, changeFavorite, changeSort, changeStatus } =
+    useVariablesItems({ resetOffset, scrollElement, setNestedState });
 
   return (
     <IonPage>
@@ -129,7 +90,7 @@ export const Albums = () => {
                   <IonCheckbox
                     color="main"
                     checked={!!variables.conditions?.favorite}
-                    onIonChange={handleChangeFavorite}
+                    onIonChange={changeFavorite}
                   >
                     お気に入り
                   </IonCheckbox>
@@ -141,7 +102,7 @@ export const Albums = () => {
                         button
                         detail={false}
                         key={index}
-                        onClick={() => handleChangeStatus(status[1])}
+                        onClick={() => changeStatus(status[1])}
                       >
                         <IonCheckbox
                           color="main"
@@ -150,7 +111,7 @@ export const Albums = () => {
                             (status[1] === "ACTIVE" &&
                               variables.conditions?.status === undefined)
                           }
-                          onIonChange={handleChangeFavorite}
+                          onIonChange={changeFavorite}
                         >
                           {status[0]}
                         </IonCheckbox>
@@ -178,7 +139,7 @@ export const Albums = () => {
                     button
                     detail={false}
                     key={index}
-                    onClick={() => handleSort(sort[1])}
+                    onClick={() => changeSort(sort[1])}
                   >
                     {sort[0]}
                   </IonItem>
@@ -191,7 +152,7 @@ export const Albums = () => {
           <IonSearchbar
             placeholder="アルバムで検索"
             debounce={2000}
-            onIonInput={(ev) => handleInput(ev)}
+            onIonInput={(ev) => changeInput(ev)}
           ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
