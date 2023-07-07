@@ -16,7 +16,7 @@ import {
   IonAvatar,
   IonSkeletonText,
 } from "@ionic/react";
-import { Fragment, useMemo } from "react";
+import { useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, SquareImage } from "~/components";
@@ -66,6 +66,15 @@ export const Album: React.FC<
           <IonItem className="ion-text-wrap text-select" lines="none">
             {album ? <IonLabel>{album.name}</IonLabel> : <IonSkeletonText />}
           </IonItem>
+          <IonItem button detail={false} lines="none">
+            {album ? (
+              <IonButtons slot="end">
+                <FavoriteButton type="albumIds" id={album?.id} size="s" />
+              </IonButtons>
+            ) : (
+              <IonSkeletonText />
+            )}
+          </IonItem>
           <IonItem className="ion-text-wrap text-select" lines="none">
             {album ? (
               <IonNote slot="end">{album?.copyright}</IonNote>
@@ -83,15 +92,6 @@ export const Album: React.FC<
               <IonSkeletonText />
             )}
           </IonItem>
-          <IonItem button detail={false}>
-            {album ? (
-              <IonButtons slot="end">
-                <FavoriteButton type="albumIds" id={album?.id} size="s" />
-              </IonButtons>
-            ) : (
-              <IonSkeletonText />
-            )}
-          </IonItem>
         </IonList>
         {album ? (
           <AlbumTracks
@@ -100,7 +100,6 @@ export const Album: React.FC<
           />
         ) : (
           <IonList>
-            <IonItemDivider sticky>トラック</IonItemDivider>
             {[...Array(10)].map((_, i) => (
               <IonItem button detail={false} key={i}>
                 <IonSkeletonText />
@@ -133,44 +132,24 @@ const AlbumTracks = ({
   tracks: TrackObject[];
   scrollElement: HTMLElement | undefined;
 }) => {
-  const discTracks = tracks.reduce(
-    (discs: TrackObject[][], track) =>
-      track.trackNumber === 1
-        ? [...discs, [track]]
-        : [...discs.slice(0, -1), [...discs[discs.length - 1], track]],
-    []
-  );
-
   return (
     <IonList>
-      {discTracks.map((tracks, i) => (
-        <Fragment key={i}>
-          {discTracks.length >= 2 ? (
-            <IonItemDivider sticky>ディスク {i + 1}</IonItemDivider>
-          ) : (
-            <IonItemDivider sticky>トラック</IonItemDivider>
-          )}
-          <Virtuoso
-            useWindowScroll
-            customScrollParent={scrollElement}
-            style={{ height: "44.5px" }}
-            totalCount={tracks.length}
-            itemContent={(index) => (
-              <IonItem button detail={false}>
-                <IonNote slot="start">{tracks[index].trackNumber}</IonNote>
-                <IonLabel class="ion-text-wrap">{tracks[index].name}</IonLabel>
-                <IonButtons slot="end">
-                  <FavoriteButton
-                    type="trackIds"
-                    id={tracks[index].id}
-                    size="s"
-                  />
-                </IonButtons>
-              </IonItem>
-            )}
-          />
-        </Fragment>
-      ))}
+      <IonItem />
+      <Virtuoso
+        useWindowScroll
+        customScrollParent={scrollElement}
+        style={{ height: "44.5px" }}
+        totalCount={tracks.length}
+        itemContent={(index) => (
+          <IonItem button detail={false}>
+            <IonNote slot="start">{tracks[index].trackNumber}</IonNote>
+            <IonLabel class="ion-text-wrap">{tracks[index].name}</IonLabel>
+            <IonButtons slot="end">
+              <FavoriteButton type="trackIds" id={tracks[index].id} size="s" />
+            </IonButtons>
+          </IonItem>
+        )}
+      />
     </IonList>
   );
 };
@@ -196,7 +175,6 @@ const AlbumArtists = ({
 
   return (
     <IonList>
-      <IonItemDivider sticky>アーティスト</IonItemDivider>
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
