@@ -1,11 +1,11 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "net.himakan.app",
-  appName: "music-app-v7",
+  appId: "net.video-game-music",
+  appName: "ゲーム音楽",
   webDir: "dist",
   server: {
-    androidScheme: "https",
+    androidScheme: "capacitor",
   },
 };
 
