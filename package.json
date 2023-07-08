@@ -18,6 +18,7 @@
     "@ionic/react": "^7.0.14",
     "@ionic/react-router": "^7.0.14",
     "@xstate/react": "^3.2.2",
+    "capacitor-plugin-musickit": "^0.0.73",
     "graphql": "^16.7.1",
     "lodash.camelcase": "^4.3.0",
     "lodash.merge": "^4.6.2",
