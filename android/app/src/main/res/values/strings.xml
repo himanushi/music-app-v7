@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">music-app-v7</string>
+    <string name="title_activity_main">music-app-v7</string>
+    <string name="package_name">net.himanushi.app</string>
+    <string name="custom_url_scheme">net.himanushi.app</string>
+</resources>
