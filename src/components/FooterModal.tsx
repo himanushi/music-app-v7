@@ -36,7 +36,7 @@ import { useHistory } from "react-router-dom";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
-const min = 0.18;
+const min = 0.15;
 
 export const FooterModal = () => {
   const modal = useRef<HTMLIonModalElement>(null);

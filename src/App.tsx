@@ -39,7 +39,7 @@ import "~/theme/variables.css";
 import "~/theme/custom.css";
 import { Playlists } from "./pages/music/Playlists";
 
-setupIonicReact({ mode: "ios", animated: false });
+setupIonicReact({ mode: "ios" });
 
 function App() {
   return (

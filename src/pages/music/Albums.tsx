@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import {
   IonButton,
   IonButtons,
@@ -77,6 +78,7 @@ export const Albums = () => {
   return (
     <IonPage>
       <IonHeader translucent className="ion-no-border">
+        {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
           <IonTitle>アルバム</IonTitle>
           <IonButtons slot="start">
