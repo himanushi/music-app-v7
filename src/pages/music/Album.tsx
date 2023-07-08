@@ -16,7 +16,8 @@ import {
   IonAvatar,
   IonSkeletonText,
 } from "@ionic/react";
-import { useMemo } from "react";
+import { CapacitorMusicKit } from "capacitor-plugin-musickit";
+import { useCallback, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, SquareImage } from "~/components";
@@ -158,8 +159,13 @@ const AlbumTracks = ({
 };
 
 const AlbumTrackItem = ({ track }: { track: TrackObject }) => {
+  const onClick = useCallback(async () => {
+    await CapacitorMusicKit.setQueue({ ids: [track.appleMusicId] });
+    CapacitorMusicKit.play({});
+  }, [track]);
+
   return (
-    <IonItem button detail={false}>
+    <IonItem button detail={false} onClick={onClick}>
       <IonNote slot="start">{track.trackNumber}</IonNote>
       <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
       <IonButtons slot="end">

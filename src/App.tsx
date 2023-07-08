@@ -9,6 +9,7 @@ import {
   Artist,
   Tracks,
   Track,
+  Playlists,
   Settings,
   Me,
   Login,
@@ -17,6 +18,7 @@ import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "./graphql/client";
+import { useInitialize } from "~/hooks";
 
 /* Ionic Framework css */
 /* Core css */
@@ -37,15 +39,20 @@ import "@ionic/react/css/display.css";
 
 import "~/theme/variables.css";
 import "~/theme/custom.css";
-import { Playlists } from "./pages/music/Playlists";
 
 setupIonicReact({ mode: "ios" });
+
+const Initialize = () => {
+  useInitialize();
+  return <></>;
+};
 
 function App() {
   return (
     <ApolloProvider client={client}>
       <IonApp>
         <IonReactRouter>
+          <Initialize />
           <IonRouterOutlet>
             <Route path="/music" component={Music} />
             <Route path="/artists/:artistId" component={Artist} />
