@@ -22,6 +22,7 @@ import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, SquareImage } from "~/components";
 import {
   AlbumDocument,
+  AlbumObject,
   ArtistObject,
   ArtistsDocument,
   TrackObject,
@@ -66,11 +67,9 @@ export const Album: React.FC<
           <IonItem className="ion-text-wrap text-select" lines="none">
             {album ? <IonLabel>{album.name}</IonLabel> : <IonSkeletonText />}
           </IonItem>
-          <IonItem button detail={false} lines="none">
+          <IonItem lines="none">
             {album ? (
-              <IonButtons slot="end">
-                <FavoriteButton type="albumIds" id={album?.id} size="s" />
-              </IonButtons>
+              <AlbumSearchButtons album={album as AlbumObject} />
             ) : (
               <IonSkeletonText />
             )}
@@ -82,7 +81,7 @@ export const Album: React.FC<
               <IonSkeletonText />
             )}
           </IonItem>
-          <IonItem className="ion-text-wrap text-select" lines="none">
+          <IonItem className="ion-text-wrap text-select">
             {album ? (
               <IonNote slot="end">
                 {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
@@ -92,6 +91,11 @@ export const Album: React.FC<
               <IonSkeletonText />
             )}
           </IonItem>
+          {album && album.status !== "ACTIVE" && (
+            <IonItem color={album.status === "PENDING" ? "yellow" : "red"}>
+              {album.status}
+            </IonItem>
+          )}
         </IonList>
         {album ? (
           <AlbumTracks
@@ -125,6 +129,14 @@ export const Album: React.FC<
   );
 };
 
+const AlbumSearchButtons = ({ album }: { album: AlbumObject }) => {
+  return (
+    <IonButtons slot="end">
+      <FavoriteButton type="albumIds" id={album?.id} size="s" />
+    </IonButtons>
+  );
+};
+
 const AlbumTracks = ({
   tracks,
   scrollElement,
@@ -134,7 +146,6 @@ const AlbumTracks = ({
 }) => {
   return (
     <IonList>
-      <IonItem />
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
@@ -179,7 +190,6 @@ const AlbumArtists = ({
 
   return (
     <IonList>
-      <IonItem />
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
