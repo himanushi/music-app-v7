@@ -97,7 +97,6 @@ const pathMap = [
 const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
   const history = useHistory();
   const location = useLocation();
-  console.log(location);
 
   return (
     <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
