@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && mv ./dist/prod-index.html ./dist/index.html",
     "codegen": "graphql-codegen --config codegen.ts",
     "generate": "graphql-codegen"
   },
