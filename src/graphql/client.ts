@@ -9,8 +9,9 @@ import { setContext } from "@apollo/client/link/context";
 import { asyncMap } from "@apollo/client/utilities";
 import { Capacitor } from "@capacitor/core";
 import { store } from "~/lib/store";
+import { graphqlUrl } from "~/lib/variable";
 
-const uri = "http://localhost:3000/graphql";
+const uri = graphqlUrl ?? "http://localhost:3000/graphql";
 
 const httpLink = new HttpLink({
   credentials: "include",

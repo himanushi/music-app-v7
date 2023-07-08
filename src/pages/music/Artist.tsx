@@ -15,7 +15,6 @@ import {
   IonButton,
   IonSkeletonText,
   IonThumbnail,
-  IonAvatar,
 } from "@ionic/react";
 import { useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
