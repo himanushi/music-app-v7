@@ -32,7 +32,7 @@ import type {
   IonModalCustomEvent,
   ModalBreakpointChangeEventDetail,
 } from "@ionic/core";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
@@ -73,8 +73,31 @@ export const FooterModal = () => {
   );
 };
 
+const pathMap = [
+  {
+    title: "見つける",
+    path: "/music",
+    icon: "music_note",
+    locations: ["", "music", "albums", "artists", "playlists", "tracks"],
+  },
+  {
+    title: "ライブラリ",
+    path: "/library",
+    icon: "library_music",
+    locations: ["library"],
+  },
+  {
+    title: "設定",
+    path: "/settings",
+    icon: "settings",
+    locations: ["settings", "me", "login"],
+  },
+];
+
 const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
   const history = useHistory();
+  const location = useLocation();
+  console.log(location);
 
   return (
     <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
@@ -106,38 +129,30 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
         </IonToolbar>
         <IonToolbar color="dark-gray">
           <IonButtons>
-            <IonSegmentButton
-              onClick={() =>
-                history.location.pathname !== "/music" && history.push("/music")
-              }
-            >
-              <IonButton>
-                <Icon name="music_note" slot="start" />
-              </IonButton>
-              見つける
-            </IonSegmentButton>
-            <IonSegmentButton
-              onClick={() =>
-                history.location.pathname !== "/library" &&
-                history.push("/library")
-              }
-            >
-              <IonButton>
-                <Icon name="library_music" slot="start" />
-              </IonButton>
-              ライブラリ
-            </IonSegmentButton>
-            <IonSegmentButton
-              onClick={() =>
-                history.location.pathname !== "/settings" &&
-                history.push("/settings")
-              }
-            >
-              <IonButton>
-                <Icon name="settings" slot="start" />
-              </IonButton>
-              設定
-            </IonSegmentButton>
+            {pathMap.map(({ title, path, icon, locations }) => {
+              const isSelected = locations.includes(
+                location.pathname.split("/")[1]
+              );
+              return (
+                <IonSegmentButton
+                  onClick={() =>
+                    history.location.pathname !== path && history.push(path)
+                  }
+                  key={path}
+                >
+                  <IonButton>
+                    <Icon
+                      name={icon as any}
+                      slot="start"
+                      color={isSelected ? "main" : "white"}
+                    />
+                  </IonButton>
+                  <IonLabel color={isSelected ? "main" : "white"}>
+                    {title}
+                  </IonLabel>
+                </IonSegmentButton>
+              );
+            })}
           </IonButtons>
         </IonToolbar>
       </IonHeader>
