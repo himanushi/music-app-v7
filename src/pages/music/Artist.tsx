@@ -104,7 +104,6 @@ const ArtistAlbums = ({
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
-        style={{ height: "44.5px" }}
         totalCount={albums.length}
         endReached={() => fetchMore()}
         itemContent={(index) => (

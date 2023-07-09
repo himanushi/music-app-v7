@@ -150,7 +150,6 @@ const AlbumTracks = ({
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
-        style={{ height: "44.5px" }}
         totalCount={tracks.length}
         itemContent={(index) => <AlbumTrackItem track={tracks[index]} />}
       />
@@ -199,7 +198,6 @@ const AlbumArtists = ({
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
-        style={{ height: "44.5px" }}
         totalCount={artists.length}
         endReached={() => fetchMore()}
         itemContent={(index) => (
