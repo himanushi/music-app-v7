@@ -1,13 +1,13 @@
 import { useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { AppleMusicTokenDocument } from "~/graphql/types";
-import { accountService } from "~/machines/apple-music-account-machine";
+import { appleMusicAccountService } from "~/machines/appleMusicAccountMachine";
 
 export const useInitialize = () => {
   const { data } = useQuery(AppleMusicTokenDocument);
   useEffect(() => {
     if (data?.appleMusicToken) {
-      accountService.send({
+      appleMusicAccountService.send({
         config: {
           app: {
             build: "5.0.1",

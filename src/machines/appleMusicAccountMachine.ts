@@ -6,24 +6,24 @@ import type { AuthorizationStatusDidChangeListener } from "capacitor-plugin-musi
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { assign, interpret, createMachine } from "xstate";
 
-export type Context = {
+type Context = {
   config?: MusicKit.Configuration;
 };
 
-export type Event =
+type Event =
   | { type: "SET_TOKEN"; config: MusicKit.Configuration } // Web のみで使用
   | { type: "CHECKING" } // iOS で使用する
   | { type: "LOGIN_OR_LOGOUT" }
   | { type: "LOGIN" }
   | { type: "LOGOUT" };
 
-export type State =
+type State =
   | { value: "idle"; context: Context & { config: undefined } }
   | { value: "checking"; context: Context }
   | { value: "authorized"; context: Context }
   | { value: "unauthorized"; context: Context };
 
-export const accountMachine = createMachine<Context, Event, State>(
+const appleMusicAccountMachine = createMachine<Context, Event, State>(
   {
     context: { config: undefined },
 
@@ -167,4 +167,6 @@ export const accountMachine = createMachine<Context, Event, State>(
   }
 );
 
-export const accountService = interpret(accountMachine).start();
+export const appleMusicAccountService = interpret(
+  appleMusicAccountMachine
+).start();
