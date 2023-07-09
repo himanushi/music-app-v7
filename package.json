@@ -21,6 +21,7 @@
     "capacitor-plugin-musickit": "^0.0.73",
     "graphql": "^16.7.1",
     "lodash.camelcase": "^4.3.0",
+    "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
