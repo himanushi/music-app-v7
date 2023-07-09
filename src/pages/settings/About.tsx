@@ -35,7 +35,7 @@ Apple Music で配信中のゲーム音楽を検索できるアプリです。Ap
 * [Twitter](https://twitter.com/vgm_net)
 * [Treads](https://www.threads.net/@himanushi777)
 * [note](https://note.com/himanushi/n/nd598a3d92a15)
-* [Github](https://github.com/users/himanushi/projects/2)
+* [Github](https://github.com/himanushi?tab=repositories)
 
 ## 問い合わせ
 * [Q & A](https://note.com/himanushi/n/na2e56d4ee4d6)
