@@ -11,6 +11,7 @@ import {
 } from "@ionic/react";
 import { Icon } from "~/components";
 import { Me } from ".";
+import { AppleMusicAccount } from "./AppleMusicAccount";
 
 export const Settings = () => {
   return (
@@ -27,6 +28,7 @@ export const Settings = () => {
           </IonToolbar>
         </IonHeader>
         <Me />
+        <AppleMusicAccount />
         <IonList>
           <IonItemDivider>アプリ</IonItemDivider>
           <IonItem button routerLink="/about">
