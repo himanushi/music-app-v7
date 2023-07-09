@@ -9,7 +9,6 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { Icon } from "~/components";
 import { Me } from ".";
 import { AppleMusicAccount } from "./AppleMusicAccount";
 
@@ -32,8 +31,10 @@ export const Settings = () => {
         <IonList>
           <IonItemDivider>アプリ</IonItemDivider>
           <IonItem button routerLink="/about">
-            <Icon name="apps" slot="start" color="main" />
             <IonLabel>このアプリについて</IonLabel>
+          </IonItem>
+          <IonItem button routerLink="/teams">
+            <IonLabel>利用規約</IonLabel>
           </IonItem>
         </IonList>
       </IonContent>

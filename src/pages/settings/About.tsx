@@ -3,7 +3,7 @@ import { FooterPadding } from "~/components";
 import { markdown } from "~/lib";
 
 export const About = () => {
-  const html = markdown(about({ version: "0.0.1" }));
+  const html = markdown(content({ version: "0.0.1" }));
 
   return (
     <IonPage>
@@ -23,7 +23,7 @@ export const About = () => {
   );
 };
 
-const about = ({ version }: { version: string }) => `
+const content = ({ version }: { version: string }) => `
 # このアプリについて
 ## 概要
 Apple Music で配信中のゲーム音楽を検索できるアプリです。Apple Music とライブラリの曲を再生することができます。

@@ -14,6 +14,7 @@ import {
   Me,
   Login,
   About,
+  Teams,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
@@ -68,6 +69,7 @@ function App() {
             <Route path="/me" component={Me} />
             <Route path="/login" component={Login} />
             <Route path="/about" component={About} />
+            <Route path="/teams" component={Teams} />
 
             <Route exact path="/" component={Albums} />
           </IonRouterOutlet>
