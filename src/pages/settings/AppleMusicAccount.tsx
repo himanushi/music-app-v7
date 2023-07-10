@@ -55,7 +55,9 @@ const Info = () => {
   return (
     <IonItem>
       <Icon color="blue" name="info" slot="start" />
-      <IonLabel class="ion-text-wrap">{contents}</IonLabel>
+      <IonLabel class="ion-text-wrap">
+        <div dangerouslySetInnerHTML={{ __html: contents.join("") }} />
+      </IonLabel>
     </IonItem>
   );
 };
