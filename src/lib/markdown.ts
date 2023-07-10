@@ -1,5 +1,11 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
+import { mangle } from "marked-mangle";
+
+marked.use(mangle());
+marked.setOptions({
+  headerIds: false,
+});
 
 const renderer = new marked.Renderer();
 renderer.link = (href, title, text) => {
