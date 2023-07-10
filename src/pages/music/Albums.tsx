@@ -15,9 +15,10 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback, useRef } from "react";
+import { useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, Icon } from "~/components";
+import { AddPlaylistItemsModal } from "~/components/AddPlaylistItemsModal";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -31,6 +32,7 @@ import {
   useScrollElement,
   useVariablesItems,
 } from "~/hooks";
+import { ClickEvent } from "~/types";
 
 const limit = 50;
 
@@ -181,18 +183,18 @@ export const Albums = () => {
 
 export const AlbumItem = ({ album }: { album: AlbumObject }) => {
   const popover = useRef<HTMLIonPopoverElement>(null);
-  const open = useCallback(
-    (event: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (popover.current) {
-        popover.current.event = event;
-        popover.current.present();
-      }
-    },
-    []
-  );
-  const close = useCallback(() => popover.current?.dismiss(), []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openMenu = (event: ClickEvent<HTMLIonButtonElement>) => {
+    if (popover.current) {
+      popover.current.event = event;
+      popover.current.present();
+    }
+  };
+
+  const closeMenu = () => {
+    popover.current?.dismiss();
+  };
 
   return (
     <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
@@ -202,24 +204,38 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
       <IonLabel class="ion-text-wrap">{album.name}</IonLabel>
       <IonButtons slot="end">
         <FavoriteButton type="albumIds" id={album.id} size="s" />
-        <IonButton onClick={open}>
+        <IonButton onClick={openMenu}>
           <Icon name="more_horiz" slot="icon-only" />
         </IonButton>
-        <IonPopover ref={popover} style={{ "--width": "250px" }} side="left">
+        <IonPopover
+          ref={popover}
+          side="left"
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+          }}
+        >
           <IonContent>
-            <IonList onClick={close}>
-              <IonItem color="dark" button detail={false}>
-                <Icon name="playlist_add_check" slot="end" />
+            <IonList>
+              <IonItem
+                onClick={() => {
+                  popover.current?.dismiss();
+                  setIsModalOpen(true);
+                }}
+                color="dark"
+                button
+                detail={false}
+              >
                 <IonLabel>プレイリストに追加</IonLabel>
               </IonItem>
-              <IonItem color="dark" button detail={false}>
-                <Icon name="play_arrow" slot="end" />
+              <IonItem onClick={closeMenu} color="dark" button detail={false}>
                 <IonLabel>再生</IonLabel>
               </IonItem>
             </IonList>
           </IonContent>
         </IonPopover>
       </IonButtons>
+      <AddPlaylistItemsModal isOpen={isModalOpen} setOpen={setIsModalOpen} />
     </IonItem>
   );
 };
