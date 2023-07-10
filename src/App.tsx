@@ -16,6 +16,7 @@ import {
   About,
   Teams,
   Privacy,
+  CookiePolicy,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
@@ -72,6 +73,7 @@ function App() {
             <Route path="/about" component={About} />
             <Route path="/teams" component={Teams} />
             <Route path="/privacy" component={Privacy} />
+            <Route path="/cookie-policy" component={CookiePolicy} />
 
             <Route exact path="/" component={Albums} />
           </IonRouterOutlet>

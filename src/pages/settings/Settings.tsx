@@ -39,6 +39,9 @@ export const Settings = () => {
           <IonItem button routerLink="/privacy">
             <IonLabel>プライバシーポリシー</IonLabel>
           </IonItem>
+          <IonItem button routerLink="/cookie-policy">
+            <IonLabel>クッキーポリシー</IonLabel>
+          </IonItem>
         </IonList>
       </IonContent>
     </IonPage>
