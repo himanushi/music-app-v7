@@ -36,6 +36,9 @@ export const Settings = () => {
           <IonItem button routerLink="/teams">
             <IonLabel>利用規約</IonLabel>
           </IonItem>
+          <IonItem button routerLink="/privacy">
+            <IonLabel>プライバシーポリシー</IonLabel>
+          </IonItem>
         </IonList>
       </IonContent>
     </IonPage>
