@@ -36,14 +36,14 @@ const Info = () => {
       "ログアウトする場合は設定で<strong>メディアと Apple Music</strong>を無効にしてください。"
     );
   }
-  if (service.matches("unauthorized") && Capacitor.getPlatform() === "ios") {
-    contents.push(
-      "ログインする場合は設定で<strong>メディアと Apple Music</strong>を有効にしてください。"
-    );
-  }
   if (service.matches("authorized")) {
     contents.push(
       "Apple Music からログアウトした場合は30秒の試聴再生となります。"
+    );
+  }
+  if (service.matches("unauthorized") && Capacitor.getPlatform() === "ios") {
+    contents.push(
+      "ログインする場合は設定で<strong>メディアと Apple Music</strong>を有効にしてください。"
     );
   }
   if (service.matches("unauthorized")) {
