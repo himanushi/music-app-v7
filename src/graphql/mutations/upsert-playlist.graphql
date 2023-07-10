@@ -1,0 +1,7 @@
+mutation UpsertPlaylist($input: UpsertPlaylistInput!) {
+  upsertPlaylist(input: $input) {
+    playlist {
+      ...PlaylistFields
+    }
+  }
+}
