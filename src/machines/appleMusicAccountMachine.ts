@@ -25,6 +25,9 @@ type State =
 
 const appleMusicAccountMachine = createMachine<Context, Event, State>(
   {
+    // https://xstate.js.org/docs/guides/actions.html#actions
+    predictableActionArguments: true,
+
     context: { config: undefined },
 
     id: "AppleMusicAccount",
