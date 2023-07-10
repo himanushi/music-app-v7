@@ -1,4 +1,4 @@
-import { IonApp, IonRouterOutlet } from "@ionic/react";
+import { IonApp, IonPage, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route } from "react-router-dom";
 import {
@@ -56,27 +56,29 @@ function App() {
     <ApolloProvider client={client}>
       <IonApp>
         <IonReactRouter>
-          <Initialize />
-          <IonRouterOutlet>
-            <Route path="/music" component={Music} />
-            <Route path="/artists/:artistId" component={Artist} />
-            <Route path="/artists" exact component={Artists} />
-            <Route path="/albums/:albumId" component={Album} />
-            <Route path="/albums" exact component={Albums} />
-            <Route path="/tracks/:trackId" component={Track} />
-            <Route path="/tracks" exact component={Tracks} />
-            <Route path="/playlists" exact component={Playlists} />
+          <IonPage id="page">
+            <Initialize />
+            <IonRouterOutlet>
+              <Route path="/music" component={Music} />
+              <Route path="/artists/:artistId" component={Artist} />
+              <Route path="/artists" exact component={Artists} />
+              <Route path="/albums/:albumId" component={Album} />
+              <Route path="/albums" exact component={Albums} />
+              <Route path="/tracks/:trackId" component={Track} />
+              <Route path="/tracks" exact component={Tracks} />
+              <Route path="/playlists" exact component={Playlists} />
 
-            <Route path="/settings" component={Settings} />
-            <Route path="/me" component={Me} />
-            <Route path="/login" component={Login} />
-            <Route path="/about" component={About} />
-            <Route path="/teams" component={Teams} />
-            <Route path="/privacy" component={Privacy} />
-            <Route path="/cookie-policy" component={CookiePolicy} />
+              <Route path="/settings" component={Settings} />
+              <Route path="/me" component={Me} />
+              <Route path="/login" component={Login} />
+              <Route path="/about" component={About} />
+              <Route path="/teams" component={Teams} />
+              <Route path="/privacy" component={Privacy} />
+              <Route path="/cookie-policy" component={CookiePolicy} />
 
-            <Route exact path="/" component={Albums} />
-          </IonRouterOutlet>
+              <Route exact path="/" component={Albums} />
+            </IonRouterOutlet>
+          </IonPage>
           <FooterModal />
         </IonReactRouter>
       </IonApp>
