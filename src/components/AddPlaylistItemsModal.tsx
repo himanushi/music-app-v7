@@ -12,10 +12,9 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useCallback, useRef } from "react";
+import { Virtuoso } from "react-virtuoso";
 import { PlaylistObject, PlaylistsDocument } from "~/graphql/types";
-import { useFetchItems } from "~/hooks";
-
-const limit = 100;
+import { useFetchItems, useScrollElement } from "~/hooks";
 
 export const AddPlaylistItemsModal = ({
   isOpen,
@@ -44,7 +43,7 @@ export const AddPlaylistItemsModal = ({
         event.preventDefault();
       }}
     >
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
           <IonTitle>プレイリストに追加</IonTitle>
           <IonButtons slot="end">
@@ -62,8 +61,10 @@ export const AddPlaylistItemsModal = ({
   );
 };
 
+const limit = 100;
+
 const Playlists = () => {
-  const { items: playlists } = useFetchItems<PlaylistObject>({
+  const { items: playlists, fetchMore } = useFetchItems<PlaylistObject>({
     limit,
     doc: PlaylistsDocument,
     variables: {
@@ -73,11 +74,19 @@ const Playlists = () => {
     },
   });
 
+  const { contentRef, scrollElement } = useScrollElement();
+
   return (
-    <IonContent fullscreen>
-      {playlists.map((playlist) => (
-        <PlaylistItem playlist={playlist} />
-      ))}
+    <IonContent fullscreen ref={contentRef}>
+      <Virtuoso
+        key={playlists[0]?.id}
+        useWindowScroll
+        customScrollParent={scrollElement}
+        style={{ height: "100%" }}
+        totalCount={playlists.length}
+        endReached={() => playlists.length >= limit && fetchMore()}
+        itemContent={(index) => <PlaylistItem playlist={playlists[index]} />}
+      />
     </IonContent>
   );
 };
