@@ -17,7 +17,7 @@ import {
 } from "@ionic/react";
 import { useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Icon } from "~/components";
+import { FavoriteButton, FooterPadding, Icon, Refresher } from "~/components";
 import { AddPlaylistItemsModal } from "~/components/AddPlaylistItemsModal";
 import {
   AlbumObject,
@@ -64,10 +64,12 @@ export const Albums = () => {
     items: albums,
     fetchMore,
     resetOffset,
+    refresh,
   } = useFetchItems<AlbumObject>({
     limit,
     doc: AlbumsDocument,
     variables,
+    refreshName: "albums",
   });
 
   const { changeInput, changeFavorite, changeSort, changeStatus } =
@@ -166,8 +168,9 @@ export const Albums = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
+        <Refresher refresh={refresh} />
         <Virtuoso
-          key={albums[0]?.id}
+          key={JSON.stringify(variables)}
           useWindowScroll
           customScrollParent={scrollElement}
           style={{ height: "100%" }}
