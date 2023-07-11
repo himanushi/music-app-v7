@@ -46,11 +46,11 @@ export const useFetchItems = <
     (event: CustomEvent<RefresherEventDetail>) => {
       if (refreshName) {
         client.cache.evict({ fieldName: refreshName });
-        setOffset(limit);
-        event.detail.complete();
+        // TODO: complete は refetch したタイミングにすること
+        setTimeout(() => event.detail.complete(), 500);
       }
     },
-    [limit, refreshName]
+    [refreshName]
   );
 
   return { items: items as T[], fetchMore, resetOffset, refresh };
