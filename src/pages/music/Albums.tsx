@@ -186,6 +186,8 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openMenu = (event: ClickEvent<HTMLIonButtonElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
     if (popover.current) {
       popover.current.event = event;
       popover.current.present();
@@ -207,16 +209,14 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
         <IonButton onClick={openMenu}>
           <Icon name="more_horiz" slot="icon-only" />
         </IonButton>
-        <IonPopover
-          ref={popover}
-          side="left"
-          onClick={(event) => {
-            event.stopPropagation();
-            event.preventDefault();
-          }}
-        >
+        <IonPopover arrow={false} ref={popover} side="left">
           <IonContent>
-            <IonList>
+            <IonList
+              onClick={(event) => {
+                event.stopPropagation();
+                event.preventDefault();
+              }}
+            >
               <IonItem
                 onClick={() => {
                   popover.current?.dismiss();
