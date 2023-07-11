@@ -1,17 +1,21 @@
-import { useQuery } from "@apollo/client";
 import {
   IonButton,
   IonButtons,
   IonContent,
+  IonFooter,
   IonHeader,
   IonItem,
+  IonLabel,
   IonModal,
+  IonThumbnail,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { useCallback, useRef } from "react";
-import { PlaylistsDocument } from "~/graphql/types";
-import { ClickEvent } from "~/types";
+import { PlaylistObject, PlaylistsDocument } from "~/graphql/types";
+import { useFetchItems } from "~/hooks";
+
+const limit = 100;
 
 export const AddPlaylistItemsModal = ({
   isOpen,
@@ -20,24 +24,14 @@ export const AddPlaylistItemsModal = ({
   isOpen: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { data } = useQuery(PlaylistsDocument, {
-    variables: {
-      conditions: { isMine: true },
-      cursor: { limit: 50, offset: 0 },
-      sort: { order: "UPDATE", direction: "DESC" },
-    },
-    fetchPolicy: "cache-and-network",
-    skip: !isOpen,
-  });
   const modal = useRef<HTMLIonModalElement>(null);
+
   const close = useCallback(() => {
     modal.current?.dismiss();
     setOpen(false);
   }, [setOpen]);
 
   if (!isOpen) return <></>;
-
-  const playlists = data?.items || [];
 
   return (
     <IonModal
@@ -59,15 +53,51 @@ export const AddPlaylistItemsModal = ({
             </IonButton>
           </IonButtons>
         </IonToolbar>
-        <IonToolbar>aaa</IonToolbar>
       </IonHeader>
-      <IonContent>
-        {playlists.map((playlist) => (
-          <IonItem color="dark-gray" key={playlist.id}>
-            {playlist.name}
-          </IonItem>
-        ))}
-      </IonContent>
+      <Playlists />
+      <IonFooter>
+        <IonToolbar />
+      </IonFooter>
     </IonModal>
+  );
+};
+
+const Playlists = () => {
+  const { items: playlists } = useFetchItems<PlaylistObject>({
+    limit,
+    doc: PlaylistsDocument,
+    variables: {
+      conditions: { isMine: true },
+      cursor: { limit, offset: 0 },
+      sort: { order: "UPDATE", direction: "DESC" },
+    },
+  });
+
+  return (
+    <IonContent fullscreen>
+      {playlists.map((playlist) => (
+        <PlaylistItem playlist={playlist} />
+      ))}
+    </IonContent>
+  );
+};
+
+const PlaylistItem = ({ playlist }: { playlist: PlaylistObject }) => {
+  return (
+    <IonItem color="dark-gray" key={playlist.id}>
+      <IonThumbnail slot="start">
+        <img src={playlist.track?.artworkM.url} alt={playlist.name} />
+      </IonThumbnail>
+      <IonLabel>{playlist.name}</IonLabel>
+      <IonButton
+        slot="end"
+        color="white"
+        onClick={() => {
+          // nothing
+        }}
+      >
+        追加する
+      </IonButton>
+    </IonItem>
   );
 };

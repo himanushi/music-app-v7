@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TypedDocumentNode, useQuery } from "@apollo/client";
+import {
+  TypedDocumentNode,
+  WatchQueryFetchPolicy,
+  useQuery,
+} from "@apollo/client";
 import { useCallback, useMemo, useState } from "react";
 
 interface UseFetchItemsOptions<V extends { [key: string]: any }> {
   limit: number;
   doc: TypedDocumentNode<any, V>;
   variables: V;
+  fetchPolicy?: WatchQueryFetchPolicy;
 }
 
 export const useFetchItems = <
@@ -15,12 +20,13 @@ export const useFetchItems = <
   limit,
   doc,
   variables,
+  fetchPolicy = "cache-first",
 }: UseFetchItemsOptions<V>) => {
   const [offset, setOffset] = useState(limit);
 
   const { data, fetchMore: fetchMoreQuery } = useQuery(doc, {
     variables,
-    fetchPolicy: "cache-first",
+    fetchPolicy,
   });
 
   const fetchMore = useCallback(() => {
