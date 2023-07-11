@@ -4,13 +4,16 @@ import {
   WatchQueryFetchPolicy,
   useQuery,
 } from "@apollo/client";
+import { RefresherEventDetail } from "@ionic/react";
 import { useCallback, useMemo, useState } from "react";
+import { client } from "~/graphql/client";
 
 interface UseFetchItemsOptions<V extends { [key: string]: any }> {
   limit: number;
   doc: TypedDocumentNode<any, V>;
   variables: V;
   fetchPolicy?: WatchQueryFetchPolicy;
+  refreshName?: string;
 }
 
 export const useFetchItems = <
@@ -21,6 +24,7 @@ export const useFetchItems = <
   doc,
   variables,
   fetchPolicy = "cache-first",
+  refreshName,
 }: UseFetchItemsOptions<V>) => {
   const [offset, setOffset] = useState(limit);
 
@@ -38,5 +42,16 @@ export const useFetchItems = <
 
   const resetOffset = useCallback(() => setOffset(limit), [limit]);
 
-  return { items: items as T[], fetchMore, resetOffset };
+  const refresh = useCallback(
+    (event: CustomEvent<RefresherEventDetail>) => {
+      if (refreshName) {
+        client.cache.evict({ fieldName: refreshName });
+        setOffset(limit);
+        event.detail.complete();
+      }
+    },
+    [limit, refreshName]
+  );
+
+  return { items: items as T[], fetchMore, resetOffset, refresh };
 };
