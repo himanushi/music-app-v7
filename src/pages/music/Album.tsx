@@ -8,19 +8,22 @@ import {
   IonGrid,
   IonRow,
   IonList,
-  IonItemDivider,
   IonItem,
   IonLabel,
   IonNote,
   IonButtons,
   IonAvatar,
-  IonSkeletonText,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useCallback, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, SquareImage } from "~/components";
+import {
+  FavoriteButton,
+  FooterPadding,
+  SkeletonItems,
+  SquareImage,
+} from "~/components";
 import {
   AlbumDocument,
   AlbumObject,
@@ -64,65 +67,44 @@ export const Album: React.FC<
             </IonCol>
           </IonRow>
         </IonGrid>
-        <IonList>
-          <IonItem className="ion-text-wrap text-select" lines="none">
-            {album ? <IonLabel>{album.name}</IonLabel> : <IonSkeletonText />}
-          </IonItem>
-          <IonItem lines="none">
-            {album ? (
+        {album ? (
+          <IonList>
+            <IonItem className="ion-text-wrap text-select" lines="none">
+              <IonLabel>{album.name}</IonLabel>
+            </IonItem>
+            <IonItem lines="none">
               <AlbumSearchButtons album={album as AlbumObject} />
-            ) : (
-              <IonSkeletonText />
-            )}
-          </IonItem>
-          <IonItem className="ion-text-wrap text-select" lines="none">
-            {album ? (
-              <IonNote slot="end">{album?.copyright}</IonNote>
-            ) : (
-              <IonSkeletonText />
-            )}
-          </IonItem>
-          <IonItem className="ion-text-wrap text-select">
-            {album ? (
+            </IonItem>
+            <IonItem className="ion-text-wrap text-select" lines="none">
+              <IonNote slot="end">{album.copyright}</IonNote>
+            </IonItem>
+            <IonItem className="ion-text-wrap text-select">
               <IonNote slot="end">
                 {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
                 {convertTime(toMs(album.tracks))}
               </IonNote>
-            ) : (
-              <IonSkeletonText />
-            )}
-          </IonItem>
-          {album && album.status !== "ACTIVE" && (
-            <IonItem color={album.status === "PENDING" ? "yellow" : "red"}>
-              {album.status}
             </IonItem>
-          )}
-        </IonList>
+            {album.status !== "ACTIVE" && (
+              <IonItem color={album.status === "PENDING" ? "yellow" : "red"}>
+                {album.status}
+              </IonItem>
+            )}
+          </IonList>
+        ) : (
+          <SkeletonItems count={5} lines="none" />
+        )}
         {album ? (
           <AlbumTracks
             tracks={tracks as TrackObject[]}
             scrollElement={scrollElement}
           />
         ) : (
-          <IonList>
-            {[...Array(10)].map((_, i) => (
-              <IonItem button detail={false} key={i}>
-                <IonSkeletonText />
-              </IonItem>
-            ))}
-          </IonList>
+          <SkeletonItems count={10} />
         )}
         {album ? (
           <AlbumArtists albumId={album.id} scrollElement={scrollElement} />
         ) : (
-          <IonList>
-            <IonItemDivider sticky>アーティスト</IonItemDivider>
-            {[...Array(5)].map((_, i) => (
-              <IonItem button detail={false} key={i}>
-                <IonSkeletonText />
-              </IonItem>
-            ))}
-          </IonList>
+          <SkeletonItems count={5} />
         )}
         <FooterPadding />
       </IonContent>
