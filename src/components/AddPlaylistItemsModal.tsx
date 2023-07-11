@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import {
   IonButton,
   IonButtons,
@@ -11,15 +12,21 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { PlaylistObject, PlaylistsDocument } from "~/graphql/types";
+import {
+  AddPlaylistItemsDocument,
+  PlaylistObject,
+  PlaylistsDocument,
+} from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 
 export const AddPlaylistItemsModal = ({
+  trackIds,
   isOpen,
   setOpen,
 }: {
+  trackIds: string[];
   isOpen: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -53,7 +60,7 @@ export const AddPlaylistItemsModal = ({
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <Playlists />
+      <Playlists trackIds={trackIds} />
       <IonFooter>
         <IonToolbar />
       </IonFooter>
@@ -63,7 +70,7 @@ export const AddPlaylistItemsModal = ({
 
 const limit = 100;
 
-const Playlists = () => {
+const Playlists = ({ trackIds }: { trackIds: string[] }) => {
   const { items: playlists, fetchMore } = useFetchItems<PlaylistObject>({
     limit,
     doc: PlaylistsDocument,
@@ -85,26 +92,43 @@ const Playlists = () => {
         style={{ height: "100%" }}
         totalCount={playlists.length}
         endReached={() => playlists.length >= limit && fetchMore()}
-        itemContent={(index) => <PlaylistItem playlist={playlists[index]} />}
+        itemContent={(index) => (
+          <PlaylistItem playlist={playlists[index]} trackIds={trackIds} />
+        )}
       />
     </IonContent>
   );
 };
 
-const PlaylistItem = ({ playlist }: { playlist: PlaylistObject }) => {
+const PlaylistItem = ({
+  playlist,
+  trackIds,
+}: {
+  playlist: PlaylistObject;
+  trackIds: string[];
+}) => {
+  const [add] = useMutation(AddPlaylistItemsDocument);
+  const [disabled, setDisabled] = useState(false);
+  const onClick = async () => {
+    setDisabled(true);
+    await add({
+      variables: {
+        input: {
+          playlistId: playlist.id,
+          trackIds: trackIds,
+        },
+      },
+    });
+    setDisabled(false);
+  };
+
   return (
     <IonItem color="dark-gray" key={playlist.id}>
       <IonThumbnail slot="start">
         <img src={playlist.track?.artworkM.url} alt={playlist.name} />
       </IonThumbnail>
       <IonLabel>{playlist.name}</IonLabel>
-      <IonButton
-        slot="end"
-        color="white"
-        onClick={() => {
-          // nothing
-        }}
-      >
+      <IonButton disabled={disabled} slot="end" color="white" onClick={onClick}>
         追加する
       </IonButton>
     </IonItem>
