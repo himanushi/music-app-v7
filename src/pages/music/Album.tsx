@@ -13,14 +13,18 @@ import {
   IonNote,
   IonButtons,
   IonAvatar,
+  IonButton,
+  IonPopover,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
+  AddPlaylistItemsModal,
   FavoriteButton,
   FooterPadding,
+  Icon,
   SkeletonItems,
   SquareImage,
 } from "~/components";
@@ -33,6 +37,7 @@ import {
 } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
+import { ClickEvent } from "~/types";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -73,6 +78,9 @@ export const Album: React.FC<
               <IonLabel>{album.name}</IonLabel>
             </IonItem>
             <IonItem lines="none">
+              <AlbumMenuButtons album={album as AlbumObject} />
+            </IonItem>
+            <IonItem lines="none">
               <AlbumSearchButtons album={album as AlbumObject} />
             </IonItem>
             <IonItem className="ion-text-wrap text-select" lines="none">
@@ -109,6 +117,56 @@ export const Album: React.FC<
         <FooterPadding />
       </IonContent>
     </IonPage>
+  );
+};
+
+const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
+  const popover = useRef<HTMLIonPopoverElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openMenu = (event: ClickEvent<HTMLIonButtonElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    if (popover.current) {
+      popover.current.event = event;
+      popover.current.present();
+    }
+  };
+
+  return (
+    <IonButtons slot="end">
+      <FavoriteButton type="albumIds" id={album?.id} size="s" />
+      <IonButton onClick={openMenu}>
+        <Icon name="more_horiz" slot="icon-only" />
+      </IonButton>
+      <IonPopover arrow={false} ref={popover} side="left">
+        <IonContent>
+          <IonList
+            onClick={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+            }}
+          >
+            <IonItem
+              onClick={() => {
+                popover.current?.dismiss();
+                setIsModalOpen(true);
+              }}
+              color="dark"
+              button
+              detail={false}
+            >
+              <IonLabel>プレイリストに追加</IonLabel>
+            </IonItem>
+          </IonList>
+        </IonContent>
+      </IonPopover>
+      <AddPlaylistItemsModal
+        trackIds={album.tracks?.map((t) => t.id) ?? []}
+        isOpen={isModalOpen}
+        setOpen={setIsModalOpen}
+      />
+    </IonButtons>
   );
 };
 
