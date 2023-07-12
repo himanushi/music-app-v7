@@ -11,8 +11,9 @@ import {
   IonThumbnail,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from "@ionic/react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistItemsDocument,
@@ -71,7 +72,11 @@ export const AddPlaylistItemsModal = ({
 const limit = 100;
 
 const Playlists = ({ trackIds }: { trackIds: string[] }) => {
-  const { items: playlists, fetchMore } = useFetchItems<PlaylistObject>({
+  const {
+    items: playlists,
+    fetchMore,
+    refresh,
+  } = useFetchItems<PlaylistObject>({
     limit,
     doc: PlaylistsDocument,
     variables: {
@@ -79,7 +84,11 @@ const Playlists = ({ trackIds }: { trackIds: string[] }) => {
       cursor: { limit, offset: 0 },
       sort: { order: "UPDATE", direction: "DESC" },
     },
+    refreshName: "playlists",
   });
+
+  // 曲が追加されたら再取得
+  useEffect(() => refresh(), [refresh]);
 
   const { contentRef, scrollElement } = useScrollElement();
 
@@ -109,18 +118,33 @@ const PlaylistItem = ({
 }) => {
   const [add] = useMutation(AddPlaylistItemsDocument);
   const [disabled, setDisabled] = useState(false);
-  const onClick = async () => {
+  const [toast] = useIonToast();
+  const onClick = useCallback(async () => {
     setDisabled(true);
-    await add({
-      variables: {
-        input: {
-          playlistId: playlist.id,
-          trackIds: trackIds,
+    try {
+      await add({
+        variables: {
+          input: {
+            playlistId: playlist.id,
+            trackIds: trackIds,
+          },
         },
-      },
-    });
+      });
+      toast({
+        message: "追加しました",
+        duration: 1000,
+        position: "bottom",
+        color: "main",
+      });
+    } catch (error: any) {
+      toast({
+        color: "light-red",
+        duration: 5000,
+        message: `エラーが発生しました。${error.message}`,
+      });
+    }
     setDisabled(false);
-  };
+  }, [add, playlist.id, toast, trackIds]);
 
   return (
     <IonItem color="dark-gray" key={playlist.id}>

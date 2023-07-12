@@ -43,11 +43,11 @@ export const useFetchItems = <
   const resetOffset = useCallback(() => setOffset(limit), [limit]);
 
   const refresh = useCallback(
-    (event: CustomEvent<RefresherEventDetail>) => {
+    (event?: CustomEvent<RefresherEventDetail>) => {
       if (refreshName) {
         client.cache.evict({ fieldName: refreshName, id: "ROOT_QUERY" });
         // TODO: complete は refetch したタイミングにすること
-        setTimeout(() => event.detail.complete(), 500);
+        setTimeout(() => event?.detail?.complete(), 500);
       }
     },
     [refreshName]
