@@ -237,12 +237,12 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
             </IonList>
           </IonContent>
         </IonPopover>
+        <AddPlaylistItemsModal
+          trackIds={album.tracks?.map((t) => t.id) ?? []}
+          isOpen={isModalOpen}
+          setOpen={setIsModalOpen}
+        />
       </IonButtons>
-      <AddPlaylistItemsModal
-        trackIds={album.tracks?.map((t) => t.id) ?? []}
-        isOpen={isModalOpen}
-        setOpen={setIsModalOpen}
-      />
     </IonItem>
   );
 };
