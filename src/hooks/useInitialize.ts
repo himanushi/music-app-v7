@@ -10,7 +10,7 @@ export const useInitialize = () => {
       appleMusicAccountService.send({
         config: {
           app: {
-            build: "5.0.1",
+            build: "2.0.1",
             name: "video-game-music.net",
           },
           developerToken: data.appleMusicToken,
