@@ -24,7 +24,6 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -275,8 +274,12 @@ const PlayerSeekBar = () => {
     []
   );
 
-  const Range = useMemo(
-    () => (
+  return (
+    <>
+      <IonItem color="dark-gray" lines="none">
+        <IonNote slot="start">00:00</IonNote>
+        <IonNote slot="end">00:30</IonNote>
+      </IonItem>
       <IonRange
         pinFormatter={toMMSS}
         class="player-seek-bar ion-no-padding"
@@ -287,23 +290,6 @@ const PlayerSeekBar = () => {
         onIonKnobMoveStart={onStart}
         onIonKnobMoveEnd={onStop}
       />
-    ),
-    [onStart, onStop, seekValue]
-  );
-
-  const Time = useMemo(() => {
-    return (
-      <IonItem color="dark-gray" lines="none">
-        <IonNote slot="start">00:00</IonNote>
-        <IonNote slot="end">00:30</IonNote>
-      </IonItem>
-    );
-  }, []);
-
-  return (
-    <>
-      {Time}
-      {Range}
     </>
   );
 };
