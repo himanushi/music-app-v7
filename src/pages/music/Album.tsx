@@ -34,12 +34,7 @@ import {
   ArtistsDocument,
   TrackObject,
 } from "~/graphql/types";
-import {
-  useAddPlaylistItems,
-  useFetchItems,
-  useMenu,
-  useScrollElement,
-} from "~/hooks";
+import { useFetchItems, useMenu, useScrollElement } from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
 
 export const Album: React.FC<
@@ -106,9 +101,6 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
           <IonItem lines="none">
             <AlbumMenuButtons album={album as AlbumObject} />
           </IonItem>
-          <IonItem lines="none">
-            <AlbumSearchButtons album={album as AlbumObject} />
-          </IonItem>
           <IonItem className="ion-text-wrap text-select" lines="none">
             <IonNote slot="end">{album.copyright}</IonNote>
           </IonItem>
@@ -143,17 +135,9 @@ const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
   return (
     <IonButtons slot="end">
       <FavoriteButton type="albumIds" id={album?.id} size="s" />
-      <IonButton onClick={(event: any) => open(event)}>
+      <IonButton onClick={(event) => open(event)}>
         <Icon name="more_horiz" slot="icon-only" />
       </IonButton>
-    </IonButtons>
-  );
-};
-
-const AlbumSearchButtons = ({ album }: { album: AlbumObject }) => {
-  return (
-    <IonButtons slot="end">
-      <FavoriteButton type="albumIds" id={album?.id} size="s" />
     </IonButtons>
   );
 };
@@ -182,27 +166,38 @@ const AlbumTrackItem = ({ track }: { track: TrackObject }) => {
     await CapacitorMusicKit.setQueue({ ids: [track.appleMusicId] });
     CapacitorMusicKit.play({});
   }, [track]);
-  const { open } = useAddPlaylistItems({
-    trackIds: [track.id],
-  });
 
   return (
     <IonItem button detail={false} onClick={onClick}>
       <IonNote slot="start">{track.trackNumber}</IonNote>
       <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
-      <IonButtons
-        slot="end"
-        onClick={(event) => {
-          event.stopPropagation();
-          event.preventDefault();
-        }}
-      >
-        <FavoriteButton type="trackIds" id={track.id} size="s" />
-        <IonButton onClick={() => open()}>
-          <Icon name="more_horiz" slot="icon-only" />
-        </IonButton>
-      </IonButtons>
+      <AlbumTrackItemButtons track={track} />
     </IonItem>
+  );
+};
+
+const AlbumTrackItemButtons = ({ track }: { track: TrackObject }) => {
+  const { open } = useMenu({
+    component: ({ onDismiss }) => (
+      <IonContent onClick={() => onDismiss()}>
+        <AddPlaylistMenuItem trackIds={[track.id]} />
+      </IonContent>
+    ),
+  });
+
+  return (
+    <IonButtons
+      slot="end"
+      onClick={(event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      }}
+    >
+      <FavoriteButton type="trackIds" id={track.id} size="s" />
+      <IonButton onClick={(event) => open(event)}>
+        <Icon name="more_horiz" slot="icon-only" />
+      </IonButton>
+    </IonButtons>
   );
 };
 

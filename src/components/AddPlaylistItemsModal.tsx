@@ -33,7 +33,7 @@ export const AddPlaylistItemsModal = ({
     <IonPage>
       <IonHeader translucent>
         <IonToolbar>
-          <IonTitle>プレイリストに追加</IonTitle>
+          <IonTitle>プレイリストに{trackIds.length}曲追加</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => onDismiss()} color="main">
               閉じる
