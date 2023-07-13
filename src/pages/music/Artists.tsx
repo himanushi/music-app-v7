@@ -200,7 +200,6 @@ export const Artists = () => {
           key={artists[0]?.id}
           useWindowScroll
           customScrollParent={scrollElement}
-          style={{ height: "100%" }}
           totalCount={artists.length}
           endReached={() => artists.length >= limit && fetchMore()}
           itemContent={(index) => (

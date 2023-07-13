@@ -132,7 +132,6 @@ export const Playlists = () => {
           key={playlists[0]?.id}
           useWindowScroll
           customScrollParent={scrollElement}
-          style={{ height: "100%" }}
           totalCount={playlists.length}
           endReached={() => playlists.length >= limit && fetchMore()}
           itemContent={(index) => <PlaylistItem playlist={playlists[index]} />}

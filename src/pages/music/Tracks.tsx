@@ -48,7 +48,6 @@ export const Tracks = () => {
         <Virtuoso
           useWindowScroll
           customScrollParent={scrollElement}
-          style={{ height: "100%" }}
           totalCount={tracks.length}
           endReached={() => fetchMore()}
           itemContent={(index) => (
