@@ -15,10 +15,8 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Icon, Refresher } from "~/components";
-import { AddPlaylistItemsModal } from "~/components/AddPlaylistItemsModal";
+import { FavoriteButton, FooterPadding, Refresher } from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -32,7 +30,6 @@ import {
   useScrollElement,
   useVariablesItems,
 } from "~/hooks";
-import { ClickEvent } from "~/types";
 
 const limit = 50;
 
@@ -173,7 +170,6 @@ export const Albums = () => {
           key={JSON.stringify(variables)}
           useWindowScroll
           customScrollParent={scrollElement}
-          style={{ height: "100%" }}
           totalCount={albums.length}
           endReached={() => albums.length >= limit && fetchMore()}
           itemContent={(index) => <AlbumItem album={albums[index]} />}
@@ -185,22 +181,6 @@ export const Albums = () => {
 };
 
 export const AlbumItem = ({ album }: { album: AlbumObject }) => {
-  const popover = useRef<HTMLIonPopoverElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openMenu = (event: ClickEvent<HTMLIonButtonElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    if (popover.current) {
-      popover.current.event = event;
-      popover.current.present();
-    }
-  };
-
-  const closeMenu = () => {
-    popover.current?.dismiss();
-  };
-
   return (
     <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
@@ -209,39 +189,6 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
       <IonLabel class="ion-text-wrap">{album.name}</IonLabel>
       <IonButtons slot="end">
         <FavoriteButton type="albumIds" id={album.id} size="s" />
-        <IonButton onClick={openMenu}>
-          <Icon name="more_horiz" slot="icon-only" />
-        </IonButton>
-        <IonPopover arrow={false} ref={popover} side="left">
-          <IonContent>
-            <IonList
-              onClick={(event) => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
-            >
-              <IonItem
-                onClick={() => {
-                  popover.current?.dismiss();
-                  setIsModalOpen(true);
-                }}
-                color="dark"
-                button
-                detail={false}
-              >
-                <IonLabel>プレイリストに追加</IonLabel>
-              </IonItem>
-              <IonItem onClick={closeMenu} color="dark" button detail={false}>
-                <IonLabel>再生</IonLabel>
-              </IonItem>
-            </IonList>
-          </IonContent>
-        </IonPopover>
-        <AddPlaylistItemsModal
-          trackIds={album.tracks?.map((t) => t.id) ?? []}
-          isOpen={isModalOpen}
-          setOpen={setIsModalOpen}
-        />
       </IonButtons>
     </IonItem>
   );
