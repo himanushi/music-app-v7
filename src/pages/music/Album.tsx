@@ -17,7 +17,7 @@ import {
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useCallback } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
@@ -177,10 +177,18 @@ const AlbumTrackItem = ({ track }: { track: TrackObject }) => {
 };
 
 const AlbumTrackItemButtons = ({ track }: { track: TrackObject }) => {
+  const history = useHistory();
   const { open } = useMenu({
     component: ({ onDismiss }) => (
       <IonContent onClick={() => onDismiss()}>
         <AddPlaylistMenuItem trackIds={[track.id]} />
+        <IonItem
+          color="dark"
+          detail={false}
+          onClick={() => history.push(`/tracks/${track.id}`)}
+        >
+          <IonLabel>トラックを表示</IonLabel>
+        </IonItem>
       </IonContent>
     ),
   });
@@ -201,8 +209,6 @@ const AlbumTrackItemButtons = ({ track }: { track: TrackObject }) => {
   );
 };
 
-const limit = 50;
-
 const AlbumArtists = ({
   albumId,
   scrollElement,
@@ -210,6 +216,7 @@ const AlbumArtists = ({
   albumId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
+  const limit = 50;
   const { items: artists, fetchMore } = useFetchItems<ArtistObject>({
     limit,
     doc: ArtistsDocument,
