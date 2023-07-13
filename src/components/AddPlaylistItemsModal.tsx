@@ -7,13 +7,13 @@ import {
   IonHeader,
   IonItem,
   IonLabel,
-  IonModal,
+  IonPage,
   IonThumbnail,
   IonTitle,
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistItemsDocument,
@@ -24,38 +24,18 @@ import { useFetchItems, useScrollElement } from "~/hooks";
 
 export const AddPlaylistItemsModal = ({
   trackIds,
-  isOpen,
-  setOpen,
+  onDismiss,
 }: {
   trackIds: string[];
-  isOpen: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onDismiss: () => void;
 }) => {
-  const modal = useRef<HTMLIonModalElement>(null);
-
-  const close = useCallback(() => {
-    modal.current?.dismiss();
-    setOpen(false);
-  }, [setOpen]);
-
-  if (!isOpen) return <></>;
-
   return (
-    <IonModal
-      ref={modal}
-      isOpen={true}
-      presentingElement={document.getElementById("page")!}
-      onDidDismiss={() => setOpen(false)}
-      onClick={(event) => {
-        event.stopPropagation();
-        event.preventDefault();
-      }}
-    >
+    <IonPage>
       <IonHeader translucent>
         <IonToolbar>
           <IonTitle>プレイリストに追加</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={close} color="main">
+            <IonButton onClick={() => onDismiss()} color="main">
               閉じる
             </IonButton>
           </IonButtons>
@@ -65,7 +45,7 @@ export const AddPlaylistItemsModal = ({
       <IonFooter>
         <IonToolbar />
       </IonFooter>
-    </IonModal>
+    </IonPage>
   );
 };
 
@@ -98,7 +78,6 @@ const Playlists = ({ trackIds }: { trackIds: string[] }) => {
         key={playlists[0]?.id}
         useWindowScroll
         customScrollParent={scrollElement}
-        style={{ height: "100%" }}
         totalCount={playlists.length}
         endReached={() => playlists.length >= limit && fetchMore()}
         itemContent={(index) => (
