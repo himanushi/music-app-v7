@@ -7,3 +7,4 @@ export * from "./useVariablesItems";
 export * from "./useInitialize";
 export * from "./useStartedServiceState";
 export * from "./useAddPlaylistItems";
+export * from "./useMenu";
