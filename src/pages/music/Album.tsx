@@ -14,14 +14,13 @@ import {
   IonButtons,
   IonAvatar,
   IonButton,
-  IonPopover,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
-  AddPlaylistItemsModal,
+  AddPlaylistMenuItem,
   FavoriteButton,
   FooterPadding,
   Icon,
@@ -35,9 +34,13 @@ import {
   ArtistsDocument,
   TrackObject,
 } from "~/graphql/types";
-import { useFetchItems, useScrollElement } from "~/hooks";
+import {
+  useAddPlaylistItems,
+  useFetchItems,
+  useMenu,
+  useScrollElement,
+} from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
-import { ClickEvent } from "~/types";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -51,8 +54,8 @@ export const Album: React.FC<
     fetchPolicy: "cache-first",
   });
 
-  const album = useMemo(() => data?.album, [data?.album]);
-  const tracks = useMemo(() => album?.tracks ?? [], [album?.tracks]);
+  const album = data?.album;
+  const tracks = album?.tracks ?? [];
 
   return (
     <IonPage>
@@ -60,47 +63,7 @@ export const Album: React.FC<
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
-        <IonGrid class="ion-no-padding">
-          <IonRow>
-            <IonCol>
-              <SquareImage
-                src={convertImageUrl({
-                  px: 300,
-                  url: album?.artworkL?.url,
-                })}
-              />
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-        {album ? (
-          <IonList>
-            <IonItem className="ion-text-wrap text-select" lines="none">
-              <IonLabel>{album.name}</IonLabel>
-            </IonItem>
-            <IonItem lines="none">
-              <AlbumMenuButtons album={album as AlbumObject} />
-            </IonItem>
-            <IonItem lines="none">
-              <AlbumSearchButtons album={album as AlbumObject} />
-            </IonItem>
-            <IonItem className="ion-text-wrap text-select" lines="none">
-              <IonNote slot="end">{album.copyright}</IonNote>
-            </IonItem>
-            <IonItem className="ion-text-wrap text-select">
-              <IonNote slot="end">
-                {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
-                {convertTime(toMs(album.tracks))}
-              </IonNote>
-            </IonItem>
-            {album.status !== "ACTIVE" && (
-              <IonItem color={album.status === "PENDING" ? "yellow" : "red"}>
-                {album.status}
-              </IonItem>
-            )}
-          </IonList>
-        ) : (
-          <SkeletonItems count={5} lines="none" />
-        )}
+        <AlbumInfo album={album as AlbumObject} />
         {album ? (
           <AlbumTracks
             tracks={tracks as TrackObject[]}
@@ -120,52 +83,69 @@ export const Album: React.FC<
   );
 };
 
-const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
-  const popover = useRef<HTMLIonPopoverElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
+  return (
+    <>
+      <IonGrid class="ion-no-padding">
+        <IonRow>
+          <IonCol>
+            <SquareImage
+              src={convertImageUrl({
+                px: 300,
+                url: album?.artworkL?.url,
+              })}
+            />
+          </IonCol>
+        </IonRow>
+      </IonGrid>
+      {album ? (
+        <IonList>
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonLabel>{album.name}</IonLabel>
+          </IonItem>
+          <IonItem lines="none">
+            <AlbumMenuButtons album={album as AlbumObject} />
+          </IonItem>
+          <IonItem lines="none">
+            <AlbumSearchButtons album={album as AlbumObject} />
+          </IonItem>
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonNote slot="end">{album.copyright}</IonNote>
+          </IonItem>
+          <IonItem className="ion-text-wrap text-select">
+            <IonNote slot="end">
+              {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
+              {convertTime(toMs(album.tracks))}
+            </IonNote>
+          </IonItem>
+          {album.status !== "ACTIVE" && (
+            <IonItem color={album.status === "PENDING" ? "yellow" : "red"}>
+              {album.status}
+            </IonItem>
+          )}
+        </IonList>
+      ) : (
+        <SkeletonItems count={5} lines="none" />
+      )}
+    </>
+  );
+};
 
-  const openMenu = (event: ClickEvent<HTMLIonButtonElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    if (popover.current) {
-      popover.current.event = event;
-      popover.current.present();
-    }
-  };
+const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
+  const { open } = useMenu({
+    component: ({ onDismiss }) => (
+      <IonContent onClick={() => onDismiss()}>
+        <AddPlaylistMenuItem trackIds={album?.tracks.map((t) => t.id) ?? []} />
+      </IonContent>
+    ),
+  });
 
   return (
     <IonButtons slot="end">
       <FavoriteButton type="albumIds" id={album?.id} size="s" />
-      <IonButton onClick={openMenu}>
+      <IonButton onClick={(event: any) => open(event)}>
         <Icon name="more_horiz" slot="icon-only" />
       </IonButton>
-      <IonPopover arrow={false} ref={popover} side="left">
-        <IonContent>
-          <IonList
-            onClick={(event) => {
-              event.stopPropagation();
-              event.preventDefault();
-            }}
-          >
-            <IonItem
-              onClick={() => {
-                popover.current?.dismiss();
-                setIsModalOpen(true);
-              }}
-              color="dark"
-              button
-              detail={false}
-            >
-              <IonLabel>プレイリストに追加</IonLabel>
-            </IonItem>
-          </IonList>
-        </IonContent>
-      </IonPopover>
-      <AddPlaylistItemsModal
-        trackIds={album.tracks?.map((t) => t.id) ?? []}
-        isOpen={isModalOpen}
-        setOpen={setIsModalOpen}
-      />
     </IonButtons>
   );
 };
@@ -202,13 +182,25 @@ const AlbumTrackItem = ({ track }: { track: TrackObject }) => {
     await CapacitorMusicKit.setQueue({ ids: [track.appleMusicId] });
     CapacitorMusicKit.play({});
   }, [track]);
+  const { open } = useAddPlaylistItems({
+    trackIds: [track.id],
+  });
 
   return (
     <IonItem button detail={false} onClick={onClick}>
       <IonNote slot="start">{track.trackNumber}</IonNote>
       <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
-      <IonButtons slot="end">
+      <IonButtons
+        slot="end"
+        onClick={(event) => {
+          event.stopPropagation();
+          event.preventDefault();
+        }}
+      >
         <FavoriteButton type="trackIds" id={track.id} size="s" />
+        <IonButton onClick={() => open()}>
+          <Icon name="more_horiz" slot="icon-only" />
+        </IonButton>
       </IonButtons>
     </IonItem>
   );
