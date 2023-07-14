@@ -187,7 +187,7 @@ export const ArtistItem = ({ artist }: { artist: ArtistObject }) => {
       </IonAvatar>
       <IonLabel class="ion-text-wrap">{artist.name}</IonLabel>
       <IonButtons slot="end">
-        <FavoriteButton type="albumIds" id={artist.id} size="s" />
+        <FavoriteButton type="artistIds" id={artist.id} size="s" />
       </IonButtons>
     </IonItem>
   );
