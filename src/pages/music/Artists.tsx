@@ -1,5 +1,5 @@
+import { Capacitor } from "@capacitor/core";
 import {
-  CheckboxChangeEventDetail,
   IonAvatar,
   IonButton,
   IonButtons,
@@ -15,9 +15,8 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Icon } from "~/components";
+import { FavoriteButton, FooterPadding, Refresher } from "~/components";
 import {
   ArtistObject,
   ArtistsDocument,
@@ -29,7 +28,9 @@ import {
   useMe,
   useNestedState,
   useScrollElement,
+  useVariablesItems,
 } from "~/hooks";
+import { convertImageUrl } from "~/lib";
 
 const limit = 50;
 
@@ -54,63 +55,28 @@ export const Artists = () => {
   const [variables, setNestedState] = useNestedState<ArtistsQueryVariables>({
     conditions: {},
     cursor: { limit, offset: 0 },
-    sort: { order: "NAME", direction: "ASC" },
+    sort: { order: "NAME", direction: "DESC" },
   });
 
-  const {
-    items: artists,
-    fetchMore,
-    resetOffset,
-  } = useFetchItems<ArtistObject>({
-    limit,
-    doc: ArtistsDocument,
-    variables,
-  });
+  const { items, fetchMore, resetOffset, refresh } =
+    useFetchItems<ArtistObject>({
+      limit,
+      doc: ArtistsDocument,
+      variables,
+      refreshName: "artists",
+    });
 
-  const reset = useCallback(() => {
-    resetOffset();
-    scrollElement?.scrollTo({ top: 0 });
-  }, [resetOffset, scrollElement]);
-
-  const handleInput = useCallback(
-    (event: Event) => {
-      reset();
-      const target = event.target as HTMLIonSearchbarElement;
-      const query = target.value ? target.value.toLowerCase() : "";
-      setNestedState("conditions", "name", query ? query : undefined);
-    },
-    [reset, setNestedState]
-  );
-
-  const handleSort = useCallback(
-    (sort: string) => {
-      reset();
-      const [order, direction] = sort.split(".");
-      setNestedState("sort", "order", order);
-      setNestedState("sort", "direction", direction);
-    },
-    [reset, setNestedState]
-  );
-
-  const handleChangeFavorite = useCallback(
-    (event: CustomEvent<CheckboxChangeEventDetail>) => {
-      reset();
-      setNestedState("conditions", "favorite", event.detail.checked);
-    },
-    [reset, setNestedState]
-  );
-
-  const handleChangeStatus = useCallback(
-    (status: string) => {
-      reset();
-      setNestedState("conditions", "status", status);
-    },
-    [reset, setNestedState]
-  );
+  const { changeInput, changeFavorite, changeSort, changeStatus } =
+    useVariablesItems({
+      resetOffset,
+      scrollElement,
+      setNestedState,
+    });
 
   return (
     <IonPage>
       <IonHeader translucent className="ion-no-border">
+        {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
           <IonTitle>アーティスト</IonTitle>
           <IonButtons slot="start">
@@ -125,11 +91,11 @@ export const Artists = () => {
               dismissOnSelect={true}
             >
               <IonList>
-                <IonItem button detail={false}>
+                <IonItem button detail={false} color="dark">
                   <IonCheckbox
                     color="main"
                     checked={!!variables.conditions?.favorite}
-                    onIonChange={handleChangeFavorite}
+                    onIonChange={changeFavorite}
                   >
                     お気に入り
                   </IonCheckbox>
@@ -141,7 +107,8 @@ export const Artists = () => {
                         button
                         detail={false}
                         key={index}
-                        onClick={() => handleChangeStatus(status[1])}
+                        onClick={() => changeStatus(status[1])}
+                        color="dark"
                       >
                         <IonCheckbox
                           color="main"
@@ -150,7 +117,7 @@ export const Artists = () => {
                             (status[1] === "ACTIVE" &&
                               variables.conditions?.status === undefined)
                           }
-                          onIonChange={handleChangeFavorite}
+                          onIonChange={changeFavorite}
                         >
                           {status[0]}
                         </IonCheckbox>
@@ -178,7 +145,8 @@ export const Artists = () => {
                     button
                     detail={false}
                     key={index}
-                    onClick={() => handleSort(sort[1])}
+                    onClick={() => changeSort(sort[1])}
+                    color="dark"
                   >
                     {sort[0]}
                   </IonItem>
@@ -191,42 +159,36 @@ export const Artists = () => {
           <IonSearchbar
             placeholder="アーティストで検索"
             debounce={2000}
-            onIonInput={(ev) => handleInput(ev)}
+            onIonInput={(ev) => changeInput(ev)}
           ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
+        <Refresher refresh={refresh} />
         <Virtuoso
-          key={artists[0]?.id}
+          key={JSON.stringify(variables)}
           useWindowScroll
           customScrollParent={scrollElement}
-          totalCount={artists.length}
-          endReached={() => artists.length >= limit && fetchMore()}
-          itemContent={(index) => (
-            <IonItem
-              button
-              detail={false}
-              routerLink={`/artists/${artists[index].id}`}
-            >
-              <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
-                <img src={artists[index].artworkM?.url} />
-              </IonAvatar>
-              <IonLabel class="ion-text-wrap">{artists[index].name}</IonLabel>
-              <IonButtons slot="end">
-                <FavoriteButton
-                  type="albumIds"
-                  id={artists[index].id}
-                  size="s"
-                />
-                <IonButton>
-                  <Icon size="m" slot="icon-only" name="more_horiz" />
-                </IonButton>
-              </IonButtons>
-            </IonItem>
-          )}
+          totalCount={items.length}
+          endReached={() => items.length >= limit && fetchMore()}
+          itemContent={(index) => <ArtistItem artist={items[index]} />}
         />
         <FooterPadding />
       </IonContent>
     </IonPage>
+  );
+};
+
+export const ArtistItem = ({ artist }: { artist: ArtistObject }) => {
+  return (
+    <IonItem button detail={false} routerLink={`/artists/${artist.id}`}>
+      <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
+        <img src={convertImageUrl({ url: artist.artworkM?.url, px: 60 })} />
+      </IonAvatar>
+      <IonLabel class="ion-text-wrap">{artist.name}</IonLabel>
+      <IonButtons slot="end">
+        <FavoriteButton type="albumIds" id={artist.id} size="s" />
+      </IonButtons>
+    </IonItem>
   );
 };
