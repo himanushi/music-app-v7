@@ -94,7 +94,7 @@ export const Albums = () => {
               dismissOnSelect={true}
             >
               <IonList>
-                <IonItem button detail={false}>
+                <IonItem button detail={false} color="dark">
                   <IonCheckbox
                     color="main"
                     checked={!!variables.conditions?.favorite}
@@ -111,6 +111,7 @@ export const Albums = () => {
                         detail={false}
                         key={index}
                         onClick={() => changeStatus(status[1])}
+                        color="dark"
                       >
                         <IonCheckbox
                           color="main"
@@ -148,6 +149,7 @@ export const Albums = () => {
                     detail={false}
                     key={index}
                     onClick={() => changeSort(sort[1])}
+                    color="dark"
                   >
                     {sort[0]}
                   </IonItem>
