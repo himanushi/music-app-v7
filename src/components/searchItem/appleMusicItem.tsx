@@ -46,7 +46,7 @@ const ItunesItem = ({
       <IonButtons slot="start">
         <LogoIcon name="itunes" size="s" />
       </IonButtons>
-      <IonLabel>iTunes で確認</IonLabel>
+      <IonLabel>iTunes で聴く</IonLabel>
     </IonItem>
   );
 };
