@@ -10,22 +10,20 @@ export const AppleMusicItem = ({
   appleMusicId: string;
 }) => {
   let token = "";
-  if (appleAffiliateToken) {
-    token = `&at=${appleAffiliateToken}`;
-  }
+  if (appleAffiliateToken) token = `&at=${appleAffiliateToken}`;
 
-  if (!isAppleMusic) {
-    <IonItem
-      button
-      href={`https://music.apple.com/jp/album/${appleMusicId}?app=music${token}`}
-    >
-      <IonButtons slot="start">
-        <LogoIcon name="apple-music" size="s" />
-      </IonButtons>
-      <IonLabel slot="start" color="apple-music">
-        Apple Music で聴く
-      </IonLabel>
-    </IonItem>;
+  if (isAppleMusic) {
+    return (
+      <IonItem
+        button
+        href={`https://music.apple.com/jp/album/${appleMusicId}?app=music${token}`}
+      >
+        <IonButtons slot="start">
+          <LogoIcon name="apple-music" size="s" />
+        </IonButtons>
+        <IonLabel color="apple-music">Apple Music で聴く</IonLabel>
+      </IonItem>
+    );
   }
 
   return <ItunesItem appleMusicId={appleMusicId} token={token} />;
@@ -46,7 +44,7 @@ const ItunesItem = ({
       <IonButtons slot="start">
         <LogoIcon name="itunes" size="s" />
       </IonButtons>
-      <IonLabel slot="start">iTunes で確認</IonLabel>
+      <IonLabel>iTunes で確認</IonLabel>
     </IonItem>
   );
 };
