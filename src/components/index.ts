@@ -1,4 +1,5 @@
 export * from "./menuItem";
+export * from "./searchItem";
 export * from "./SquareImage";
 export * from "./Icon";
 export * from "./FooterModal";

@@ -25,8 +25,10 @@ import {
   FooterPadding,
   Icon,
   SkeletonItems,
+  SpotifyItem,
   SquareImage,
 } from "~/components";
+import { LogoIcon } from "~/components/LogoIcon";
 import {
   AlbumDocument,
   AlbumObject,
@@ -104,7 +106,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
           <IonItem className="ion-text-wrap text-select" lines="none">
             <IonNote slot="end">{album.copyright}</IonNote>
           </IonItem>
-          <IonItem className="ion-text-wrap text-select">
+          <IonItem className="ion-text-wrap text-select" lines="none">
             <IonNote slot="end">
               {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
               {convertTime(toMs(album.tracks))}
@@ -115,6 +117,10 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               {album.status}
             </IonItem>
           )}
+          <IonItem button>
+            <LogoIcon name="apple-music" slot="start" />
+            <IonLabel>Apple Music で聴く</IonLabel>
+          </IonItem>
         </IonList>
       ) : (
         <SkeletonItems count={5} lines="none" />
@@ -128,6 +134,7 @@ const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
     component: ({ onDismiss }) => (
       <IonContent onClick={() => onDismiss()}>
         <AddPlaylistMenuItem trackIds={album?.tracks.map((t) => t.id) ?? []} />
+        <SpotifyItem name={album.name} />
       </IonContent>
     ),
   });

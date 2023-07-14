@@ -11,7 +11,7 @@ export type LogoIconName =
 const sizeMap = {
   l: 40,
   m: 32,
-  s: 24,
+  s: 28,
 };
 
 export const LogoIcon = ({
@@ -20,7 +20,7 @@ export const LogoIcon = ({
   size = "m",
 }: {
   name: LogoIconName;
-  slot: "start" | "end" | "icon-only";
+  slot?: "start" | "end" | "icon-only";
   size?: "s" | "m" | "l";
 }) => {
   return (
