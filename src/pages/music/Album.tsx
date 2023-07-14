@@ -100,13 +100,17 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
           <IonItem className="ion-text-wrap text-select" lines="none">
             <IonLabel>{album.name}</IonLabel>
           </IonItem>
+          <AppleMusicItem
+            isAppleMusic={album.appleMusicPlayable}
+            appleMusicId={album.appleMusicId}
+          />
           <IonItem lines="none">
             <AlbumMenuButtons album={album as AlbumObject} />
           </IonItem>
           <IonItem className="ion-text-wrap text-select" lines="none">
             <IonNote slot="end">{album.copyright}</IonNote>
           </IonItem>
-          <IonItem className="ion-text-wrap text-select" lines="none">
+          <IonItem className="ion-text-wrap text-select">
             <IonNote slot="end">
               {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
               {convertTime(toMs(album.tracks))}
@@ -117,10 +121,6 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               {album.status}
             </IonItem>
           )}
-          <AppleMusicItem
-            isAppleMusic={album.appleMusicPlayable}
-            appleMusicId={album.appleMusicId}
-          />
         </IonList>
       ) : (
         <SkeletonItems count={5} lines="none" />
