@@ -28,7 +28,7 @@ import {
   SpotifyItem,
   SquareImage,
 } from "~/components";
-import { LogoIcon } from "~/components/LogoIcon";
+import { AppleMusicItem } from "~/components/searchItem/appleMusicItem";
 import {
   AlbumDocument,
   AlbumObject,
@@ -117,10 +117,10 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               {album.status}
             </IonItem>
           )}
-          <IonItem button>
-            <LogoIcon name="apple-music" slot="start" />
-            <IonLabel>Apple Music で聴く</IonLabel>
-          </IonItem>
+          <AppleMusicItem
+            isAppleMusic={album.appleMusicPlayable}
+            appleMusicId={album.appleMusicId}
+          />
         </IonList>
       ) : (
         <SkeletonItems count={5} lines="none" />

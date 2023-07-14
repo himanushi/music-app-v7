@@ -280,3 +280,22 @@ body.dark,
   --ion-color-shade: var(--ion-color-dark-gray-shade);
   --ion-color-tint: var(--ion-color-dark-gray-tint);
 }
+
+body.dark,
+:root {
+  --ion-color-apple-music: #fa586a;
+  --ion-color-apple-music-rgb: 250, 88, 106;
+  --ion-color-apple-music-contrast: #000000;
+  --ion-color-apple-music-contrast-rgb: 0, 0, 0;
+  --ion-color-apple-music-shade: #dc4d5d;
+  --ion-color-apple-music-tint: #fb6979;
+}
+
+.ion-color-apple-music {
+  --ion-color-base: var(--ion-color-apple-music);
+  --ion-color-base-rgb: var(--ion-color-apple-music-rgb);
+  --ion-color-contrast: var(--ion-color-apple-music-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-apple-music-contrast-rgb);
+  --ion-color-shade: var(--ion-color-apple-music-shade);
+  --ion-color-tint: var(--ion-color-apple-music-tint);
+}
