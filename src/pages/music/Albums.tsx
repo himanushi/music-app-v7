@@ -30,6 +30,7 @@ import {
   useScrollElement,
   useVariablesItems,
 } from "~/hooks";
+import { convertImageUrl } from "~/lib";
 
 const limit = 50;
 
@@ -57,17 +58,14 @@ export const Albums = () => {
     sort: { order: "RELEASE", direction: "DESC" },
   });
 
-  const {
-    items: albums,
-    fetchMore,
-    resetOffset,
-    refresh,
-  } = useFetchItems<AlbumObject>({
-    limit,
-    doc: AlbumsDocument,
-    variables,
-    refreshName: "albums",
-  });
+  const { items, fetchMore, resetOffset, refresh } = useFetchItems<AlbumObject>(
+    {
+      limit,
+      doc: AlbumsDocument,
+      variables,
+      refreshName: "albums",
+    }
+  );
 
   const { changeInput, changeFavorite, changeSort, changeStatus } =
     useVariablesItems({
@@ -172,9 +170,9 @@ export const Albums = () => {
           key={JSON.stringify(variables)}
           useWindowScroll
           customScrollParent={scrollElement}
-          totalCount={albums.length}
-          endReached={() => albums.length >= limit && fetchMore()}
-          itemContent={(index) => <AlbumItem album={albums[index]} />}
+          totalCount={items.length}
+          endReached={() => items.length >= limit && fetchMore()}
+          itemContent={(index) => <AlbumItem album={items[index]} />}
         />
         <FooterPadding />
       </IonContent>
@@ -186,7 +184,7 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
   return (
     <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
-        <img src={album.artworkM?.url} />
+        <img src={convertImageUrl({ url: album.artworkM?.url, px: 110 })} />
       </IonThumbnail>
       <IonLabel class="ion-text-wrap">{album.name}</IonLabel>
       <IonButtons slot="end">
