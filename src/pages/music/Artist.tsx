@@ -8,21 +8,28 @@ import {
   IonGrid,
   IonRow,
   IonList,
-  IonItemDivider,
   IonItem,
   IonLabel,
+  IonNote,
   IonButtons,
-  IonButton,
-  IonSkeletonText,
-  IonThumbnail,
 } from "@ionic/react";
-import { useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, Icon, SquareImage } from "~/components";
-import { AlbumsDocument, ArtistDocument, ArtistObject } from "~/graphql/types";
+import {
+  FavoriteButton,
+  FooterPadding,
+  SkeletonItems,
+  SquareImage,
+} from "~/components";
+import {
+  AlbumObject,
+  AlbumsDocument,
+  ArtistDocument,
+  ArtistObject,
+} from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
+import { AlbumItem } from ".";
 
 export const Artist: React.FC<
   RouteComponentProps<{
@@ -36,7 +43,7 @@ export const Artist: React.FC<
     fetchPolicy: "cache-first",
   });
 
-  const artist = useMemo(() => data?.artist, [data?.artist]);
+  const artist = data?.artist;
 
   return (
     <IonPage>
@@ -44,34 +51,11 @@ export const Artist: React.FC<
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
-        <IonGrid class="ion-no-padding">
-          <IonRow>
-            <IonCol>
-              <SquareImage
-                src={convertImageUrl({
-                  px: 300,
-                  url: artist?.artworkL?.url,
-                })}
-              />
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-        <IonList>
-          <IonItem className="ion-text-wrap text-select" lines="none">
-            {artist ? <IonLabel>{artist.name}</IonLabel> : <IonSkeletonText />}
-          </IonItem>
-        </IonList>
+        <ArtistInfo artist={artist as ArtistObject} />
         {artist ? (
           <ArtistAlbums artistId={artist.id} scrollElement={scrollElement} />
         ) : (
-          <IonList>
-            <IonItemDivider sticky>アーティスト</IonItemDivider>
-            {[...Array(5)].map((_, i) => (
-              <IonItem button detail={false} key={i}>
-                <IonSkeletonText />
-              </IonItem>
-            ))}
-          </IonList>
+          <SkeletonItems count={10} />
         )}
         <FooterPadding />
       </IonContent>
@@ -79,7 +63,43 @@ export const Artist: React.FC<
   );
 };
 
-const limit = 50;
+const ArtistInfo = ({ artist }: { artist?: ArtistObject }) => {
+  return (
+    <>
+      <IonGrid class="ion-no-padding">
+        <IonRow>
+          <IonCol>
+            <SquareImage
+              src={convertImageUrl({
+                px: 300,
+                url: artist?.artworkL?.url,
+              })}
+            />
+          </IonCol>
+        </IonRow>
+      </IonGrid>
+      {artist ? (
+        <IonList>
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonLabel>{artist.name}</IonLabel>
+          </IonItem>
+          <IonItem lines="none">
+            <IonButtons slot="end">
+              <FavoriteButton type="artistIds" id={artist?.id} size="s" />
+            </IonButtons>
+          </IonItem>
+          {artist.status !== "ACTIVE" && (
+            <IonItem color={artist.status === "PENDING" ? "yellow" : "red"}>
+              {artist.status}
+            </IonItem>
+          )}
+        </IonList>
+      ) : (
+        <SkeletonItems count={5} lines="none" />
+      )}
+    </>
+  );
+};
 
 const ArtistAlbums = ({
   artistId,
@@ -88,47 +108,33 @@ const ArtistAlbums = ({
   artistId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: albums, fetchMore } = useFetchItems<ArtistObject>({
+  const limit = 50;
+  const { items, fetchMore } = useFetchItems<
+    AlbumObject,
+    typeof AlbumsDocument
+  >({
     limit,
     doc: AlbumsDocument,
     variables: {
       conditions: { artistIds: [artistId] },
       cursor: { limit, offset: 0 },
-      sort: { direction: "DESC", order: "POPULARITY" },
+      sort: { order: "RELEASE", direction: "DESC" },
     },
   });
 
+  if (items.length === 0) return <></>;
+
   return (
     <IonList>
-      <IonItemDivider sticky>アルバム</IonItemDivider>
+      <IonItem>
+        <IonNote>アルバム</IonNote>
+      </IonItem>
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
-        totalCount={albums.length}
-        endReached={() => fetchMore()}
-        itemContent={(index) => (
-          <IonItem
-            button
-            detail={false}
-            routerLink={`/albums/${albums[index].id}`}
-          >
-            <IonThumbnail
-              slot="start"
-              style={{ height: "110px", width: "110px" }}
-            >
-              <img src={albums[index].artworkM?.url} />
-            </IonThumbnail>
-            <IonLabel class="ion-text-wrap">{albums[index].name}</IonLabel>
-            <IonButtons slot="end">
-              <IonButton>
-                <Icon size="s" color="red" slot="icon-only" name="favorite" />
-              </IonButton>
-              <IonButton>
-                <Icon size="m" slot="icon-only" name="more_horiz" />
-              </IonButton>
-            </IonButtons>
-          </IonItem>
-        )}
+        totalCount={items.length}
+        endReached={() => items.length >= limit && fetchMore()}
+        itemContent={(index) => <AlbumItem album={items[index]} />}
       />
     </IonList>
   );
