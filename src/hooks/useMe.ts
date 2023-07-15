@@ -1,26 +1,21 @@
 import { useQuery } from "@apollo/client";
-import { useCallback } from "react";
 import { ActionEnum, CurrentUserObject, MeDocument } from "~/graphql/types";
 
 export const useMe = () => {
-  const { data } = useQuery(MeDocument);
+  const { data } = useQuery(MeDocument, {
+    fetchPolicy: "cache-only",
+  });
   const me = data?.me;
 
-  const allowed = useCallback(
-    (actionName: ActionEnum | ActionEnum[]) => {
-      if (!me) return false;
-      return isAllowed(me, actionName);
-    },
-    [me]
-  );
+  const allowed = (actionName: ActionEnum | ActionEnum[]) => {
+    if (!me) return false;
+    return isAllowed(me, actionName);
+  };
 
-  const favorite = useCallback(
-    (id: string) => {
-      if (!me) return false;
-      return isFavorite(me, id);
-    },
-    [me]
-  );
+  const favorite = (id: string) => {
+    if (!me) return false;
+    return isFavorite(me, id);
+  };
 
   return { me, isAllowed: allowed, isFavorite: favorite };
 };
