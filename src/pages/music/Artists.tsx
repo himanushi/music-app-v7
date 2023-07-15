@@ -35,8 +35,8 @@ import { convertImageUrl } from "~/lib";
 const limit = 50;
 
 const sortOptions = [
-  ["名前降順", "NAME.DESC"],
   ["名前昇順", "NAME.ASC"],
+  ["名前降順", "NAME.DESC"],
   ["追加日新しい順", "NEW.DESC"],
   ["追加日古い順", "NEW.ASC"],
   ["人気順", "POPULARITY.DESC"],
@@ -55,7 +55,7 @@ export const Artists = () => {
   const [variables, setNestedState] = useNestedState<ArtistsQueryVariables>({
     conditions: {},
     cursor: { limit, offset: 0 },
-    sort: { order: "NAME", direction: "DESC" },
+    sort: { order: "NAME", direction: "ASC" },
   });
 
   const { items, fetchMore, resetOffset, refresh } =
@@ -182,8 +182,8 @@ export const Artists = () => {
 export const ArtistItem = ({ artist }: { artist: ArtistObject }) => {
   return (
     <IonItem button detail={false} routerLink={`/artists/${artist.id}`}>
-      <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
-        <img src={convertImageUrl({ url: artist.artworkM?.url, px: 60 })} />
+      <IonAvatar slot="start" style={{ height: "80px", width: "80px" }}>
+        <img src={convertImageUrl({ url: artist.artworkM?.url, px: 80 })} />
       </IonAvatar>
       <IonLabel class="ion-text-wrap">{artist.name}</IonLabel>
       <IonButtons slot="end">
