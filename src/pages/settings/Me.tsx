@@ -1,11 +1,11 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
 import { Icon } from "~/components";
 import { CurrentUserObject, LogoutDocument, MeDocument } from "~/graphql/types";
+import { useMe } from "~/hooks";
 
 export const Me = () => {
-  const { data } = useQuery(MeDocument);
-  const me = data?.me;
+  const { me } = useMe();
 
   // ログイン済み
   if (me?.registered) return <RegisteredMe me={me} />;
