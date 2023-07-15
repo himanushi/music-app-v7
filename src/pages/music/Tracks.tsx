@@ -8,6 +8,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonNote,
   IonPage,
   IonPopover,
   IonSearchbar,
@@ -15,8 +16,17 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { CapacitorMusicKit } from "capacitor-plugin-musickit";
+import { useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Refresher } from "~/components";
+import {
+  AddPlaylistMenuItem,
+  FavoriteButton,
+  FooterPadding,
+  Icon,
+  Refresher,
+} from "~/components";
 import {
   TrackObject,
   TracksDocument,
@@ -24,6 +34,7 @@ import {
 } from "~/graphql/types";
 import {
   useFetchItems,
+  useMenu,
   useNestedState,
   useScrollElement,
   useVariablesItems,
@@ -135,7 +146,9 @@ export const Tracks = () => {
           customScrollParent={scrollElement}
           totalCount={items.length}
           endReached={() => items.length >= limit && fetchMore()}
-          itemContent={(index) => <TrackItem track={items[index]} />}
+          itemContent={(index) => (
+            <TrackItem track={items[index]} displayThumbnail />
+          )}
         />
         <FooterPadding />
       </IonContent>
@@ -143,16 +156,62 @@ export const Tracks = () => {
   );
 };
 
-export const TrackItem = ({ track }: { track: TrackObject }) => {
+export const TrackItem = ({
+  track,
+  displayThumbnail = false,
+}: {
+  track: TrackObject;
+  displayThumbnail?: boolean;
+}) => {
+  const onClick = useCallback(async () => {
+    await CapacitorMusicKit.setQueue({ ids: [track.appleMusicId] });
+    CapacitorMusicKit.play({});
+  }, [track]);
+
   return (
-    <IonItem button detail={false}>
-      <IonThumbnail slot="start" style={{ height: "50px", width: "50px" }}>
-        <img src={convertImageUrl({ url: track.artworkM?.url, px: 50 })} />
-      </IonThumbnail>
+    <IonItem button detail={false} onClick={onClick}>
+      {displayThumbnail ? (
+        <IonThumbnail slot="start" style={{ height: "60px", width: "60px" }}>
+          <img src={convertImageUrl({ url: track.artworkM?.url, px: 60 })} />
+        </IonThumbnail>
+      ) : (
+        <IonNote slot="start">{track.trackNumber}</IonNote>
+      )}
       <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
-      <IonButtons slot="end">
-        <FavoriteButton type="trackIds" id={track.id} size="s" />
-      </IonButtons>
+      <TrackItemButtons track={track} />
     </IonItem>
+  );
+};
+
+const TrackItemButtons = ({ track }: { track: TrackObject }) => {
+  const history = useHistory();
+  const { open } = useMenu({
+    component: ({ onDismiss }) => (
+      <IonContent onClick={() => onDismiss()}>
+        <AddPlaylistMenuItem trackIds={[track.id]} />
+        <IonItem
+          color="dark"
+          detail={false}
+          onClick={() => history.push(`/tracks/${track.id}`)}
+        >
+          <IonLabel>トラックを表示</IonLabel>
+        </IonItem>
+      </IonContent>
+    ),
+  });
+
+  return (
+    <IonButtons
+      slot="end"
+      onClick={(event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      }}
+    >
+      <FavoriteButton type="trackIds" id={track.id} size="s" />
+      <IonButton onClick={(event) => open(event)}>
+        <Icon name="more_horiz" slot="icon-only" />
+      </IonButton>
+    </IonButtons>
   );
 };

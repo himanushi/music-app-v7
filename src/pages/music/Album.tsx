@@ -15,9 +15,7 @@ import {
   IonAvatar,
   IonButton,
 } from "@ionic/react";
-import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback } from "react";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
@@ -38,6 +36,7 @@ import {
 } from "~/graphql/types";
 import { useFetchItems, useMenu, useScrollElement } from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
+import { TrackItem } from ".";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -162,57 +161,9 @@ const AlbumTracks = ({
         useWindowScroll
         customScrollParent={scrollElement}
         totalCount={tracks.length}
-        itemContent={(index) => <AlbumTrackItem track={tracks[index]} />}
+        itemContent={(index) => <TrackItem track={tracks[index]} />}
       />
     </IonList>
-  );
-};
-
-const AlbumTrackItem = ({ track }: { track: TrackObject }) => {
-  const onClick = useCallback(async () => {
-    await CapacitorMusicKit.setQueue({ ids: [track.appleMusicId] });
-    CapacitorMusicKit.play({});
-  }, [track]);
-
-  return (
-    <IonItem button detail={false} onClick={onClick}>
-      <IonNote slot="start">{track.trackNumber}</IonNote>
-      <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
-      <AlbumTrackItemButtons track={track} />
-    </IonItem>
-  );
-};
-
-const AlbumTrackItemButtons = ({ track }: { track: TrackObject }) => {
-  const history = useHistory();
-  const { open } = useMenu({
-    component: ({ onDismiss }) => (
-      <IonContent onClick={() => onDismiss()}>
-        <AddPlaylistMenuItem trackIds={[track.id]} />
-        <IonItem
-          color="dark"
-          detail={false}
-          onClick={() => history.push(`/tracks/${track.id}`)}
-        >
-          <IonLabel>トラックを表示</IonLabel>
-        </IonItem>
-      </IonContent>
-    ),
-  });
-
-  return (
-    <IonButtons
-      slot="end"
-      onClick={(event) => {
-        event.stopPropagation();
-        event.preventDefault();
-      }}
-    >
-      <FavoriteButton type="trackIds" id={track.id} size="s" />
-      <IonButton onClick={(event) => open(event)}>
-        <Icon name="more_horiz" slot="icon-only" />
-      </IonButton>
-    </IonButtons>
   );
 };
 
