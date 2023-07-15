@@ -17,6 +17,7 @@ import {
   Teams,
   Privacy,
   CookiePolicy,
+  Playlist,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
@@ -67,6 +68,7 @@ function App() {
               <Route path="/tracks/:trackId" component={Track} />
               <Route path="/tracks" exact component={Tracks} />
               <Route path="/playlists" exact component={Playlists} />
+              <Route path="/playlists/:playlistId" component={Playlist} />
 
               <Route path="/settings" component={Settings} />
               <Route path="/me" component={Me} />
