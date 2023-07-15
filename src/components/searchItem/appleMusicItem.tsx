@@ -17,6 +17,7 @@ export const AppleMusicItem = ({
       <IonItem
         button
         href={`https://music.apple.com/jp/album/${appleMusicId}?app=music${token}`}
+        target="_blank"
         lines="none"
       >
         <IonButtons slot="start">
@@ -41,6 +42,7 @@ const ItunesItem = ({
     <IonItem
       button
       href={`itmss://music.apple.com/jp/album/${appleMusicId}?app=itunes${token}`}
+      target="_blank"
       lines="none"
     >
       <IonButtons slot="start">
