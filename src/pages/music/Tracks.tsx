@@ -171,8 +171,8 @@ export const TrackItem = ({
   return (
     <IonItem button detail={false} onClick={onClick}>
       {displayThumbnail ? (
-        <IonThumbnail slot="start" style={{ height: "60px", width: "60px" }}>
-          <img src={convertImageUrl({ url: track.artworkM?.url, px: 60 })} />
+        <IonThumbnail slot="start" style={{ height: "50px", width: "50px" }}>
+          <img src={convertImageUrl({ url: track.artworkM?.url, px: 50 })} />
         </IonThumbnail>
       ) : (
         <IonNote slot="start">{track.trackNumber}</IonNote>
