@@ -60,17 +60,15 @@ export const Album: React.FC<
       <IonContent fullscreen ref={contentRef}>
         <AlbumInfo album={album as AlbumObject} />
         {album ? (
-          <AlbumTracks
-            tracks={tracks as TrackObject[]}
-            scrollElement={scrollElement}
-          />
+          <>
+            <AlbumTracks
+              tracks={tracks as TrackObject[]}
+              scrollElement={scrollElement}
+            />
+            <AlbumArtists albumId={album.id} scrollElement={scrollElement} />
+          </>
         ) : (
           <SkeletonItems count={10} />
-        )}
-        {album ? (
-          <AlbumArtists albumId={album.id} scrollElement={scrollElement} />
-        ) : (
-          <SkeletonItems count={5} />
         )}
         <FooterPadding />
       </IonContent>
