@@ -3,7 +3,7 @@ import { ActionEnum, CurrentUserObject, MeDocument } from "~/graphql/types";
 
 export const useMe = () => {
   const { data } = useQuery(MeDocument, {
-    fetchPolicy: "cache-only",
+    fetchPolicy: "cache-first",
   });
   const me = data?.me;
 
