@@ -78,7 +78,7 @@ export const Tracks = () => {
       <IonHeader translucent className="ion-no-border">
         {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
-          <IonTitle>トラック</IonTitle>
+          <IonTitle>曲</IonTitle>
           <IonButtons slot="start">
             <IonButton id="track-filter-button" color="main">
               フィルター
@@ -132,7 +132,7 @@ export const Tracks = () => {
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar
-            placeholder="トラックで検索"
+            placeholder="曲で検索"
             debounce={2000}
             onIonInput={(ev) => changeInput(ev)}
           ></IonSearchbar>
