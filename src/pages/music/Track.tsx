@@ -8,29 +8,24 @@ import {
   IonGrid,
   IonRow,
   IonList,
-  IonItemDivider,
   IonItem,
   IonLabel,
   IonNote,
-  IonButtons,
-  IonButton,
-  IonAvatar,
-  IonSkeletonText,
-  IonThumbnail,
 } from "@ionic/react";
-import { useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, Icon, SquareImage } from "~/components";
+import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
   ArtistObject,
   ArtistsDocument,
   TrackDocument,
+  TrackObject,
 } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertImageUrl, convertTime, toMs } from "~/lib";
+import { AlbumItem, ArtistItem, TrackItem } from ".";
 
 export const Track: React.FC<
   RouteComponentProps<{
@@ -44,7 +39,7 @@ export const Track: React.FC<
     fetchPolicy: "cache-first",
   });
 
-  const track = useMemo(() => data?.track, [data?.track]);
+  const track = data?.track;
 
   return (
     <IonPage>
@@ -52,61 +47,14 @@ export const Track: React.FC<
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
-        <IonGrid class="ion-no-padding">
-          <IonRow>
-            <IonCol>
-              <SquareImage
-                src={convertImageUrl({
-                  px: 300,
-                  url: track?.artworkL?.url,
-                })}
-              />
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-        <IonList>
-          <IonItem className="ion-text-wrap text-select" lines="none">
-            {track ? <IonLabel>{track.name}</IonLabel> : <IonSkeletonText />}
-          </IonItem>
-          <IonItem className="ion-text-wrap text-select" lines="none">
-            {track ? (
-              <IonNote slot="end">{convertTime(toMs([track]))}</IonNote>
-            ) : (
-              <IonSkeletonText />
-            )}
-          </IonItem>
-          <IonItemDivider sticky>トラック</IonItemDivider>
-          <IonItem button detail={false}>
-            {track ? (
-              <>
-                <IonThumbnail slot="start">
-                  <img src={track.artworkM?.url} />
-                </IonThumbnail>
-                <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
-                <IonButtons slot="end">
-                  <IonButton>
-                    <Icon
-                      size="s"
-                      color="red"
-                      slot="icon-only"
-                      name="favorite"
-                    />
-                  </IonButton>
-                  <IonButton>
-                    <Icon size="m" slot="icon-only" name="more_horiz" />
-                  </IonButton>
-                </IonButtons>
-              </>
-            ) : (
-              <IonSkeletonText />
-            )}
-          </IonItem>
-        </IonList>
-        {track && (
-          <TrackArtists trackId={track.id} scrollElement={scrollElement} />
-        )}
-        {track && (
-          <TrackAlbums trackId={track.id} scrollElement={scrollElement} />
+        <TrackInfo track={track as TrackObject} />
+        {track ? (
+          <>
+            <TrackAlbums trackId={track.id} scrollElement={scrollElement} />
+            <TrackArtists trackId={track.id} scrollElement={scrollElement} />
+          </>
+        ) : (
+          <SkeletonItems count={10} />
         )}
         <FooterPadding />
       </IonContent>
@@ -114,53 +62,43 @@ export const Track: React.FC<
   );
 };
 
-const limit = 50;
-
-const TrackArtists = ({
-  trackId,
-  scrollElement,
-}: {
-  trackId: string;
-  scrollElement: HTMLElement | undefined;
-}) => {
-  const { items: artists, fetchMore } = useFetchItems<
-    ArtistObject,
-    typeof ArtistsDocument
-  >({
-    limit,
-    doc: ArtistsDocument,
-    variables: {
-      conditions: { trackIds: [trackId] },
-      cursor: { limit, offset: 0 },
-      sort: { direction: "DESC", order: "POPULARITY" },
-    },
-  });
-
+const TrackInfo = ({ track }: { track?: TrackObject }) => {
   return (
-    artists.length > 0 && (
-      <IonList>
-        <IonItemDivider sticky>アーティスト</IonItemDivider>
-        <Virtuoso
-          useWindowScroll
-          customScrollParent={scrollElement}
-          totalCount={artists.length}
-          endReached={() => fetchMore()}
-          itemContent={(index) => (
-            <IonItem button detail={false}>
-              <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
-                <img src={`https://picsum.photos/id/${index + 100}/600`} />
-              </IonAvatar>
-              <IonLabel>{artists[index].name}</IonLabel>
-              <IonButtons slot="end">
-                <IonButton>
-                  <Icon size="s" color="red" slot="icon-only" name="favorite" />
-                </IonButton>
-              </IonButtons>
+    <>
+      <IonGrid class="ion-no-padding">
+        <IonRow>
+          <IonCol>
+            <SquareImage
+              src={convertImageUrl({
+                px: 300,
+                url: track?.artworkL?.url,
+              })}
+            />
+          </IonCol>
+        </IonRow>
+      </IonGrid>
+      {track ? (
+        <IonList>
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonLabel>{track.name}</IonLabel>
+          </IonItem>
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonNote slot="end">{track.isrc}</IonNote>
+          </IonItem>
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonNote slot="end">{convertTime(toMs([track]))}</IonNote>
+          </IonItem>
+          <TrackItem track={track} displayThumbnail />
+          {track.status !== "ACTIVE" && (
+            <IonItem color={track.status === "PENDING" ? "yellow" : "red"}>
+              {track.status}
             </IonItem>
           )}
-        />
-      </IonList>
-    )
+        </IonList>
+      ) : (
+        <SkeletonItems count={5} lines="none" />
+      )}
+    </>
   );
 };
 
@@ -171,7 +109,8 @@ const TrackAlbums = ({
   trackId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: albums, fetchMore } = useFetchItems<
+  const limit = 50;
+  const { items, fetchMore } = useFetchItems<
     AlbumObject,
     typeof AlbumsDocument
   >({
@@ -180,37 +119,65 @@ const TrackAlbums = ({
     variables: {
       conditions: { trackIds: [trackId] },
       cursor: { limit, offset: 0 },
-      sort: { direction: "DESC", order: "POPULARITY" },
+      sort: { order: "RELEASE", direction: "DESC" },
     },
   });
 
+  if (items.length === 0) return <></>;
+
   return (
-    albums.length > 0 && (
-      <IonList>
-        <IonItemDivider sticky>アルバム</IonItemDivider>
-        <Virtuoso
-          useWindowScroll
-          customScrollParent={scrollElement}
-          totalCount={albums.length}
-          endReached={() => fetchMore()}
-          itemContent={(index) => (
-            <IonItem button detail={false}>
-              <IonThumbnail
-                slot="start"
-                style={{ height: "110px", width: "110px" }}
-              >
-                <img src={albums[index].artworkM?.url} />
-              </IonThumbnail>
-              <IonLabel>{albums[index].name}</IonLabel>
-              <IonButtons slot="end">
-                <IonButton>
-                  <Icon size="s" color="red" slot="icon-only" name="favorite" />
-                </IonButton>
-              </IonButtons>
-            </IonItem>
-          )}
-        />
-      </IonList>
-    )
+    <IonList>
+      <IonItem>
+        <IonNote>アルバム</IonNote>
+      </IonItem>
+      <Virtuoso
+        key={items.length}
+        useWindowScroll
+        customScrollParent={scrollElement}
+        totalCount={items.length}
+        endReached={() => items.length >= limit && fetchMore()}
+        itemContent={(index) => <AlbumItem album={items[index]} />}
+      />
+    </IonList>
+  );
+};
+
+const TrackArtists = ({
+  trackId,
+  scrollElement,
+}: {
+  trackId: string;
+  scrollElement: HTMLElement | undefined;
+}) => {
+  const limit = 50;
+  const { items, fetchMore } = useFetchItems<
+    ArtistObject,
+    typeof ArtistsDocument
+  >({
+    limit,
+    doc: ArtistsDocument,
+    variables: {
+      conditions: { trackIds: [trackId] },
+      cursor: { limit, offset: 0 },
+      sort: { order: "POPULARITY", direction: "DESC" },
+    },
+  });
+
+  if (items.length === 0) return <></>;
+
+  return (
+    <IonList>
+      <IonItem>
+        <IonNote>アーティスト</IonNote>
+      </IonItem>
+      <Virtuoso
+        key={items.length}
+        useWindowScroll
+        customScrollParent={scrollElement}
+        totalCount={items.length}
+        endReached={() => items.length >= limit && fetchMore()}
+        itemContent={(index) => <ArtistItem artist={items[index]} />}
+      />
+    </IonList>
   );
 };

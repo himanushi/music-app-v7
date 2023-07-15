@@ -55,7 +55,6 @@ const offsetLimitPagination = {
       "artistIds",
       "albumIds",
       "trackIds",
-      [],
       "random",
     ],
     "sort",
