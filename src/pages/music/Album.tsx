@@ -12,7 +12,6 @@ import {
   IonLabel,
   IonNote,
   IonButtons,
-  IonAvatar,
   IonButton,
 } from "@ionic/react";
 import { RouteComponentProps } from "react-router-dom";
@@ -36,7 +35,7 @@ import {
 } from "~/graphql/types";
 import { useFetchItems, useMenu, useScrollElement } from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
-import { TrackItem } from ".";
+import { ArtistItem, TrackItem } from ".";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -192,21 +191,7 @@ const AlbumArtists = ({
         customScrollParent={scrollElement}
         totalCount={artists.length}
         endReached={() => fetchMore()}
-        itemContent={(index) => (
-          <IonItem button detail={false}>
-            <IonAvatar slot="start" style={{ height: "60px", width: "60px" }}>
-              <img src={`https://picsum.photos/id/${index + 100}/600`} />
-            </IonAvatar>
-            <IonLabel>{artists[index].name}</IonLabel>
-            <IonButtons slot="end">
-              <FavoriteButton
-                type="artistIds"
-                id={artists[index].id}
-                size="s"
-              />
-            </IonButtons>
-          </IonItem>
-        )}
+        itemContent={(index) => <ArtistItem artist={artists[index]} />}
       />
     </IonList>
   );
