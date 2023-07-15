@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import {
   IonButton,
   IonButtons,
@@ -14,9 +15,8 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCallback, useRef } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Icon } from "~/components";
+import { FavoriteButton, FooterPadding, Refresher } from "~/components";
 import {
   PlaylistObject,
   PlaylistsDocument,
@@ -28,6 +28,7 @@ import {
   useScrollElement,
   useVariablesItems,
 } from "~/hooks";
+import { convertImageUrl } from "~/lib";
 
 const limit = 50;
 
@@ -48,15 +49,13 @@ export const Playlists = () => {
     sort: { order: "UPDATE", direction: "DESC" },
   });
 
-  const {
-    items: playlists,
-    fetchMore,
-    resetOffset,
-  } = useFetchItems<PlaylistObject>({
-    limit,
-    doc: PlaylistsDocument,
-    variables,
-  });
+  const { items, fetchMore, resetOffset, refresh } =
+    useFetchItems<PlaylistObject>({
+      limit,
+      doc: PlaylistsDocument,
+      variables,
+      refreshName: "playlists",
+    });
 
   const { changeInput, changeFavorite, changeSort } = useVariablesItems({
     resetOffset,
@@ -67,21 +66,22 @@ export const Playlists = () => {
   return (
     <IonPage>
       <IonHeader translucent className="ion-no-border">
+        {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
           <IonTitle>プレイリスト</IonTitle>
           <IonButtons slot="start">
-            <IonButton id="album-filter-button" color="main">
+            <IonButton id="playlist-filter-button" color="main">
               フィルター
             </IonButton>
             <IonPopover
               arrow={false}
-              trigger="album-filter-button"
+              trigger="playlist-filter-button"
               side="bottom"
               alignment="start"
               dismissOnSelect={true}
             >
               <IonList>
-                <IonItem button detail={false}>
+                <IonItem button detail={false} color="dark">
                   <IonCheckbox
                     color="main"
                     checked={!!variables.conditions?.favorite}
@@ -94,12 +94,12 @@ export const Playlists = () => {
             </IonPopover>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton id="album-sort-button" color="main">
+            <IonButton id="playlist-sort-button" color="main">
               並び替え
             </IonButton>
             <IonPopover
               arrow={false}
-              trigger="album-sort-button"
+              trigger="playlist-sort-button"
               side="bottom"
               alignment="start"
               dismissOnSelect={true}
@@ -111,6 +111,7 @@ export const Playlists = () => {
                     detail={false}
                     key={index}
                     onClick={() => changeSort(sort[1])}
+                    color="dark"
                   >
                     {sort[0]}
                   </IonItem>
@@ -128,13 +129,14 @@ export const Playlists = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
+        <Refresher refresh={refresh} />
         <Virtuoso
-          key={playlists[0]?.id}
+          key={JSON.stringify(variables)}
           useWindowScroll
           customScrollParent={scrollElement}
-          totalCount={playlists.length}
-          endReached={() => playlists.length >= limit && fetchMore()}
-          itemContent={(index) => <PlaylistItem playlist={playlists[index]} />}
+          totalCount={items.length}
+          endReached={() => items.length >= limit && fetchMore()}
+          itemContent={(index) => <PlaylistItem playlist={items[index]} />}
         />
         <FooterPadding />
       </IonContent>
@@ -143,45 +145,16 @@ export const Playlists = () => {
 };
 
 export const PlaylistItem = ({ playlist }: { playlist: PlaylistObject }) => {
-  const popover = useRef<HTMLIonPopoverElement>(null);
-  const open = useCallback(
-    (event: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (popover.current) {
-        popover.current.event = event;
-        popover.current.present();
-      }
-    },
-    []
-  );
-  const close = useCallback(() => popover.current?.dismiss(), []);
-
   return (
     <IonItem button detail={false} routerLink={`/playlists/${playlist.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
-        <img src={playlist.track?.artworkM?.url} />
+        <img
+          src={convertImageUrl({ url: playlist.track?.artworkM?.url, px: 110 })}
+        />
       </IonThumbnail>
       <IonLabel class="ion-text-wrap">{playlist.name}</IonLabel>
       <IonButtons slot="end">
         <FavoriteButton type="playlistIds" id={playlist.id} size="s" />
-        <IonButton onClick={open}>
-          <Icon name="more_horiz" slot="icon-only" />
-        </IonButton>
-        <IonPopover ref={popover} style={{ "--width": "250px" }} side="left">
-          <IonContent>
-            <IonList onClick={close}>
-              <IonItem color="dark" button detail={false}>
-                <Icon name="playlist_add_check" slot="end" />
-                <IonLabel>プレイリストに追加</IonLabel>
-              </IonItem>
-              <IonItem color="dark" button detail={false}>
-                <Icon name="play_arrow" slot="end" />
-                <IonLabel>再生</IonLabel>
-              </IonItem>
-            </IonList>
-          </IonContent>
-        </IonPopover>
       </IonButtons>
     </IonItem>
   );
