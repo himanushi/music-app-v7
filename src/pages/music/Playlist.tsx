@@ -12,6 +12,7 @@ import {
   IonLabel,
   IonButtons,
   IonButton,
+  IonNote,
 } from "@ionic/react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
@@ -26,7 +27,7 @@ import {
 } from "~/components";
 import { PlaylistDocument, PlaylistObject, TrackObject } from "~/graphql/types";
 import { useMenu, useScrollElement } from "~/hooks";
-import { convertImageUrl } from "~/lib";
+import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
 import { TrackItem } from ".";
 
 export const Playlist: React.FC<
@@ -82,13 +83,32 @@ const PlaylistInfo = ({ playlist }: { playlist?: PlaylistObject }) => {
           <IonItem className="text-select" lines="none">
             <IonLabel className="ion-text-wrap">{playlist.name}</IonLabel>
           </IonItem>
-          <IonItem lines="none">
-            <MenuButtons playlist={playlist} />
-          </IonItem>
-          <IonItem className="text-select">
+          <IonItem className="text-select" lines="none">
             <IonLabel className="ion-text-wrap">
               {playlist.description}
             </IonLabel>
+          </IonItem>
+          <IonItem lines="none">
+            <MenuButtons playlist={playlist} />
+          </IonItem>
+          {playlist.author && (
+            <IonItem className="text-select" lines="none">
+              <IonNote slot="end">
+                {playlist.author.name}(@{playlist.author.username})
+              </IonNote>
+            </IonItem>
+          )}
+          <IonItem className="ion-text-wrap text-select" lines="none">
+            <IonNote slot="end">
+              {playlist.items.length}曲,{" "}
+              {convertTime(toMs(playlist.items.map((i) => i.track)))}
+            </IonNote>
+          </IonItem>
+          <IonItem className="text-select">
+            <IonNote slot="end">
+              作成 {convertDate(playlist.createdAt)}, 更新{" "}
+              {convertDate(playlist.updatedAt)}
+            </IonNote>
           </IonItem>
         </IonList>
       ) : (
