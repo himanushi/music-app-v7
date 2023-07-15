@@ -58,14 +58,15 @@ export const Tracks = () => {
     sort: { order: "NEW", direction: "DESC" },
   });
 
-  const { items, fetchMore, resetOffset, refresh } = useFetchItems<TrackObject>(
-    {
-      limit,
-      doc: TracksDocument,
-      variables,
-      refreshName: "tracks",
-    }
-  );
+  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
+    TrackObject,
+    typeof TracksDocument
+  >({
+    limit,
+    doc: TracksDocument,
+    variables,
+    refreshName: "tracks",
+  });
 
   const { changeInput, changeFavorite, changeSort } = useVariablesItems({
     resetOffset,

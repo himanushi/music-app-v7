@@ -49,13 +49,15 @@ export const Playlists = () => {
     sort: { order: "UPDATE", direction: "DESC" },
   });
 
-  const { items, fetchMore, resetOffset, refresh } =
-    useFetchItems<PlaylistObject>({
-      limit,
-      doc: PlaylistsDocument,
-      variables,
-      refreshName: "playlists",
-    });
+  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
+    PlaylistObject,
+    typeof PlaylistsDocument
+  >({
+    limit,
+    doc: PlaylistsDocument,
+    variables,
+    refreshName: "playlists",
+  });
 
   const { changeInput, changeFavorite, changeSort } = useVariablesItems({
     resetOffset,

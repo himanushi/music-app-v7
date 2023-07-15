@@ -56,7 +56,7 @@ const Playlists = ({ trackIds }: { trackIds: string[] }) => {
     items: playlists,
     fetchMore,
     refresh,
-  } = useFetchItems<PlaylistObject>({
+  } = useFetchItems<PlaylistObject, typeof PlaylistsDocument>({
     limit,
     doc: PlaylistsDocument,
     variables: {

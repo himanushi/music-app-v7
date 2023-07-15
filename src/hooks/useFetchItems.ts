@@ -8,24 +8,24 @@ import { RefresherEventDetail } from "@ionic/react";
 import { useCallback, useMemo, useState } from "react";
 import { client } from "~/graphql/client";
 
-interface UseFetchItemsOptions<V extends { [key: string]: any }> {
+type VariablesType<T extends TypedDocumentNode<any, any>> =
+  T extends TypedDocumentNode<any, infer V> ? V : never;
+
+interface UseFetchItemsOptions<D extends TypedDocumentNode<any, any>> {
   limit: number;
-  doc: TypedDocumentNode<any, V>;
-  variables: V;
+  doc: D;
+  variables: VariablesType<D>;
   fetchPolicy?: WatchQueryFetchPolicy;
   refreshName?: string;
 }
 
-export const useFetchItems = <
-  T,
-  V extends { [key: string]: any } = { [key: string]: any }
->({
+export const useFetchItems = <T, D extends TypedDocumentNode<any, any>>({
   limit,
   doc,
   variables,
   fetchPolicy = "cache-first",
   refreshName,
-}: UseFetchItemsOptions<V>) => {
+}: UseFetchItemsOptions<D>) => {
   const [offset, setOffset] = useState(limit);
 
   const { data, fetchMore: fetchMoreQuery } = useQuery(doc, {

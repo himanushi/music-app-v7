@@ -58,14 +58,15 @@ export const Albums = () => {
     sort: { order: "RELEASE", direction: "DESC" },
   });
 
-  const { items, fetchMore, resetOffset, refresh } = useFetchItems<AlbumObject>(
-    {
-      limit,
-      doc: AlbumsDocument,
-      variables,
-      refreshName: "albums",
-    }
-  );
+  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
+    AlbumObject,
+    typeof AlbumsDocument
+  >({
+    limit,
+    doc: AlbumsDocument,
+    variables,
+    refreshName: "albums",
+  });
 
   const { changeInput, changeFavorite, changeSort, changeStatus } =
     useVariablesItems({

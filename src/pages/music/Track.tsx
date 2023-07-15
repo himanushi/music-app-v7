@@ -123,7 +123,10 @@ const TrackArtists = ({
   trackId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: artists, fetchMore } = useFetchItems<ArtistObject>({
+  const { items: artists, fetchMore } = useFetchItems<
+    ArtistObject,
+    typeof ArtistsDocument
+  >({
     limit,
     doc: ArtistsDocument,
     variables: {
@@ -168,7 +171,10 @@ const TrackAlbums = ({
   trackId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const { items: albums, fetchMore } = useFetchItems<AlbumObject>({
+  const { items: albums, fetchMore } = useFetchItems<
+    AlbumObject,
+    typeof AlbumsDocument
+  >({
     limit,
     doc: AlbumsDocument,
     variables: {

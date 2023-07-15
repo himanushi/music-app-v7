@@ -174,7 +174,10 @@ const AlbumArtists = ({
   scrollElement: HTMLElement | undefined;
 }) => {
   const limit = 100;
-  const { items: artists } = useFetchItems<ArtistObject>({
+  const { items: artists } = useFetchItems<
+    ArtistObject,
+    typeof ArtistsDocument
+  >({
     limit,
     doc: ArtistsDocument,
     variables: {

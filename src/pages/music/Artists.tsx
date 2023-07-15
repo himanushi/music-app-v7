@@ -58,13 +58,15 @@ export const Artists = () => {
     sort: { order: "NAME", direction: "ASC" },
   });
 
-  const { items, fetchMore, resetOffset, refresh } =
-    useFetchItems<ArtistObject>({
-      limit,
-      doc: ArtistsDocument,
-      variables,
-      refreshName: "artists",
-    });
+  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
+    ArtistObject,
+    typeof ArtistsDocument
+  >({
+    limit,
+    doc: ArtistsDocument,
+    variables,
+    refreshName: "artists",
+  });
 
   const { changeInput, changeFavorite, changeSort, changeStatus } =
     useVariablesItems({
@@ -182,8 +184,8 @@ export const Artists = () => {
 export const ArtistItem = ({ artist }: { artist: ArtistObject }) => {
   return (
     <IonItem button detail={false} routerLink={`/artists/${artist.id}`}>
-      <IonAvatar slot="start" style={{ height: "80px", width: "80px" }}>
-        <img src={convertImageUrl({ url: artist.artworkM?.url, px: 80 })} />
+      <IonAvatar slot="start" style={{ height: "50px", width: "50px" }}>
+        <img src={convertImageUrl({ url: artist.artworkM?.url, px: 50 })} />
       </IonAvatar>
       <IonLabel class="ion-text-wrap">{artist.name}</IonLabel>
       <IonButtons slot="end">
