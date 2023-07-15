@@ -173,8 +173,8 @@ const AlbumArtists = ({
   albumId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
-  const limit = 50;
-  const { items: artists, fetchMore } = useFetchItems<ArtistObject>({
+  const limit = 100;
+  const { items: artists } = useFetchItems<ArtistObject>({
     limit,
     doc: ArtistsDocument,
     variables: {
@@ -184,13 +184,17 @@ const AlbumArtists = ({
     },
   });
 
+  if (artists.length === 0) return <></>;
+
   return (
     <IonList>
+      <IonItem>
+        <IonNote>アーティスト</IonNote>
+      </IonItem>
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
         totalCount={artists.length}
-        endReached={() => fetchMore()}
         itemContent={(index) => <ArtistItem artist={artists[index]} />}
       />
     </IonList>
