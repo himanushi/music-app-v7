@@ -10,6 +10,8 @@ import { asyncMap } from "@apollo/client/utilities";
 import { Capacitor } from "@capacitor/core";
 import { store } from "~/lib/store";
 import { graphqlUrl } from "~/lib/variable";
+import { persistCache } from "apollo3-cache-persist";
+import { CapacitorPreferencesWrapper } from "./CapacitorPreferencesWrapper";
 
 const uri = graphqlUrl ?? "http://localhost:3000/graphql";
 
@@ -66,20 +68,54 @@ const offsetLimitPagination = {
   },
 };
 
-const cache = new InMemoryCache({
-  typePolicies: {
-    Query: {
-      fields: {
-        albums: offsetLimitPagination,
-        artists: offsetLimitPagination,
-        playlists: offsetLimitPagination,
-        tracks: offsetLimitPagination,
+// const cache = new InMemoryCache({
+//   typePolicies: {
+//     Query: {
+//       fields: {
+//         albums: offsetLimitPagination,
+//         artists: offsetLimitPagination,
+//         playlists: offsetLimitPagination,
+//         tracks: offsetLimitPagination,
+//       },
+//     },
+//   },
+// });
+
+// await persistCache({
+//   cache,
+//   storage: new CapacitorPreferencesWrapper(),
+// });
+
+// export const client = new ApolloClient({
+//   cache,
+//   link,
+// });
+
+async function initializeApollo() {
+  const cache = new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          albums: offsetLimitPagination,
+          artists: offsetLimitPagination,
+          playlists: offsetLimitPagination,
+          tracks: offsetLimitPagination,
+        },
       },
     },
-  },
-});
+  });
 
-export const client = new ApolloClient({
-  cache,
-  link,
-});
+  await persistCache({
+    cache,
+    storage: new CapacitorPreferencesWrapper(),
+  });
+
+  const client = new ApolloClient({
+    cache,
+    link,
+  });
+
+  return client;
+}
+
+export const client = await initializeApollo();
