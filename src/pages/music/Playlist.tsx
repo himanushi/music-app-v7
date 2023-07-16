@@ -106,8 +106,8 @@ const PlaylistInfo = ({ playlist }: { playlist?: PlaylistObject }) => {
           </IonItem>
           <IonItem className="text-select">
             <IonNote slot="end">
-              作成 {convertDate(playlist.createdAt)}, 更新{" "}
-              {convertDate(playlist.updatedAt)}
+              {convertDate(playlist.createdAt)}作成,
+              {convertDate(playlist.updatedAt)}更新
             </IonNote>
           </IonItem>
         </IonList>
