@@ -78,18 +78,27 @@ const pathMap = [
     path: "/music",
     icon: "music_note",
     locations: ["", "music", "albums", "artists", "playlists", "tracks"],
+    color: "main",
   },
   {
     title: "ライブラリ",
     path: "/library",
     icon: "library_music",
-    locations: ["library"],
+    locations: [
+      "library",
+      "library-albums",
+      "library-artists",
+      "library-playlists",
+      "library-tracks",
+    ],
+    color: "red",
   },
   {
     title: "設定",
     path: "/settings",
     icon: "settings",
     locations: ["settings", "me", "login"],
+    color: "main",
   },
 ];
 
@@ -127,7 +136,7 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
         </IonToolbar>
         <IonToolbar color="dark-gray">
           <IonButtons>
-            {pathMap.map(({ title, path, icon, locations }) => {
+            {pathMap.map(({ title, path, icon, locations, color }) => {
               const isSelected = locations.includes(
                 location.pathname.split("/")[1]
               );
@@ -142,10 +151,10 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
                     <Icon
                       name={icon as any}
                       slot="start"
-                      color={isSelected ? "main" : "white"}
+                      color={isSelected ? color : "white"}
                     />
                   </IonButton>
-                  <IonLabel color={isSelected ? "main" : "white"}>
+                  <IonLabel color={isSelected ? color : "white"}>
                     {title}
                   </IonLabel>
                 </IonSegmentButton>
