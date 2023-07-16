@@ -4,7 +4,10 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client/core";
-import type { RequestHandler } from "@apollo/client/core";
+import type {
+  NormalizedCacheObject,
+  RequestHandler,
+} from "@apollo/client/core";
 import { setContext } from "@apollo/client/link/context";
 import { asyncMap } from "@apollo/client/utilities";
 import { Capacitor } from "@capacitor/core";
@@ -67,29 +70,6 @@ const offsetLimitPagination = {
     return [...existing, ...incoming];
   },
 };
-
-// const cache = new InMemoryCache({
-//   typePolicies: {
-//     Query: {
-//       fields: {
-//         albums: offsetLimitPagination,
-//         artists: offsetLimitPagination,
-//         playlists: offsetLimitPagination,
-//         tracks: offsetLimitPagination,
-//       },
-//     },
-//   },
-// });
-
-// await persistCache({
-//   cache,
-//   storage: new CapacitorPreferencesWrapper(),
-// });
-
-// export const client = new ApolloClient({
-//   cache,
-//   link,
-// });
 
 async function initializeApollo() {
   const cache = new InMemoryCache({
