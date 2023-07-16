@@ -4,10 +4,7 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client/core";
-import type {
-  NormalizedCacheObject,
-  RequestHandler,
-} from "@apollo/client/core";
+import type { RequestHandler } from "@apollo/client/core";
 import { setContext } from "@apollo/client/link/context";
 import { asyncMap } from "@apollo/client/utilities";
 import { Capacitor } from "@capacitor/core";
