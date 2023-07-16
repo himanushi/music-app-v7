@@ -8,3 +8,4 @@ export * from "./useInitialize";
 export * from "./useStartedServiceState";
 export * from "./useAddPlaylistItems";
 export * from "./useMenu";
+export * from "./useMusicKit";
