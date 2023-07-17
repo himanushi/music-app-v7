@@ -1,3 +1,4 @@
+import { gql, useQuery, useReactiveVar } from "@apollo/client";
 import { Capacitor } from "@capacitor/core";
 import {
   IonButton,
@@ -15,8 +16,12 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { CapacitorMusicKit } from "capacitor-plugin-musickit";
+import { useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding, Refresher } from "~/components";
+import { appleMusicClient } from "~/graphql/appleMusicClient";
+import { LibraryAlbumsDocument } from "~/graphql/client";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -25,7 +30,9 @@ import {
 } from "~/graphql/types";
 import {
   useFetchItems,
+  useFetchLibraryItems,
   useMe,
+  useMusicKit,
   useNestedState,
   useScrollElement,
   useVariablesItems,
@@ -50,129 +57,48 @@ const statusOptions: [string, StatusEnum][] = [
 
 export const LibraryAlbums = () => {
   const { contentRef, scrollElement } = useScrollElement();
-  const { isAllowed } = useMe();
-
-  const [variables, setNestedState] = useNestedState<AlbumsQueryVariables>({
-    conditions: {},
-    cursor: { limit, offset: 0 },
-    sort: { order: "RELEASE", direction: "DESC" },
+  const { isAuthorized } = useMusicKit();
+  const { items, fetchMore } = useFetchLibraryItems({
+    doc: LibraryAlbumsDocument,
+    limit: 50,
+    variables: { limit: 50, offset: 0 },
+    skip: !isAuthorized,
   });
-
-  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
-    AlbumObject,
-    typeof AlbumsDocument
-  >({
-    limit,
-    doc: AlbumsDocument,
-    variables,
-    refreshName: "albums",
-  });
-
-  const { changeInput, changeFavorite, changeSort, changeStatus } =
-    useVariablesItems({
-      resetOffset,
-      scrollElement,
-      setNestedState,
-    });
+  console.log("items", items);
 
   return (
     <IonPage>
       <IonHeader translucent className="ion-no-border">
         {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
-          <IonTitle>アルバム</IonTitle>
+          <IonTitle>ライブラリアルバム</IonTitle>
           <IonButtons slot="start">
-            <IonButton id="album-filter-button" color="main">
+            <IonButton id="library-album-filter-button" color="red">
               フィルター
             </IonButton>
-            <IonPopover
-              arrow={false}
-              trigger="album-filter-button"
-              side="bottom"
-              alignment="start"
-              dismissOnSelect={true}
-            >
-              <IonList>
-                <IonItem button detail={false} color="dark">
-                  <IonCheckbox
-                    color="main"
-                    checked={!!variables.conditions?.favorite}
-                    onIonChange={changeFavorite}
-                  >
-                    お気に入り
-                  </IonCheckbox>
-                </IonItem>
-                {isAllowed("changeAlbumStatus") && (
-                  <>
-                    {statusOptions.map((status, index) => (
-                      <IonItem
-                        button
-                        detail={false}
-                        key={index}
-                        onClick={() => changeStatus(status[1])}
-                        color="dark"
-                      >
-                        <IonCheckbox
-                          color="main"
-                          checked={
-                            variables.conditions?.status?.includes(status[1]) ||
-                            (status[1] === "ACTIVE" &&
-                              variables.conditions?.status === undefined)
-                          }
-                          onIonChange={changeFavorite}
-                        >
-                          {status[0]}
-                        </IonCheckbox>
-                      </IonItem>
-                    ))}
-                  </>
-                )}
-              </IonList>
-            </IonPopover>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton id="album-sort-button" color="main">
+            <IonButton id="album-sort-button" color="red">
               並び替え
             </IonButton>
-            <IonPopover
-              arrow={false}
-              trigger="album-sort-button"
-              side="bottom"
-              alignment="start"
-              dismissOnSelect={true}
-            >
-              <IonList>
-                {sortOptions.map((sort, index) => (
-                  <IonItem
-                    button
-                    detail={false}
-                    key={index}
-                    onClick={() => changeSort(sort[1])}
-                    color="dark"
-                  >
-                    {sort[0]}
-                  </IonItem>
-                ))}
-              </IonList>
-            </IonPopover>
           </IonButtons>
         </IonToolbar>
         <IonToolbar>
-          <IonSearchbar
+          {/* <IonSearchbar
             placeholder="アルバムで検索"
             debounce={2000}
             onIonInput={(ev) => changeInput(ev)}
-          ></IonSearchbar>
+          ></IonSearchbar> */}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
-        <Refresher refresh={refresh} />
         <Virtuoso
-          key={JSON.stringify(variables)}
           useWindowScroll
           customScrollParent={scrollElement}
           totalCount={items.length}
-          endReached={() => items.length >= limit && fetchMore()}
+          endReached={() =>
+            items.length >= limit && fetchMore({ offset: 50, limit: 50 })
+          }
           itemContent={(index) => <LibraryAlbumItem album={items[index]} />}
         />
         <FooterPadding />
@@ -181,13 +107,19 @@ export const LibraryAlbums = () => {
   );
 };
 
-export const LibraryAlbumItem = ({ album }: { album: AlbumObject }) => {
+export const LibraryAlbumItem = ({
+  album,
+}: {
+  album: MusicKit.LibraryAlbums;
+}) => {
   return (
     <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
-        <img src={convertImageUrl({ url: album.artworkM?.url, px: 110 })} />
+        <img
+          src={convertImageUrl({ url: album.attributes.artwork?.url, px: 110 })}
+        />
       </IonThumbnail>
-      <IonLabel class="ion-text-wrap">{album.name}</IonLabel>
+      <IonLabel class="ion-text-wrap">{album.attributes.name}</IonLabel>
       <IonButtons slot="end">
         <FavoriteButton type="albumIds" id={album.id} size="s" />
       </IonButtons>

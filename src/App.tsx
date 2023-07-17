@@ -18,6 +18,8 @@ import {
   Privacy,
   CookiePolicy,
   Playlist,
+  Library,
+  LibraryAlbums,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
@@ -55,12 +57,12 @@ const Initialize = () => {
 function App() {
   return (
     <ApolloProvider client={client}>
+      {/* <ApolloProvider client={appleMusicClient}> */}
       <IonApp>
         <IonReactRouter>
           <IonPage id="page">
             <Initialize />
             <IonRouterOutlet>
-              <Route path="/music" component={Music} />
               <Route path="/artists/:artistId" component={Artist} />
               <Route path="/artists" exact component={Artists} />
               <Route path="/albums/:albumId" component={Album} />
@@ -69,14 +71,18 @@ function App() {
               <Route path="/tracks" exact component={Tracks} />
               <Route path="/playlists" exact component={Playlists} />
               <Route path="/playlists/:playlistId" component={Playlist} />
+              <Route path="/music" component={Music} />
 
-              <Route path="/settings" component={Settings} />
+              <Route path="/library-albums" exact component={LibraryAlbums} />
+              <Route path="/library" component={Library} />
+
               <Route path="/me" component={Me} />
               <Route path="/login" component={Login} />
               <Route path="/about" component={About} />
               <Route path="/teams" component={Teams} />
               <Route path="/privacy" component={Privacy} />
               <Route path="/cookie-policy" component={CookiePolicy} />
+              <Route path="/settings" component={Settings} />
 
               <Route exact path="/" component={Albums} />
             </IonRouterOutlet>
@@ -84,6 +90,7 @@ function App() {
           <FooterModal />
         </IonReactRouter>
       </IonApp>
+      {/* </ApolloProvider> */}
     </ApolloProvider>
   );
 }

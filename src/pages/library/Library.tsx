@@ -9,8 +9,11 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Icon } from "~/components";
+import { useMusicKit } from "~/hooks";
 
 export const Library = () => {
+  const { isAuthorized } = useMusicKit();
+
   return (
     <IonPage>
       <IonHeader>
@@ -25,19 +28,27 @@ export const Library = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <IonItem button routerLink="/library-artists">
+          <IonItem
+            disabled={!isAuthorized}
+            button
+            routerLink="/library-artists"
+          >
             <Icon name="group" slot="start" color="red" />
             <IonLabel>ライブラリアーティスト</IonLabel>
           </IonItem>
-          <IonItem button routerLink="/library-albums">
+          <IonItem disabled={!isAuthorized} button routerLink="/library-albums">
             <Icon name="album" slot="start" color="red" />
             <IonLabel>ライブラリアルバム</IonLabel>
           </IonItem>
-          <IonItem button routerLink="/library-tracks">
+          <IonItem disabled={!isAuthorized} button routerLink="/library-tracks">
             <Icon name="music_note" slot="start" color="red" />
             <IonLabel>ライブラリ曲</IonLabel>
           </IonItem>
-          <IonItem button routerLink="/library-playlists">
+          <IonItem
+            disabled={!isAuthorized}
+            button
+            routerLink="/library-playlists"
+          >
             <Icon name="playlist_play" slot="start" color="red" />
             <IonLabel>ライブラリプレイリスト</IonLabel>
           </IonItem>
