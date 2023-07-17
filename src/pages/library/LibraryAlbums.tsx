@@ -30,7 +30,6 @@ export const LibraryAlbums = () => {
     limit,
     variables: { limit, offset: 0 },
     skip: !isAuthorized,
-    fetchPolicy: "cache-and-network",
   });
 
   return (

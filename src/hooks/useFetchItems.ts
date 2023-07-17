@@ -5,7 +5,7 @@ import {
   useQuery,
 } from "@apollo/client";
 import { RefresherEventDetail } from "@ionic/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { client } from "~/graphql/client";
 
 type VariablesType<T extends TypedDocumentNode<any, any>> =
@@ -26,21 +26,16 @@ export const useFetchItems = <T, D extends TypedDocumentNode<any, any>>({
   fetchPolicy = "cache-first",
   refreshName,
 }: UseFetchItemsOptions<D>) => {
-  const [offset, setOffset] = useState(limit);
-
   const { data, fetchMore: fetchMoreQuery } = useQuery(doc, {
     variables,
     fetchPolicy,
   });
 
-  const fetchMore = useCallback(() => {
-    setOffset((prevOffset) => prevOffset + limit);
-    fetchMoreQuery({ variables: { cursor: { limit, offset } } });
-  }, [fetchMoreQuery, limit, offset]);
-
   const items = useMemo(() => data?.items ?? [], [data?.items]);
 
-  const resetOffset = useCallback(() => setOffset(limit), [limit]);
+  const fetchMore = useCallback(() => {
+    fetchMoreQuery({ variables: { cursor: { limit, offset: items.length } } });
+  }, [fetchMoreQuery, limit, items.length]);
 
   const refresh = useCallback(
     (event?: CustomEvent<RefresherEventDetail>) => {
@@ -53,5 +48,5 @@ export const useFetchItems = <T, D extends TypedDocumentNode<any, any>>({
     [refreshName]
   );
 
-  return { items: items as T[], fetchMore, resetOffset, refresh };
+  return { items: items as T[], fetchMore, refresh };
 };

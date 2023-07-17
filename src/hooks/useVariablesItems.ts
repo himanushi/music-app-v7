@@ -2,11 +2,9 @@ import { CheckboxChangeEventDetail } from "@ionic/react";
 import { useCallback } from "react";
 
 export const useVariablesItems = ({
-  resetOffset,
   scrollElement,
   setNestedState,
 }: {
-  resetOffset: () => void;
   scrollElement: HTMLElement | undefined;
   setNestedState: (
     key: "conditions" | "sort" | "cursor",
@@ -15,9 +13,8 @@ export const useVariablesItems = ({
   ) => void;
 }) => {
   const reset = useCallback(() => {
-    resetOffset();
     scrollElement?.scrollTo({ top: 0 });
-  }, [resetOffset, scrollElement]);
+  }, [scrollElement]);
 
   const changeInput = useCallback(
     (event: Event) => {

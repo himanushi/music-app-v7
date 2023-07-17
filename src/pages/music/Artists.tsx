@@ -58,7 +58,7 @@ export const Artists = () => {
     sort: { order: "NAME", direction: "ASC" },
   });
 
-  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
+  const { items, fetchMore, refresh } = useFetchItems<
     ArtistObject,
     typeof ArtistsDocument
   >({
@@ -70,7 +70,6 @@ export const Artists = () => {
 
   const { changeInput, changeFavorite, changeSort, changeStatus } =
     useVariablesItems({
-      resetOffset,
       scrollElement,
       setNestedState,
     });

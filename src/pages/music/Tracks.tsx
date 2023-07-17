@@ -58,7 +58,7 @@ export const Tracks = () => {
     sort: { order: "NEW", direction: "DESC" },
   });
 
-  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
+  const { items, fetchMore, refresh } = useFetchItems<
     TrackObject,
     typeof TracksDocument
   >({
@@ -69,7 +69,6 @@ export const Tracks = () => {
   });
 
   const { changeInput, changeFavorite, changeSort } = useVariablesItems({
-    resetOffset,
     scrollElement,
     setNestedState,
   });

@@ -58,7 +58,7 @@ export const Albums = () => {
     sort: { order: "RELEASE", direction: "DESC" },
   });
 
-  const { items, fetchMore, resetOffset, refresh } = useFetchItems<
+  const { items, fetchMore, refresh } = useFetchItems<
     AlbumObject,
     typeof AlbumsDocument
   >({
@@ -70,7 +70,6 @@ export const Albums = () => {
 
   const { changeInput, changeFavorite, changeSort, changeStatus } =
     useVariablesItems({
-      resetOffset,
       scrollElement,
       setNestedState,
     });
