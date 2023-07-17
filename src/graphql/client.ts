@@ -44,8 +44,6 @@ const capacitorLink = new ApolloLink((operation, forward) => {
     return new Observable((observer) => {
       CapacitorMusicKit.getLibraryAlbums(operation.variables)
         .then((data) => {
-          console.log("LibraryAlbums", operation, data);
-
           const items = data.data.map((item) => ({
             __typename: "LibraryAlbum",
             ...item,
@@ -102,11 +100,9 @@ async function initializeApollo() {
           LibraryAlbums: {
             keyArgs: ["limit", "offset"],
             merge(existing: any[] = [], incoming: any[] = []) {
-              console.log("merge", existing, incoming);
               return [...existing, ...incoming];
             },
             read(existing: any[]) {
-              console.log("read", existing);
               return existing;
             },
           },

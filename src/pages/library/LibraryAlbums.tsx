@@ -17,7 +17,7 @@ import { LibraryAlbumsDocument } from "~/graphql/client";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
 
-const limit = 10;
+const limit = 100;
 
 export const LibraryAlbums = () => {
   const { contentRef, scrollElement } = useScrollElement();
@@ -32,7 +32,6 @@ export const LibraryAlbums = () => {
     skip: !isAuthorized,
     fetchPolicy: "cache-and-network",
   });
-  console.log("items", items);
 
   return (
     <IonPage>

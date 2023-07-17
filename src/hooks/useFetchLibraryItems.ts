@@ -37,8 +37,6 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
     skip,
   });
 
-  console.log("useFetchLibraryItems", data);
-
   const fetchMore = useCallback(() => {
     setOffset((prevOffset) => prevOffset + limit);
     fetchMoreQuery({
