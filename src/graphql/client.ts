@@ -54,7 +54,6 @@ const capacitorLink = new ApolloLink((operation, forward) => {
               items: data.data.map((item) => ({
                 __typename: "LibraryAlbum",
                 ...item,
-                ...item.attributes,
               })),
             },
             variables: operation.variables,
@@ -109,13 +108,25 @@ async function initializeApollo() {
           tracks: offsetLimitPagination,
           LibraryAlbums: {
             keyArgs: ["limit", "offset"],
-            merge(existing = { items: [] }, incoming = { items: [] }) {
+            merge(existing: any[] = [], incoming: any[] = []) {
               console.log("merge", existing, incoming);
-              return [...existing.items, ...incoming.items];
+              return [...existing, ...incoming];
+              // Create a Map object from the existing items.
+              const itemMap = new Map(existing.map((item) => [item.id, item]));
+
+              // Add the incoming items to the map.
+              for (const item of incoming) {
+                itemMap.set(item.id, item);
+              }
+
+              // Create an array from the map values.
+              const uniqueItems = Array.from(itemMap.values());
+
+              return uniqueItems;
             },
-            read(existing) {
+            read(existing: any[]) {
               console.log("read", existing);
-              return existing?.items;
+              return existing;
             },
           },
         },
@@ -142,7 +153,9 @@ export const LibraryAlbumsDocument = gql`
   query LibraryAlbums($limit: Int, $offset: Int) {
     items: LibraryAlbums(limit: $limit, offset: $offset) {
       id
-      name
+      attributes {
+        name
+      }
     }
   }
 `;
