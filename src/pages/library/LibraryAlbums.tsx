@@ -49,13 +49,13 @@ export const LibraryAlbums = () => {
             </IonButton>
           </IonButtons>
         </IonToolbar>
-        <IonToolbar>
-          {/* <IonSearchbar
+        {/* <IonToolbar>
+          <IonSearchbar
             placeholder="アルバムで検索"
             debounce={2000}
             onIonInput={(ev) => changeInput(ev)}
-          ></IonSearchbar> */}
-        </IonToolbar>
+          ></IonSearchbar>
+        </IonToolbar> */}
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Virtuoso
@@ -80,7 +80,7 @@ export const LibraryAlbumItem = ({
     <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <img
-          src={convertImageUrl({ url: album.attributes.artwork?.url, px: 110 })}
+          src={convertImageUrl({ url: album.attributes.artwork?.url, px: 200 })}
         />
       </IonThumbnail>
       <IonLabel class="ion-text-wrap">{album.attributes.name}</IonLabel>
