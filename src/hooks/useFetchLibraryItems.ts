@@ -45,10 +45,7 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
       variables: { limit, offset },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
-        return {
-          ...fetchMoreResult,
-          items: [...prev.items, ...fetchMoreResult.items],
-        };
+        return { ...fetchMoreResult };
       },
     });
   }, [fetchMoreQuery, limit, offset]);
