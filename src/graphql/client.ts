@@ -12,6 +12,8 @@ import { Capacitor } from "@capacitor/core";
 import { store } from "~/lib/store";
 import { graphqlUrl } from "~/lib/variable";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
+import { persistCache } from "apollo3-cache-persist";
+import { CapacitorPreferencesWrapper } from "./CapacitorPreferencesWrapper";
 
 const uri = graphqlUrl ?? "http://localhost:3000/graphql";
 
@@ -111,10 +113,10 @@ async function initializeApollo() {
     },
   });
 
-  // await persistCache({
-  //   cache,
-  //   storage: new CapacitorPreferencesWrapper(),
-  // });
+  await persistCache({
+    cache,
+    storage: new CapacitorPreferencesWrapper(),
+  });
 
   const client = new ApolloClient({
     cache,
@@ -131,7 +133,9 @@ export const LibraryAlbumsDocument = gql`
     items: LibraryAlbums(limit: $limit, offset: $offset) {
       id
       attributes {
+        dateAdded
         name
+        trackCount
       }
     }
   }
