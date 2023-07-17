@@ -46,10 +46,21 @@ const capacitorLink = new ApolloLink((operation, forward) => {
     return new Observable((observer) => {
       CapacitorMusicKit.getLibraryAlbums(operation.variables)
         .then((data) => {
-          const items = data.data.map((item) => ({
-            __typename: "LibraryAlbum",
-            ...item,
-          }));
+          const items = data.data.map((item) => {
+            const newAttributes: any = { ...item.attributes };
+
+            for (const field in libraryAlbumsFields) {
+              if (!newAttributes[field]) {
+                newAttributes[field] = libraryAlbumsFields[field];
+              }
+            }
+
+            return {
+              __typename: "LibraryAlbum",
+              ...item,
+              attributes: newAttributes,
+            };
+          });
 
           observer.next({ data: { items } });
           observer.complete();
@@ -57,7 +68,6 @@ const capacitorLink = new ApolloLink((operation, forward) => {
         .catch(observer.error.bind(observer));
     });
   }
-  // 他の操作は標準のforward chainに送ります
   return forward(operation);
 });
 
@@ -133,10 +143,22 @@ export const LibraryAlbumsDocument = gql`
     items: LibraryAlbums(limit: $limit, offset: $offset) {
       id
       attributes {
+        artwork {
+          url
+        }
         dateAdded
         name
+        releaseDate
         trackCount
       }
     }
   }
 `;
+
+const libraryAlbumsFields = {
+  artwork: { url: "" },
+  dateAdded: "",
+  name: "",
+  releaseDate: "",
+  trackCount: 0,
+} as any;
