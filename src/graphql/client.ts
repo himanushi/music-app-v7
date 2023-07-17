@@ -11,8 +11,6 @@ import { Observable, asyncMap } from "@apollo/client/utilities";
 import { Capacitor } from "@capacitor/core";
 import { store } from "~/lib/store";
 import { graphqlUrl } from "~/lib/variable";
-import { persistCache } from "apollo3-cache-persist";
-import { CapacitorPreferencesWrapper } from "./CapacitorPreferencesWrapper";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 
 const uri = graphqlUrl ?? "http://localhost:3000/graphql";
@@ -48,23 +46,18 @@ const capacitorLink = new ApolloLink((operation, forward) => {
         .then((data) => {
           console.log("LibraryAlbums", operation, data);
 
-          client.writeQuery({
-            query: LibraryAlbumsDocument,
-            data: {
-              items: data.data.map((item) => ({
-                __typename: "LibraryAlbum",
-                ...item,
-              })),
-            },
-            variables: operation.variables,
-          });
+          const items = data.data.map((item) => ({
+            __typename: "LibraryAlbum",
+            ...item,
+          }));
 
-          observer.next({ data: { items: data.data } });
+          observer.next({ data: { items } });
           observer.complete();
         })
         .catch(observer.error.bind(observer));
     });
   }
+  // 他の操作は標準のforward chainに送ります
   return forward(operation);
 });
 
@@ -111,18 +104,6 @@ async function initializeApollo() {
             merge(existing: any[] = [], incoming: any[] = []) {
               console.log("merge", existing, incoming);
               return [...existing, ...incoming];
-              // Create a Map object from the existing items.
-              const itemMap = new Map(existing.map((item) => [item.id, item]));
-
-              // Add the incoming items to the map.
-              for (const item of incoming) {
-                itemMap.set(item.id, item);
-              }
-
-              // Create an array from the map values.
-              const uniqueItems = Array.from(itemMap.values());
-
-              return uniqueItems;
             },
             read(existing: any[]) {
               console.log("read", existing);

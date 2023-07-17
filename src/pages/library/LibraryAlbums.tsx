@@ -1,68 +1,36 @@
-import { gql, useQuery, useReactiveVar } from "@apollo/client";
 import { Capacitor } from "@capacitor/core";
 import {
   IonButton,
   IonButtons,
-  IonCheckbox,
   IonContent,
   IonHeader,
   IonItem,
   IonLabel,
-  IonList,
   IonPage,
-  IonPopover,
-  IonSearchbar,
   IonThumbnail,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Refresher } from "~/components";
-import { appleMusicClient } from "~/graphql/appleMusicClient";
+import { FavoriteButton, FooterPadding } from "~/components";
 import { LibraryAlbumsDocument } from "~/graphql/client";
-import {
-  AlbumObject,
-  AlbumsDocument,
-  AlbumsQueryVariables,
-  StatusEnum,
-} from "~/graphql/types";
-import {
-  useFetchItems,
-  useFetchLibraryItems,
-  useMe,
-  useMusicKit,
-  useNestedState,
-  useScrollElement,
-  useVariablesItems,
-} from "~/hooks";
+import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
 
-const limit = 50;
-
-const sortOptions = [
-  ["配信日新しい順", "RELEASE.DESC"],
-  ["配信日古い順", "RELEASE.ASC"],
-  ["追加日新しい順", "NEW.DESC"],
-  ["追加日古い順", "NEW.ASC"],
-  ["人気順", "POPULARITY.DESC"],
-];
-
-const statusOptions: [string, StatusEnum][] = [
-  ["有効のみ表示", "ACTIVE"],
-  ["保留のみ表示", "PENDING"],
-  ["除外のみ表示", "IGNORE"],
-];
+const limit = 10;
 
 export const LibraryAlbums = () => {
   const { contentRef, scrollElement } = useScrollElement();
   const { isAuthorized } = useMusicKit();
-  const { items, fetchMore } = useFetchLibraryItems({
+  const { items, fetchMore } = useFetchLibraryItems<
+    MusicKit.LibraryAlbums,
+    any
+  >({
     doc: LibraryAlbumsDocument,
-    limit: 50,
-    variables: { limit: 50, offset: 0 },
+    limit,
+    variables: { limit, offset: 0 },
     skip: !isAuthorized,
+    fetchPolicy: "cache-and-network",
   });
   console.log("items", items);
 
@@ -96,9 +64,7 @@ export const LibraryAlbums = () => {
           useWindowScroll
           customScrollParent={scrollElement}
           totalCount={items.length}
-          endReached={() =>
-            items.length >= limit && fetchMore({ offset: 50, limit: 50 })
-          }
+          endReached={() => items.length >= limit && fetchMore()}
           itemContent={(index) => <LibraryAlbumItem album={items[index]} />}
         />
         <FooterPadding />
