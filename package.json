@@ -13,6 +13,7 @@
     "@apollo/client": "^3.7.16",
     "@capacitor/android": "^5.1.1",
     "@capacitor/core": "^5.1.1",
+    "@capacitor/filesystem": "^5.1.0",
     "@capacitor/ios": "^5.1.1",
     "@capacitor/preferences": "^5.0.5",
     "@ionic/react": "^7.0.14",
