@@ -32,13 +32,13 @@ import { TrackItem } from ".";
 
 export const Playlist: React.FC<
   RouteComponentProps<{
-    playlistId: string;
+    id: string;
   }>
 > = ({ match }) => {
   const { contentRef, scrollElement } = useScrollElement();
 
   const { data } = useQuery(PlaylistDocument, {
-    variables: { id: match.params.playlistId },
+    variables: { id: match.params.id },
     fetchPolicy: "cache-first",
   });
 

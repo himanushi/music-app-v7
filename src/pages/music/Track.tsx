@@ -29,13 +29,13 @@ import { AlbumItem, ArtistItem, TrackItem } from ".";
 
 export const Track: React.FC<
   RouteComponentProps<{
-    trackId: string;
+    id: string;
   }>
 > = ({ match }) => {
   const { contentRef, scrollElement } = useScrollElement();
 
   const { data } = useQuery(TrackDocument, {
-    variables: { id: match.params.trackId },
+    variables: { id: match.params.id },
     fetchPolicy: "cache-first",
   });
 

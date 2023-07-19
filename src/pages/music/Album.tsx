@@ -39,13 +39,13 @@ import { ArtistItem, TrackItem } from ".";
 
 export const Album: React.FC<
   RouteComponentProps<{
-    albumId: string;
+    id: string;
   }>
 > = ({ match }) => {
   const { contentRef, scrollElement } = useScrollElement();
 
   const { data } = useQuery(AlbumDocument, {
-    variables: { id: match.params.albumId },
+    variables: { id: match.params.id },
     fetchPolicy: "cache-first",
   });
 

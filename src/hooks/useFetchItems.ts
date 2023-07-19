@@ -40,7 +40,10 @@ export const useFetchItems = <T, D extends TypedDocumentNode<any, any>>({
   const refresh = useCallback(
     (event?: CustomEvent<RefresherEventDetail>) => {
       if (refreshName) {
-        client.cache.evict({ fieldName: refreshName, id: "ROOT_QUERY" });
+        client.current?.cache.evict({
+          fieldName: refreshName,
+          id: "ROOT_QUERY",
+        });
         // TODO: complete は refetch したタイミングにすること
         setTimeout(() => event?.detail?.complete(), 500);
       }

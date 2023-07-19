@@ -17,7 +17,7 @@ import { LibraryAlbumsDocument } from "~/graphql/client";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
 
-const limit = 100;
+const limit = 50;
 
 export const LibraryAlbums = () => {
   const { contentRef, scrollElement } = useScrollElement();
@@ -49,13 +49,6 @@ export const LibraryAlbums = () => {
             </IonButton>
           </IonButtons>
         </IonToolbar>
-        {/* <IonToolbar>
-          <IonSearchbar
-            placeholder="アルバムで検索"
-            debounce={2000}
-            onIonInput={(ev) => changeInput(ev)}
-          ></IonSearchbar>
-        </IonToolbar> */}
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Virtuoso
@@ -77,7 +70,7 @@ export const LibraryAlbumItem = ({
   album: MusicKit.LibraryAlbums;
 }) => {
   return (
-    <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
+    <IonItem button detail={false} routerLink={`/library-albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <img
           src={convertImageUrl({ url: album.attributes.artwork?.url, px: 200 })}
