@@ -5,12 +5,14 @@ import {
   IonItemDivider,
   IonLabel,
   IonList,
+  IonNote,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { Me } from ".";
 import { AppleMusicAccount } from "./AppleMusicAccount";
+import { FooterPadding } from "~/components";
 
 export const Settings = () => {
   return (
@@ -42,7 +44,11 @@ export const Settings = () => {
           <IonItem button routerLink="/cookie-policy">
             <IonLabel>クッキーポリシー</IonLabel>
           </IonItem>
+          <IonItem button routerLink="/cache">
+            <IonNote>キャッシュ</IonNote>
+          </IonItem>
         </IonList>
+        <FooterPadding />
       </IonContent>
     </IonPage>
   );
