@@ -7,6 +7,17 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: "capacitor",
   },
+  plugins: {
+    CapacitorSQLite: {
+      iosDatabaseLocation: "Library/CapacitorDatabase",
+      iosIsEncryption: true,
+      iosKeychainPrefix: "video-game-music-net-sqlite",
+      iosBiometric: {
+        biometricAuth: false,
+        biometricTitle: "Biometric login for capacitor sqlite",
+      },
+    },
+  },
 };
 
 export default config;
