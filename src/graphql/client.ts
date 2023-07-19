@@ -5,7 +5,10 @@ import {
   InMemoryCache,
   gql,
 } from "@apollo/client/core";
-import type { RequestHandler } from "@apollo/client/core";
+import type {
+  NormalizedCacheObject,
+  RequestHandler,
+} from "@apollo/client/core";
 import { setContext } from "@apollo/client/link/context";
 import { Observable, asyncMap } from "@apollo/client/utilities";
 import { Capacitor } from "@capacitor/core";
@@ -14,6 +17,7 @@ import { graphqlUrl } from "~/lib/variable";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { persistCache } from "apollo3-cache-persist";
 import { CapacitorPreferencesWrapper } from "./CapacitorPreferencesWrapper";
+import { CapacitorFilesystemWrapper } from "./CapacitorFilesystemWrapper";
 
 const uri = graphqlUrl ?? "http://localhost:3000/graphql";
 
@@ -100,7 +104,7 @@ const offsetLimitPagination = {
   },
 };
 
-async function initializeApollo() {
+export async function initializeApollo() {
   const cache = new InMemoryCache({
     typePolicies: {
       Query: {
@@ -110,7 +114,7 @@ async function initializeApollo() {
           playlists: offsetLimitPagination,
           tracks: offsetLimitPagination,
           LibraryAlbums: {
-            keyArgs: ["limit", "offset"],
+            keyArgs: [],
             merge(existing: any[] = [], incoming: any[] = []) {
               return [...existing, ...incoming];
             },
@@ -124,8 +128,12 @@ async function initializeApollo() {
   });
 
   await persistCache({
+    maxSize: false,
     cache,
-    storage: new CapacitorPreferencesWrapper(),
+    storage:
+      Capacitor.getPlatform() === "web"
+        ? new CapacitorPreferencesWrapper()
+        : new CapacitorFilesystemWrapper(),
   });
 
   const client = new ApolloClient({
@@ -136,7 +144,11 @@ async function initializeApollo() {
   return client;
 }
 
-export const client = await initializeApollo();
+export const client: {
+  current: ApolloClient<NormalizedCacheObject> | undefined;
+} = {
+  current: undefined,
+};
 
 export const LibraryAlbumsDocument = gql`
   query LibraryAlbums($limit: Int, $offset: Int) {

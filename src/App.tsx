@@ -20,12 +20,15 @@ import {
   Playlist,
   Library,
   LibraryAlbums,
+  Cache,
+  LibraryAlbum,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { FooterModal } from "~/components";
 import { ApolloProvider } from "@apollo/client";
-import { client } from "./graphql/client";
+import { client, initializeApollo } from "./graphql/client";
 import { useInitialize } from "~/hooks";
+import { useEffect, useState } from "react";
 
 /* Ionic Framework css */
 /* Core css */
@@ -55,24 +58,35 @@ const Initialize = () => {
 };
 
 function App() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      client.current = await initializeApollo();
+      setReady(true);
+    })();
+  }, []);
+
+  if (!ready || !client.current) return;
+
   return (
-    <ApolloProvider client={client}>
-      {/* <ApolloProvider client={appleMusicClient}> */}
+    <ApolloProvider client={client.current}>
       <IonApp>
         <IonReactRouter>
           <IonPage id="page">
             <Initialize />
             <IonRouterOutlet>
-              <Route path="/artists/:artistId" component={Artist} />
+              <Route path="/artists/:id" component={Artist} />
               <Route path="/artists" exact component={Artists} />
-              <Route path="/albums/:albumId" component={Album} />
+              <Route path="/albums/:id" component={Album} />
               <Route path="/albums" exact component={Albums} />
-              <Route path="/tracks/:trackId" component={Track} />
+              <Route path="/tracks/:id" component={Track} />
               <Route path="/tracks" exact component={Tracks} />
               <Route path="/playlists" exact component={Playlists} />
-              <Route path="/playlists/:playlistId" component={Playlist} />
+              <Route path="/playlists/:id" component={Playlist} />
               <Route path="/music" component={Music} />
 
+              <Route path="/library-albums/:id" component={LibraryAlbum} />
               <Route path="/library-albums" exact component={LibraryAlbums} />
               <Route path="/library" component={Library} />
 
@@ -82,6 +96,7 @@ function App() {
               <Route path="/teams" component={Teams} />
               <Route path="/privacy" component={Privacy} />
               <Route path="/cookie-policy" component={CookiePolicy} />
+              <Route path="/cache" component={Cache} />
               <Route path="/settings" component={Settings} />
 
               <Route exact path="/" component={Albums} />
@@ -90,7 +105,6 @@ function App() {
           <FooterModal />
         </IonReactRouter>
       </IonApp>
-      {/* </ApolloProvider> */}
     </ApolloProvider>
   );
 }
