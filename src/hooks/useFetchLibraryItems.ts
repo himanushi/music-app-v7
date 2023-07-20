@@ -38,6 +38,7 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
   const items = useMemo(() => data?.items ?? [], [data?.items]);
 
   const fetchMore = useCallback(() => {
+    if (items.length % limit !== 0) return;
     fetchMoreQuery({
       variables: { limit, offset: items.length },
       updateQuery: (prev, { fetchMoreResult }) => {
