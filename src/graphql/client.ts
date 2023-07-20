@@ -3,21 +3,20 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
-  gql,
 } from "@apollo/client/core";
 import type {
   NormalizedCacheObject,
   RequestHandler,
 } from "@apollo/client/core";
 import { setContext } from "@apollo/client/link/context";
-import { Observable, asyncMap } from "@apollo/client/utilities";
+import { asyncMap } from "@apollo/client/utilities";
 import { Capacitor } from "@capacitor/core";
 import { store } from "~/lib/store";
 import { graphqlUrl } from "~/lib/variable";
-import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { persistCache } from "apollo3-cache-persist";
 import { CapacitorPreferencesWrapper } from "./CapacitorPreferencesWrapper";
 import { CapacitorFilesystemWrapper } from "./CapacitorFilesystemWrapper";
+import { capacitorLink, libraryPolicies } from "./appleMusicClient";
 
 const uri = graphqlUrl ?? "http://localhost:3000/graphql";
 
@@ -43,36 +42,6 @@ const setRequestTokenLink = setContext(async (_, { headers }) => {
       Authorization: token ? token : "",
     },
   };
-});
-
-const capacitorLink = new ApolloLink((operation, forward) => {
-  if (operation.operationName === "LibraryAlbums") {
-    return new Observable((observer) => {
-      CapacitorMusicKit.getLibraryAlbums(operation.variables)
-        .then((data) => {
-          const items = data.data.map((item) => {
-            const newAttributes: any = { ...item.attributes };
-
-            for (const field in libraryAlbumsFields) {
-              if (!newAttributes[field]) {
-                newAttributes[field] = libraryAlbumsFields[field];
-              }
-            }
-
-            return {
-              __typename: "LibraryAlbum",
-              ...item,
-              attributes: newAttributes,
-            };
-          });
-
-          observer.next({ data: { items } });
-          observer.complete();
-        })
-        .catch(observer.error.bind(observer));
-    });
-  }
-  return forward(operation);
 });
 
 const links: (ApolloLink | RequestHandler)[] =
@@ -113,15 +82,7 @@ export async function initializeApollo() {
           artists: offsetLimitPagination,
           playlists: offsetLimitPagination,
           tracks: offsetLimitPagination,
-          LibraryAlbums: {
-            keyArgs: [],
-            merge(existing: any[] = [], incoming: any[] = []) {
-              return [...existing, ...incoming];
-            },
-            read(existing: any[]) {
-              return existing;
-            },
-          },
+          ...libraryPolicies,
         },
       },
     },
@@ -149,28 +110,3 @@ export const client: {
 } = {
   current: undefined,
 };
-
-export const LibraryAlbumsDocument = gql`
-  query LibraryAlbums($limit: Int, $offset: Int) {
-    items: LibraryAlbums(limit: $limit, offset: $offset) {
-      id
-      attributes {
-        artwork {
-          url
-        }
-        dateAdded
-        name
-        releaseDate
-        trackCount
-      }
-    }
-  }
-`;
-
-const libraryAlbumsFields = {
-  artwork: { url: "" },
-  dateAdded: "",
-  name: "",
-  releaseDate: "",
-  trackCount: 0,
-} as any;
