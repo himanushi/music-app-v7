@@ -1,5 +1,3 @@
-import type { TrackObject } from "~/graphql/types";
-
 export const convertDate = (date: string) =>
   new Date(date).toLocaleDateString("jp", {
     day: "numeric",
@@ -31,11 +29,11 @@ export const convertTime = (ms: number) => {
   return time;
 };
 
-export const toMs = (tracks: readonly TrackObject[]) => {
-  if (tracks.length > 0) {
+export const toMs = (durationMs: number[]) => {
+  if (durationMs.length > 0) {
     const reducer = (accumulator: number, currentValue: number) =>
       accumulator + currentValue;
-    return tracks.map((track) => track.durationMs).reduce(reducer);
+    return durationMs.reduce(reducer);
   }
   return 0;
 };

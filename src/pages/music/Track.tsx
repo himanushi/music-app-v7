@@ -86,7 +86,9 @@ const TrackInfo = ({ track }: { track?: TrackObject }) => {
             <IonNote slot="end">{track.isrc}</IonNote>
           </IonItem>
           <IonItem className="ion-text-wrap text-select" lines="none">
-            <IonNote slot="end">{convertTime(toMs([track]))}</IonNote>
+            <IonNote slot="end">
+              {convertTime(toMs([track.durationMs]))}
+            </IonNote>
           </IonItem>
           <TrackItem track={track} displayThumbnail />
           {track.status !== "ACTIVE" && (

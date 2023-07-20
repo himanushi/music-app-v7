@@ -101,7 +101,7 @@ const PlaylistInfo = ({ playlist }: { playlist?: PlaylistObject }) => {
           <IonItem className="ion-text-wrap text-select" lines="none">
             <IonNote slot="end">
               {playlist.items.length}曲,{" "}
-              {convertTime(toMs(playlist.items.map((i) => i.track)))}
+              {convertTime(toMs(playlist.items.map((i) => i.track.durationMs)))}
             </IonNote>
           </IonItem>
           <IonItem className="text-select">

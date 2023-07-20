@@ -109,7 +109,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
           <IonItem className="ion-text-wrap text-select">
             <IonNote slot="end">
               {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
-              {convertTime(toMs(album.tracks))}
+              {convertTime(toMs(album.tracks.map((t) => t.durationMs)))}
             </IonNote>
           </IonItem>
           {album.status !== "ACTIVE" && (
