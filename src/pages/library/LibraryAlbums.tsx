@@ -13,7 +13,7 @@ import {
 } from "@ionic/react";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding } from "~/components";
-import { LibraryAlbumsDocument } from "~/graphql/client";
+import { LibraryAlbumsDocument } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
 
