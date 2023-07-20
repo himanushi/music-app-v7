@@ -7,10 +7,12 @@ import {
   IonItem,
   IonLabel,
   IonPage,
+  IonSearchbar,
   IonThumbnail,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, FooterPadding } from "~/components";
 import { LibraryAlbumsDocument } from "~/graphql/appleMusicClient";
@@ -22,6 +24,7 @@ const limit = 50;
 export const LibraryAlbums = () => {
   const { contentRef, scrollElement } = useScrollElement();
   const { isAuthorized } = useMusicKit();
+  const [albums, setAlbums] = useState<MusicKit.LibraryAlbums[]>([]);
   const { items, fetchMore } = useFetchLibraryItems<
     MusicKit.LibraryAlbums,
     any
@@ -31,6 +34,25 @@ export const LibraryAlbums = () => {
     variables: { limit, offset: 0 },
     skip: !isAuthorized,
   });
+
+  useEffect(() => {
+    if (items.length > 0) {
+      setAlbums(items);
+    }
+  }, [items]);
+
+  const changeInput = useCallback(
+    (event: Event) => {
+      scrollElement?.scrollTo({ top: 0 });
+      const target = event.target as HTMLIonSearchbarElement;
+      const query = target.value ? target.value.toLowerCase() : "";
+      const filteredAlbums = items.filter((album) =>
+        album.attributes.name.toLowerCase().includes(query)
+      );
+      setAlbums(filteredAlbums);
+    },
+    [items, scrollElement]
+  );
 
   return (
     <IonPage>
@@ -49,14 +71,20 @@ export const LibraryAlbums = () => {
             </IonButton>
           </IonButtons>
         </IonToolbar>
+        <IonToolbar>
+          <IonSearchbar
+            placeholder="アルバムで検索"
+            onIonInput={(ev) => changeInput(ev)}
+          ></IonSearchbar>
+        </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Virtuoso
           useWindowScroll
           customScrollParent={scrollElement}
-          totalCount={items.length}
-          endReached={() => items.length >= limit && fetchMore()}
-          itemContent={(index) => <LibraryAlbumItem album={items[index]} />}
+          totalCount={albums.length}
+          endReached={() => albums.length >= limit && fetchMore()}
+          itemContent={(index) => <LibraryAlbumItem album={albums[index]} />}
         />
         <FooterPadding />
       </IonContent>
