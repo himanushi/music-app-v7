@@ -12,7 +12,7 @@ import {
   IonNote,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
@@ -37,9 +37,15 @@ export const LibraryAlbum: React.FC<
     limit,
     variables: { limit, offset: 0, ids: [match.params.id] },
     skip: !isAuthorized,
-    fetchPolicy: "cache-and-network",
   });
   const album = items[0];
+
+  const albumTracks = useMemo(
+    () => (
+      <AlbumTracks albumId={match.params.id} scrollElement={scrollElement} />
+    ),
+    [match.params.id, scrollElement]
+  );
 
   return (
     <IonPage>
@@ -48,14 +54,7 @@ export const LibraryAlbum: React.FC<
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <LibraryAlbumInfo album={album} />
-        {album ? (
-          <>
-            <AlbumTracks albumId={album.id} scrollElement={scrollElement} />
-            {/* <AlbumArtists albumId={album.id} scrollElement={scrollElement} /> */}
-          </>
-        ) : (
-          <SkeletonItems count={10} />
-        )}
+        {match.params.id ? albumTracks : <SkeletonItems count={10} />}
         <FooterPadding />
       </IonContent>
     </IonPage>
@@ -107,7 +106,6 @@ const AlbumTracks = ({
     doc: LibraryTracksDocument,
     limit,
     variables: { limit, offset: 0, albumId },
-    fetchPolicy: "cache-and-network",
   });
 
   return (
@@ -147,7 +145,12 @@ export const LibraryTrackItem = ({
   }, [track.id, tracks]);
 
   return (
-    <IonItem button detail={false} onClick={onClick}>
+    <IonItem
+      button
+      detail={false}
+      disabled={!track.attributes.playParams?.id}
+      onClick={onClick}
+    >
       <IonNote slot="start">{track.attributes.trackNumber}</IonNote>
       <IonLabel class="ion-text-wrap">{track.attributes.name}</IonLabel>
     </IonItem>
