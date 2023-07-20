@@ -71,6 +71,9 @@ const libraryItemsPolicy = {
 
 export const libraryPolicies = {
   LibraryAlbums: libraryItemsPolicy,
+  LibraryArtists: libraryItemsPolicy,
+  LibraryTracks: libraryItemsPolicy,
+  LibraryPlaylists: libraryItemsPolicy,
 };
 
 export const LibraryAlbumsDocument = gql`
@@ -111,6 +114,9 @@ export const LibraryTracksDocument = gql`
         name
         releaseDate
         durationInMillis
+        playParams {
+          id
+        }
       }
     }
   }
@@ -125,6 +131,9 @@ const libraryTracksFields = {
   name: "",
   releaseDate: "",
   durationInMillis: 0,
+  playParams: {
+    id: "",
+  },
   // artistName: "",
   // albumName: "",
   // hasCredits: false,
