@@ -12,12 +12,13 @@ import {
   IonNote,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
 import {
   LibraryAlbumsDocument,
+  LibraryArtistsDocument,
   LibraryTracksDocument,
 } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
@@ -40,13 +41,6 @@ export const LibraryAlbum: React.FC<
   });
   const album = items[0];
 
-  const albumTracks = useMemo(
-    () => (
-      <AlbumTracks albumId={match.params.id} scrollElement={scrollElement} />
-    ),
-    [match.params.id, scrollElement]
-  );
-
   return (
     <IonPage>
       <IonHeader translucent class="ion-no-border" collapse="fade">
@@ -54,7 +48,22 @@ export const LibraryAlbum: React.FC<
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <LibraryAlbumInfo album={album} />
-        {match.params.id ? albumTracks : <SkeletonItems count={10} />}
+        {match.params.id ? (
+          <LibraryAlbumTracks
+            albumId={match.params.id}
+            scrollElement={scrollElement}
+          />
+        ) : (
+          <SkeletonItems count={10} />
+        )}
+        {match.params.id ? (
+          <LibraryAlbumArtists
+            albumId={match.params.id}
+            scrollElement={scrollElement}
+          />
+        ) : (
+          <SkeletonItems count={10} />
+        )}
         <FooterPadding />
       </IonContent>
     </IonPage>
@@ -91,7 +100,7 @@ const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
   );
 };
 
-const AlbumTracks = ({
+const LibraryAlbumTracks = ({
   albumId,
   scrollElement,
 }: {
@@ -153,6 +162,54 @@ export const LibraryTrackItem = ({
     >
       <IonNote slot="start">{track.attributes.trackNumber}</IonNote>
       <IonLabel class="ion-text-wrap">{track.attributes.name}</IonLabel>
+    </IonItem>
+  );
+};
+
+const LibraryAlbumArtists = ({
+  albumId,
+  scrollElement,
+}: {
+  albumId: string;
+  scrollElement: HTMLElement | undefined;
+}) => {
+  const limit = 10;
+  const { items, fetchMore } = useFetchLibraryItems<
+    MusicKit.LibraryArtists,
+    any
+  >({
+    doc: LibraryArtistsDocument,
+    limit,
+    variables: { limit, offset: 0, albumId },
+  });
+
+  if (items.length === 0) return <></>;
+
+  return (
+    <IonList>
+      <IonItem>
+        <IonNote>ライブラリアーティスト</IonNote>
+      </IonItem>
+      <Virtuoso
+        useWindowScroll
+        customScrollParent={scrollElement}
+        totalCount={items.length}
+        endReached={() => items.length >= limit && fetchMore()}
+        itemContent={(index) => <LibraryArtistItem artist={items[index]} />}
+      />
+    </IonList>
+  );
+};
+
+export const LibraryArtistItem = ({
+  artist,
+}: {
+  artist: MusicKit.LibraryArtists;
+  displayThumbnail?: boolean;
+}) => {
+  return (
+    <IonItem button detail={false}>
+      <IonLabel class="ion-text-wrap">{artist.attributes.name}</IonLabel>
     </IonItem>
   );
 };
