@@ -54,6 +54,13 @@ export const capacitorLink = new ApolloLink((operation, forward) => {
       libraryFields: libraryTracksFields,
       typeName: "LibraryTrack",
     });
+  } else if (operation.operationName === "LibraryArtists") {
+    return libraryItemsObservable({
+      musicKitFunction: CapacitorMusicKit.getLibraryArtists,
+      operation,
+      libraryFields: libraryArtistsFields,
+      typeName: "LibraryArtist",
+    });
   }
 
   return forward(operation);
@@ -134,9 +141,19 @@ const libraryTracksFields = {
   playParams: {
     id: "",
   },
-  // artistName: "",
-  // albumName: "",
-  // hasCredits: false,
-  // genreNames: [],
-  // hasLyrics: false,
+} as any;
+
+export const LibraryArtistsDocument = gql`
+  query LibraryArtists($limit: Int, $offset: Int, $albumId: String) {
+    items: LibraryArtists(limit: $limit, offset: $offset, albumId: $albumId) {
+      id
+      attributes {
+        name
+      }
+    }
+  }
+`;
+
+const libraryArtistsFields = {
+  name: "",
 } as any;
