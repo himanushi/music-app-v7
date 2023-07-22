@@ -16,7 +16,7 @@ import {
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding } from "~/components";
+import { FavoriteButton, FooterPadding, Refresher } from "~/components";
 import { LibraryAlbumsDocument } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
@@ -42,7 +42,7 @@ export const LibraryAlbums = () => {
   >("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const { items, fetchMore } = useFetchLibraryItems<
+  const { items, fetchMore, refresh } = useFetchLibraryItems<
     MusicKit.LibraryAlbums,
     any
   >({
@@ -50,6 +50,7 @@ export const LibraryAlbums = () => {
     limit,
     variables: { limit, offset: 0 },
     skip: !isAuthorized,
+    refreshId: "LibraryAlbums:{}",
   });
 
   useEffect(() => {
@@ -151,6 +152,7 @@ export const LibraryAlbums = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
+        <Refresher refresh={refresh} />
         <Virtuoso
           useWindowScroll
           customScrollParent={scrollElement}

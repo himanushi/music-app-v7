@@ -12,10 +12,15 @@ import {
   IonNote,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
+import {
+  FooterPadding,
+  Refresher,
+  SkeletonItems,
+  SquareImage,
+} from "~/components";
 import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
@@ -31,15 +36,36 @@ export const LibraryAlbum: React.FC<
 > = ({ match }) => {
   const { contentRef, scrollElement } = useScrollElement();
 
-  const limit = 1;
+  const albumLimit = 1;
   const { isAuthorized } = useMusicKit();
-  const { items } = useFetchLibraryItems<MusicKit.LibraryAlbums, any>({
+  const { items, refresh: refreshAlbum } = useFetchLibraryItems<
+    MusicKit.LibraryAlbums,
+    any
+  >({
     doc: LibraryAlbumsDocument,
-    limit,
-    variables: { limit, offset: 0, ids: [match.params.id] },
+    limit: albumLimit,
+    variables: { limit: albumLimit, offset: 0, ids: [match.params.id] },
     skip: !isAuthorized,
+    refreshId: `LibraryAlbums:{"ids":["${match.params.id}"]}`,
   });
-  const album = items[0];
+
+  const album = useMemo(() => items[0], [items]);
+
+  const limit = 100;
+  const {
+    items: tracks,
+    fetchMore,
+    refresh: refreshTracks,
+  } = useFetchLibraryItems<MusicKit.LibrarySongs, any>({
+    doc: LibraryTracksDocument,
+    limit,
+    variables: { limit, offset: 0, albumId: match.params.id },
+    refreshId: `LibraryTracks:{"albumId":"${match.params.id}"}`,
+  });
+
+  useEffect(() => {
+    fetchMore();
+  }, [fetchMore]);
 
   return (
     <IonPage>
@@ -47,12 +73,15 @@ export const LibraryAlbum: React.FC<
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
+        <Refresher
+          refresh={(event) => {
+            refreshAlbum(event);
+            refreshTracks();
+          }}
+        />
         <LibraryAlbumInfo album={album} />
-        {match.params.id ? (
-          <LibraryAlbumTracks
-            albumId={match.params.id}
-            scrollElement={scrollElement}
-          />
+        {tracks.length > 0 ? (
+          <LibraryAlbumTracks tracks={tracks} scrollElement={scrollElement} />
         ) : (
           <SkeletonItems count={10} />
         )}
@@ -101,26 +130,12 @@ const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
 };
 
 const LibraryAlbumTracks = ({
-  albumId,
+  tracks,
   scrollElement,
 }: {
-  albumId: string;
+  tracks: MusicKit.LibrarySongs[];
   scrollElement: HTMLElement | undefined;
 }) => {
-  const limit = 100;
-  const { items: tracks, fetchMore } = useFetchLibraryItems<
-    MusicKit.LibrarySongs,
-    any
-  >({
-    doc: LibraryTracksDocument,
-    limit,
-    variables: { limit, offset: 0, albumId },
-  });
-
-  useEffect(() => {
-    fetchMore();
-  }, [fetchMore]);
-
   return (
     <IonList>
       <IonItem className="ion-text-wrap text-select">
@@ -133,7 +148,6 @@ const LibraryAlbumTracks = ({
         useWindowScroll
         customScrollParent={scrollElement}
         totalCount={tracks.length}
-        endReached={() => tracks.length >= limit && fetchMore()}
         itemContent={(index) => (
           <LibraryTrackItem tracks={tracks} track={tracks[index]} />
         )}

@@ -17,7 +17,7 @@ interface UseFetchItemsOptions<D extends TypedDocumentNode<any, any>> {
   doc: D | DocumentNode;
   variables: VariablesType<D>;
   fetchPolicy?: WatchQueryFetchPolicy;
-  refreshName?: string;
+  refreshId?: string;
   skip?: boolean;
 }
 
@@ -26,7 +26,7 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
   doc,
   variables,
   fetchPolicy = "cache-first",
-  refreshName,
+  refreshId,
   skip = false,
 }: UseFetchItemsOptions<D>) => {
   const { data, fetchMore: fetchMoreQuery } = useQuery(doc, {
@@ -56,16 +56,16 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
 
   const refresh = useCallback(
     (event?: CustomEvent<RefresherEventDetail>) => {
-      if (refreshName) {
+      if (refreshId) {
         client.current?.cache.evict({
-          fieldName: refreshName,
+          fieldName: refreshId,
           id: "ROOT_QUERY",
         });
         // TODO: complete は refetch したタイミングにすること
         setTimeout(() => event?.detail?.complete(), 500);
       }
     },
-    [refreshName]
+    [refreshId]
   );
 
   return { items: items as T[], fetchMore, refresh };

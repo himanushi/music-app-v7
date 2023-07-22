@@ -15,7 +15,7 @@ export const Refresher = ({
       style={{ zIndex: 1 }} // https://github.com/ionic-team/ionic-framework/issues/18714#issuecomment-913305864
       onIonRefresh={refresh}
     >
-      <IonRefresherContent />
+      <IonRefresherContent pullingIcon="lines" />
     </IonRefresher>
   );
 };
