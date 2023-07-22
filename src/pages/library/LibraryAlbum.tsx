@@ -12,7 +12,7 @@ import {
   IonNote,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
@@ -116,6 +116,10 @@ const LibraryAlbumTracks = ({
     limit,
     variables: { limit, offset: 0, albumId },
   });
+
+  useEffect(() => {
+    fetchMore();
+  }, [fetchMore]);
 
   return (
     <IonList>

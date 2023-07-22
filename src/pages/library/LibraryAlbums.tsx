@@ -53,6 +53,10 @@ export const LibraryAlbums = () => {
   });
 
   useEffect(() => {
+    if (isAuthorized) fetchMore();
+  }, [fetchMore, isAuthorized]);
+
+  useEffect(() => {
     if (items.length > 0) {
       let filteredAlbums = [...items];
 
@@ -151,7 +155,6 @@ export const LibraryAlbums = () => {
           useWindowScroll
           customScrollParent={scrollElement}
           totalCount={albums.length}
-          endReached={() => albums.length >= limit && fetchMore()}
           itemContent={(index) => <LibraryAlbumItem album={albums[index]} />}
         />
         <FooterPadding />
