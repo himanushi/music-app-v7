@@ -43,7 +43,9 @@ export const Cache = () => {
             <IonButton onClick={clear} color="red">
               Clear
             </IonButton>
-            <pre>{JSON.stringify(cacheData, null, 2)}</pre>
+            <pre className="text-select">
+              {JSON.stringify(cacheData, null, 2)}
+            </pre>
           </IonCardContent>
         </IonCard>
         <FooterPadding />
