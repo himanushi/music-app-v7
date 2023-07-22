@@ -29,24 +29,21 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
   refreshName,
   skip = false,
 }: UseFetchItemsOptions<D>) => {
-  const {
-    data,
-    fetchMore: fetchMoreQuery,
-    networkStatus,
-  } = useQuery(doc, {
+  const { data, fetchMore: fetchMoreQuery } = useQuery(doc, {
     variables,
     fetchPolicy,
     skip,
     notifyOnNetworkStatusChange: true,
   });
 
-  const [previousItemsLength, setPreviousItemsLength] = useState<number>(0);
-
   const items = useMemo(() => data?.items ?? [], [data?.items]);
-
+  const [previousItemsLength, setPreviousItemsLength] = useState<number>(
+    items.length
+  );
   const fetchMore = useCallback(async () => {
     if (items.length % limit !== 0 || items.length === previousItemsLength)
       return;
+
     setPreviousItemsLength(items.length);
     await fetchMoreQuery({
       variables: { limit, offset: items.length },
@@ -71,5 +68,5 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
     [refreshName]
   );
 
-  return { items: items as T[], fetchMore, refresh, networkStatus };
+  return { items: items as T[], fetchMore, refresh };
 };
