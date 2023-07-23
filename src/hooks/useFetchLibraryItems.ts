@@ -37,12 +37,17 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
   });
 
   const items = useMemo(() => data?.items ?? [], [data?.items]);
+  const meta = useMemo(() => data?.meta ?? { total: 1 }, [data?.meta]) as {
+    total: number;
+  };
   const [previousItemsLength, setPreviousItemsLength] = useState<number>(
     items.length
   );
+
   const fetchMore = useCallback(async () => {
-    if (items.length % limit !== 0 || items.length === previousItemsLength)
+    if (items.length % limit !== 0 || items.length === previousItemsLength) {
       return;
+    }
 
     setPreviousItemsLength(items.length);
     await fetchMoreQuery({
@@ -68,5 +73,5 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
     [refreshId]
   );
 
-  return { items: items as T[], fetchMore, refresh };
+  return { items: items as T[], fetchMore, refresh, meta };
 };

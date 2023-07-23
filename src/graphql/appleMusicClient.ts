@@ -15,6 +15,8 @@ const libraryItemsObservable = ({
   typeName: string;
 }) =>
   new Observable<any>((observer) => {
+    const metaId = operation.variables.albumId ?? operation.variables.ids ?? "";
+
     musicKitFunction(operation.variables)
       .then((data) => {
         const items = data.data.map((item: any) => {
@@ -33,10 +35,31 @@ const libraryItemsObservable = ({
           };
         });
 
-        observer.next({ data: { items } });
+        observer.next({
+          data: {
+            items,
+            meta: {
+              __typename: `${typeName}Meta`,
+              id: metaId,
+              total: data.meta?.total ?? 0,
+            },
+          },
+        });
         observer.complete();
       })
-      .catch(observer.error.bind(observer));
+      .catch(() => {
+        observer.next({
+          data: {
+            items: [],
+            meta: {
+              __typename: `${typeName}Meta`,
+              id: metaId,
+              total: 0,
+            },
+          },
+        });
+        observer.complete();
+      });
   });
 
 export const capacitorLink = new ApolloLink((operation, forward) => {
@@ -61,13 +84,20 @@ export const capacitorLink = new ApolloLink((operation, forward) => {
       libraryFields: libraryArtistsFields,
       typeName: "LibraryArtist",
     });
+  } else if (operation.operationName === "Ratings") {
+    return libraryItemsObservable({
+      musicKitFunction: CapacitorMusicKit.getRatings,
+      operation,
+      libraryFields: ratingsFields,
+      typeName: "Rating",
+    });
   }
 
   return forward(operation);
 });
 
 const libraryItemsPolicy = {
-  keyArgs: ["ids", "albumId"],
+  keyArgs: ["ids", "type", "albumId"],
   merge(existing: any[] = [], incoming: any[] = []) {
     return [...existing, ...incoming];
   },
@@ -96,6 +126,9 @@ export const LibraryAlbumsDocument = gql`
         releaseDate
         trackCount
       }
+    }
+    meta: LibraryAlbumMeta(ids: $ids) {
+      total
     }
   }
 `;
@@ -126,6 +159,9 @@ export const LibraryTracksDocument = gql`
         }
       }
     }
+    meta: LibraryTrackMeta(albumId: $albumId) {
+      total
+    }
   }
 `;
 
@@ -151,9 +187,27 @@ export const LibraryArtistsDocument = gql`
         name
       }
     }
+    meta: LibraryArtistMeta(albumId: $albumId) {
+      total
+    }
   }
 `;
 
 const libraryArtistsFields = {
   name: "",
+} as any;
+
+export const RatingsDocument = gql`
+  query Ratings($ids: [String], $type: String!) {
+    items: Ratings(ids: $ids, type: $type) {
+      id
+      attributes {
+        value
+      }
+    }
+  }
+`;
+
+const ratingsFields = {
+  value: 1,
 } as any;
