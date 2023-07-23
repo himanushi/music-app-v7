@@ -10,14 +10,15 @@ import {
   IonItem,
   IonLabel,
   IonNote,
+  IonButtons,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useCallback, useEffect, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
+  FavoriteLibraryButton,
   FooterPadding,
-  Refresher,
   SkeletonItems,
   SquareImage,
 } from "~/components";
@@ -25,6 +26,7 @@ import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
   LibraryTracksDocument,
+  RatingsDocument,
 } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl, convertTime, toMs } from "~/lib";
@@ -38,10 +40,7 @@ export const LibraryAlbum: React.FC<
 
   const albumLimit = 1;
   const { isAuthorized } = useMusicKit();
-  const { items, refresh: refreshAlbum } = useFetchLibraryItems<
-    MusicKit.LibraryAlbums,
-    any
-  >({
+  const { items } = useFetchLibraryItems<MusicKit.LibraryAlbums, any>({
     doc: LibraryAlbumsDocument,
     limit: albumLimit,
     variables: { limit: albumLimit, offset: 0, ids: [match.params.id] },
@@ -51,37 +50,18 @@ export const LibraryAlbum: React.FC<
 
   const album = useMemo(() => items[0], [items]);
 
-  const limit = 100;
-  const {
-    items: tracks,
-    fetchMore,
-    refresh: refreshTracks,
-  } = useFetchLibraryItems<MusicKit.LibrarySongs, any>({
-    doc: LibraryTracksDocument,
-    limit,
-    variables: { limit, offset: 0, albumId: match.params.id },
-    refreshId: `LibraryTracks:{"albumId":"${match.params.id}"}`,
-  });
-
-  useEffect(() => {
-    fetchMore();
-  }, [fetchMore]);
-
   return (
     <IonPage>
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
-        <Refresher
-          refresh={(event) => {
-            refreshAlbum(event);
-            refreshTracks();
-          }}
-        />
         <LibraryAlbumInfo album={album} />
-        {tracks.length > 0 ? (
-          <LibraryAlbumTracks tracks={tracks} scrollElement={scrollElement} />
+        {match.params.id ? (
+          <LibraryAlbumTracks
+            albumId={match.params.id}
+            scrollElement={scrollElement}
+          />
         ) : (
           <SkeletonItems count={10} />
         )}
@@ -100,6 +80,14 @@ export const LibraryAlbum: React.FC<
 };
 
 const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
+  useFetchLibraryItems<MusicKit.LibrarySongs, any>({
+    doc: RatingsDocument,
+    limit: 1,
+    variables: { ids: [album?.id], type: "library-albums" },
+    fetchPolicy: "network-only",
+    skip: !album,
+  });
+
   return (
     <>
       <IonGrid class="ion-no-padding">
@@ -121,6 +109,11 @@ const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
               {album.attributes.name}
             </IonLabel>
           </IonItem>
+          <IonItem lines="none">
+            <IonButtons slot="end">
+              <FavoriteLibraryButton type="library-albums" id={album.id} />
+            </IonButtons>
+          </IonItem>
         </IonList>
       ) : (
         <SkeletonItems count={5} lines="none" />
@@ -130,12 +123,36 @@ const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
 };
 
 const LibraryAlbumTracks = ({
-  tracks,
+  albumId,
   scrollElement,
 }: {
-  tracks: MusicKit.LibrarySongs[];
+  albumId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
+  const limit = 100;
+  const {
+    items: tracks,
+    fetchMore,
+    meta,
+  } = useFetchLibraryItems<MusicKit.LibrarySongs, any>({
+    doc: LibraryTracksDocument,
+    limit,
+    variables: { limit, offset: 0, albumId },
+    refreshId: `LibraryTracks:{"albumId":"${albumId}"}`,
+  });
+
+  useEffect(() => {
+    if (meta.total > tracks.length) fetchMore();
+  }, [meta.total, tracks.length, fetchMore]);
+
+  useFetchLibraryItems<MusicKit.Ratings, any>({
+    doc: RatingsDocument,
+    limit,
+    variables: { ids: tracks.map((t) => t.id), type: "library-songs" },
+    fetchPolicy: "network-only",
+    skip: tracks.length !== meta.total,
+  });
+
   return (
     <IonList>
       <IonItem className="ion-text-wrap text-select">
