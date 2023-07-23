@@ -16,7 +16,7 @@ import {
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Refresher } from "~/components";
+import { FavoriteLibraryButton, FooterPadding, Refresher } from "~/components";
 import { LibraryAlbumsDocument } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
@@ -42,7 +42,7 @@ export const LibraryAlbums = () => {
   >("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const { items, fetchMore, refresh } = useFetchLibraryItems<
+  const { items, fetchMore, refresh, meta } = useFetchLibraryItems<
     MusicKit.LibraryAlbums,
     any
   >({
@@ -54,8 +54,9 @@ export const LibraryAlbums = () => {
   });
 
   useEffect(() => {
-    if (isAuthorized) fetchMore();
-  }, [fetchMore, isAuthorized]);
+    if (!isAuthorized) return;
+    if (meta.total > items.length) fetchMore();
+  }, [meta.total, items.length, fetchMore, isAuthorized]);
 
   useEffect(() => {
     if (items.length > 0) {
@@ -178,8 +179,14 @@ export const LibraryAlbumItem = ({
         />
       </IonThumbnail>
       <IonLabel class="ion-text-wrap">{album.attributes.name}</IonLabel>
-      <IonButtons slot="end">
-        <FavoriteButton type="albumIds" id={album.id} size="s" />
+      <IonButtons
+        slot="end"
+        onClick={(event) => {
+          event.stopPropagation();
+          event.preventDefault();
+        }}
+      >
+        <FavoriteLibraryButton id={album.id} type="library-albums" />
       </IonButtons>
     </IonItem>
   );
