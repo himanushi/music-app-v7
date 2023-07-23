@@ -97,9 +97,20 @@ export const capacitorLink = new ApolloLink((operation, forward) => {
 });
 
 const libraryItemsPolicy = {
-  keyArgs: ["ids", "type", "albumId"],
+  keyArgs: ["ids", "albumId"],
   merge(existing: any[] = [], incoming: any[] = []) {
     return [...existing, ...incoming];
+  },
+  read(existing: any[]) {
+    return existing;
+  },
+};
+
+const ratingsPolicy = {
+  keyArgs: ["ids", "type"],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  merge(_: any[] = [], incoming: any[] = []) {
+    return [...incoming];
   },
   read(existing: any[]) {
     return existing;
@@ -111,6 +122,7 @@ export const libraryPolicies = {
   LibraryArtists: libraryItemsPolicy,
   LibraryTracks: libraryItemsPolicy,
   LibraryPlaylists: libraryItemsPolicy,
+  Ratings: ratingsPolicy,
 };
 
 export const LibraryAlbumsDocument = gql`
@@ -197,13 +209,17 @@ const libraryArtistsFields = {
   name: "",
 } as any;
 
+export const ratingAttributes = `
+id
+attributes {
+  value
+}
+`;
+
 export const RatingsDocument = gql`
   query Ratings($ids: [String], $type: String!) {
     items: Ratings(ids: $ids, type: $type) {
-      id
-      attributes {
-        value
-      }
+      ${ratingAttributes}
     }
   }
 `;
