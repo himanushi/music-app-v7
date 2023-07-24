@@ -26,6 +26,7 @@ import {
   FooterPadding,
   Icon,
   Refresher,
+  SquareImage,
 } from "~/components";
 import {
   TrackObject,
@@ -172,7 +173,9 @@ export const TrackItem = ({
     <IonItem button detail={false} onClick={onClick}>
       {displayThumbnail ? (
         <IonThumbnail slot="start" style={{ height: "50px", width: "50px" }}>
-          <img src={convertImageUrl({ url: track.artworkM?.url, px: 50 })} />
+          <SquareImage
+            src={convertImageUrl({ url: track.artworkM?.url, px: 50 })}
+          />
         </IonThumbnail>
       ) : (
         <IonNote slot="start">{track.trackNumber}</IonNote>

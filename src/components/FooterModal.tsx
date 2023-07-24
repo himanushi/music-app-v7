@@ -115,7 +115,7 @@ const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
           class="clickable"
         >
           <IonThumbnail>
-            <img src={`https://picsum.photos/id/101/300`} />
+            <SquareImage src={`https://picsum.photos/id/101/300`} />
           </IonThumbnail>
           <IonTitle className="label-long-text">
             タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル

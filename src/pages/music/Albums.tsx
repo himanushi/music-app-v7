@@ -16,7 +16,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Refresher } from "~/components";
+import {
+  FavoriteButton,
+  FooterPadding,
+  Refresher,
+  SquareImage,
+} from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -184,7 +189,9 @@ export const AlbumItem = ({ album }: { album: AlbumObject }) => {
   return (
     <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
-        <img src={convertImageUrl({ url: album.artworkM?.url, px: 110 })} />
+        <SquareImage
+          src={convertImageUrl({ url: album.artworkM?.url, px: 110 })}
+        />
       </IonThumbnail>
       <IonLabel class="ion-text-wrap">{album.name}</IonLabel>
       <IonButtons slot="end">

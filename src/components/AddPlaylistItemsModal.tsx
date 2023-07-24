@@ -21,6 +21,7 @@ import {
   PlaylistsDocument,
 } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
+import { SquareImage } from ".";
 
 export const AddPlaylistItemsModal = ({
   trackIds,
@@ -128,7 +129,7 @@ const PlaylistItem = ({
   return (
     <IonItem color="dark-gray" key={playlist.id}>
       <IonThumbnail slot="start">
-        <img src={playlist.track?.artworkM.url} alt={playlist.name} />
+        <SquareImage src={playlist.track?.artworkM.url} />
       </IonThumbnail>
       <IonLabel>{playlist.name}</IonLabel>
       <IonButton disabled={disabled} slot="end" color="white" onClick={onClick}>

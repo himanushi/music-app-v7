@@ -16,7 +16,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Refresher } from "~/components";
+import {
+  FavoriteButton,
+  FooterPadding,
+  Refresher,
+  SquareImage,
+} from "~/components";
 import {
   ArtistObject,
   ArtistsDocument,
@@ -184,7 +189,9 @@ export const ArtistItem = ({ artist }: { artist: ArtistObject }) => {
   return (
     <IonItem button detail={false} routerLink={`/artists/${artist.id}`}>
       <IonAvatar slot="start" style={{ height: "50px", width: "50px" }}>
-        <img src={convertImageUrl({ url: artist.artworkM?.url, px: 50 })} />
+        <SquareImage
+          src={convertImageUrl({ url: artist.artworkM?.url, px: 50 })}
+        />
       </IonAvatar>
       <IonLabel class="ion-text-wrap">{artist.name}</IonLabel>
       <IonButtons slot="end">

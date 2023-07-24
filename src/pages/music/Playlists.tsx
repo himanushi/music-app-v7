@@ -16,7 +16,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, FooterPadding, Refresher } from "~/components";
+import {
+  FavoriteButton,
+  FooterPadding,
+  Refresher,
+  SquareImage,
+} from "~/components";
 import {
   PlaylistObject,
   PlaylistsDocument,
@@ -149,7 +154,7 @@ export const PlaylistItem = ({ playlist }: { playlist: PlaylistObject }) => {
   return (
     <IonItem button detail={false} routerLink={`/playlists/${playlist.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
-        <img
+        <SquareImage
           src={convertImageUrl({ url: playlist.track?.artworkM?.url, px: 110 })}
         />
       </IonThumbnail>
