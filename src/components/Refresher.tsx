@@ -10,11 +10,7 @@ export const Refresher = ({
   refresh: (event: CustomEvent<RefresherEventDetail>) => void;
 }) => {
   return (
-    <IonRefresher
-      slot="fixed"
-      style={{ zIndex: 1 }} // https://github.com/ionic-team/ionic-framework/issues/18714#issuecomment-913305864
-      onIonRefresh={refresh}
-    >
+    <IonRefresher slot="fixed" onIonRefresh={refresh}>
       <IonRefresherContent pullingIcon="lines" />
     </IonRefresher>
   );
