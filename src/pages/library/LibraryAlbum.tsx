@@ -10,7 +10,6 @@ import {
   IonItem,
   IonLabel,
   IonNote,
-  IonButtons,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useCallback, useEffect, useMemo } from "react";
@@ -21,7 +20,6 @@ import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
   LibraryTracksDocument,
-  RatingsDocument,
 } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl, convertTime, toMs } from "~/lib";
@@ -75,14 +73,6 @@ export const LibraryAlbum: React.FC<
 };
 
 const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
-  useFetchLibraryItems<MusicKit.LibrarySongs, any>({
-    doc: RatingsDocument,
-    limit: 1,
-    variables: { ids: [album?.id], type: "library-albums" },
-    fetchPolicy: "network-only",
-    skip: !album,
-  });
-
   return (
     <>
       <IonGrid class="ion-no-padding">
@@ -134,14 +124,6 @@ const LibraryAlbumTracks = ({
   useEffect(() => {
     if (meta.total > tracks.length) fetchMore();
   }, [meta.total, tracks.length, fetchMore]);
-
-  useFetchLibraryItems<MusicKit.Ratings, any>({
-    doc: RatingsDocument,
-    limit,
-    variables: { ids: tracks.map((t) => t.id), type: "library-songs" },
-    fetchPolicy: "network-only",
-    skip: tracks.length !== meta.total,
-  });
 
   return (
     <IonList>

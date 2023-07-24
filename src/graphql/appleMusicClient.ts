@@ -84,13 +84,6 @@ export const capacitorLink = new ApolloLink((operation, forward) => {
       libraryFields: libraryArtistsFields,
       typeName: "LibraryArtist",
     });
-  } else if (operation.operationName === "Ratings") {
-    return libraryItemsObservable({
-      musicKitFunction: CapacitorMusicKit.getRatings,
-      operation,
-      libraryFields: ratingsFields,
-      typeName: "Rating",
-    });
   }
 
   return forward(operation);
@@ -106,23 +99,11 @@ const libraryItemsPolicy = {
   },
 };
 
-const ratingsPolicy = {
-  keyArgs: ["ids", "type"],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  merge(_: any[] = [], incoming: any[] = []) {
-    return [...incoming];
-  },
-  read(existing: any[]) {
-    return existing;
-  },
-};
-
 export const libraryPolicies = {
   LibraryAlbums: libraryItemsPolicy,
   LibraryArtists: libraryItemsPolicy,
   LibraryTracks: libraryItemsPolicy,
   LibraryPlaylists: libraryItemsPolicy,
-  Ratings: ratingsPolicy,
 };
 
 export const LibraryAlbumsDocument = gql`
@@ -207,23 +188,4 @@ export const LibraryArtistsDocument = gql`
 
 const libraryArtistsFields = {
   name: "",
-} as any;
-
-export const ratingAttributes = `
-id
-attributes {
-  value
-}
-`;
-
-export const RatingsDocument = gql`
-  query Ratings($ids: [String], $type: String!) {
-    items: Ratings(ids: $ids, type: $type) {
-      ${ratingAttributes}
-    }
-  }
-`;
-
-const ratingsFields = {
-  value: 1,
 } as any;
