@@ -11,6 +11,10 @@ export const SquareImage = ({
   return (
     <IonImg
       src={src}
+      onError={(e: any) => {
+        e.target.onerror = null;
+        e.target.src = "/assets/no-image.png";
+      }}
       style={{
         aspectRatio: "auto 1 / 1",
         height: "100%",
