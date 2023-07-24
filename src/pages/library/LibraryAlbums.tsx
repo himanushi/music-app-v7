@@ -16,7 +16,7 @@ import {
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, Refresher } from "~/components";
+import { FooterPadding, Refresher, SquareImage } from "~/components";
 import { LibraryAlbumsDocument } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
@@ -113,11 +113,6 @@ export const LibraryAlbums = () => {
         {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
           <IonTitle>ライブラリアルバム</IonTitle>
-          <IonButtons slot="start">
-            <IonButton id="library-album-filter-button" color="red">
-              フィルター
-            </IonButton>
-          </IonButtons>
           <IonButtons slot="end">
             <IonButton id="library-album-sort-button" color="red">
               並び替え
@@ -174,7 +169,7 @@ export const LibraryAlbumItem = ({
   return (
     <IonItem button detail={false} routerLink={`/library-albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
-        <img
+        <SquareImage
           src={convertImageUrl({ url: album.attributes.artwork?.url, px: 200 })}
         />
       </IonThumbnail>
