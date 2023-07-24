@@ -50,7 +50,7 @@ export const Artist: React.FC<
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent fullscreen ref={contentRef}>
+      <IonContent ref={contentRef}>
         <ArtistInfo artist={artist as ArtistObject} />
         {artist ? (
           <ArtistAlbums artistId={artist.id} scrollElement={scrollElement} />

@@ -129,7 +129,7 @@ export const Playlists = () => {
           ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen ref={contentRef}>
+      <IonContent ref={contentRef}>
         <Refresher refresh={refresh} />
         <Virtuoso
           key={JSON.stringify(variables)}

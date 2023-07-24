@@ -46,7 +46,7 @@ export const Track: React.FC<
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent fullscreen ref={contentRef}>
+      <IonContent ref={contentRef}>
         <TrackInfo track={track as TrackObject} />
         {track ? (
           <>

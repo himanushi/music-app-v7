@@ -57,7 +57,7 @@ export const Album: React.FC<
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent fullscreen ref={contentRef}>
+      <IonContent ref={contentRef}>
         <AlbumInfo album={album as AlbumObject} />
         {album ? (
           <>
