@@ -55,7 +55,7 @@ export const LibraryAlbums = () => {
 
   useEffect(() => {
     if (!isAuthorized) return;
-    if (meta.total > items.length) fetchMore();
+    if (meta.total > 0 && meta.total > items.length) fetchMore();
   }, [meta.total, items.length, fetchMore, isAuthorized]);
 
   useEffect(() => {

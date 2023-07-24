@@ -19,7 +19,6 @@ import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
-  FavoriteButton,
   FooterPadding,
   Icon,
   SkeletonItems,
@@ -162,7 +161,7 @@ const LibraryAlbumTracks = ({
   });
 
   useEffect(() => {
-    if (meta.total > tracks.length) fetchMore();
+    if (meta.total > 0 && meta.total > tracks.length) fetchMore();
   }, [meta.total, tracks.length, fetchMore]);
 
   return (

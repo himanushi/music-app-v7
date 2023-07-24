@@ -37,7 +37,7 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
   });
 
   const items = useMemo(() => data?.items ?? [], [data?.items]);
-  const meta = useMemo(() => data?.meta ?? { total: 1 }, [data?.meta]) as {
+  const meta = useMemo(() => data?.meta ?? { total: 0 }, [data?.meta]) as {
     total: number;
   };
   const [previousItemsLength, setPreviousItemsLength] = useState<number>(
