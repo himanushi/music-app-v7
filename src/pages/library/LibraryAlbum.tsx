@@ -16,12 +16,7 @@ import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useCallback, useEffect, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import {
-  FavoriteLibraryButton,
-  FooterPadding,
-  SkeletonItems,
-  SquareImage,
-} from "~/components";
+import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
 import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
@@ -55,7 +50,7 @@ export const LibraryAlbum: React.FC<
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent fullscreen ref={contentRef}>
+      <IonContent ref={contentRef}>
         <LibraryAlbumInfo album={album} />
         {match.params.id ? (
           <LibraryAlbumTracks
@@ -108,11 +103,6 @@ const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
             <IonLabel className="ion-text-wrap text-select">
               {album.attributes.name}
             </IonLabel>
-          </IonItem>
-          <IonItem lines="none">
-            <IonButtons slot="end">
-              <FavoriteLibraryButton type="library-albums" id={album.id} />
-            </IonButtons>
           </IonItem>
         </IonList>
       ) : (

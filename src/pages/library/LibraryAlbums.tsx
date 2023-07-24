@@ -16,7 +16,7 @@ import {
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteLibraryButton, FooterPadding, Refresher } from "~/components";
+import { FooterPadding, Refresher } from "~/components";
 import { LibraryAlbumsDocument } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
@@ -152,7 +152,7 @@ export const LibraryAlbums = () => {
           ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen ref={contentRef}>
+      <IonContent ref={contentRef}>
         <Refresher refresh={refresh} />
         <Virtuoso
           useWindowScroll
@@ -179,15 +179,6 @@ export const LibraryAlbumItem = ({
         />
       </IonThumbnail>
       <IonLabel class="ion-text-wrap">{album.attributes.name}</IonLabel>
-      <IonButtons
-        slot="end"
-        onClick={(event) => {
-          event.stopPropagation();
-          event.preventDefault();
-        }}
-      >
-        <FavoriteLibraryButton id={album.id} type="library-albums" />
-      </IonButtons>
     </IonItem>
   );
 };
