@@ -39,6 +39,7 @@ export const LibraryAlbum: React.FC<
     variables: { limit: albumLimit, offset: 0, ids: [match.params.id] },
     skip: !isAuthorized,
     refreshId: `LibraryAlbums:{"ids":["${match.params.id}"]}`,
+    fetchPolicy: "network-only",
   });
 
   const album = useMemo(() => items[0], [items]);
