@@ -10,18 +10,32 @@ import {
   IonItem,
   IonLabel,
   IonNote,
+  IonButton,
+  IonButtons,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useCallback, useEffect, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
+import {
+  AddPlaylistMenuItem,
+  FavoriteButton,
+  FooterPadding,
+  Icon,
+  SkeletonItems,
+  SquareImage,
+} from "~/components";
 import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
   LibraryTracksDocument,
 } from "~/graphql/appleMusicClient";
-import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
+import {
+  useFetchLibraryItems,
+  useMenu,
+  useMusicKit,
+  useScrollElement,
+} from "~/hooks";
 import { convertImageUrl, convertTime, toMs } from "~/lib";
 
 export const LibraryAlbum: React.FC<
@@ -95,11 +109,36 @@ const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
               {album.attributes.name}
             </IonLabel>
           </IonItem>
+          <IonItem lines="none">
+            <LibraryAlbumMenuButtons album={album} />
+          </IonItem>
         </IonList>
       ) : (
         <SkeletonItems count={5} lines="none" />
       )}
     </>
+  );
+};
+
+const LibraryAlbumMenuButtons = ({
+  album,
+}: {
+  album: MusicKit.LibraryAlbums;
+}) => {
+  const { open } = useMenu({
+    component: ({ onDismiss }) => (
+      <IonContent onClick={() => onDismiss()}>
+        <AddPlaylistMenuItem trackIds={[]} />
+      </IonContent>
+    ),
+  });
+
+  return (
+    <IonButtons slot="end">
+      <IonButton onClick={(event) => open(event)}>
+        <Icon name="more_horiz" slot="icon-only" />
+      </IonButton>
+    </IonButtons>
   );
 };
 
