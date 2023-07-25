@@ -14,7 +14,7 @@ import {
   IonButtons,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
@@ -24,6 +24,7 @@ import {
   SkeletonItems,
   SquareImage,
 } from "~/components";
+import { LogoIcon } from "~/components/LogoIcon";
 import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
@@ -63,7 +64,7 @@ export const LibraryAlbum: React.FC<
         <IonToolbar />
       </IonHeader>
       <IonContent ref={contentRef}>
-        <LibraryAlbumInfo album={album} />
+        <LibraryAlbumInfo libraryAlbum={album} />
         {match.params.id ? (
           <LibraryAlbumTracks
             albumId={match.params.id}
@@ -86,7 +87,21 @@ export const LibraryAlbum: React.FC<
   );
 };
 
-const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
+const LibraryAlbumInfo = ({
+  libraryAlbum,
+}: {
+  libraryAlbum?: MusicKit.LibraryAlbums;
+}) => {
+  const [album, setAlbum] = useState<MusicKit.Albums>();
+  useEffect(() => {
+    if (!libraryAlbum) return;
+    CapacitorMusicKit.api<MusicKit.Albums>({
+      url: `/v1/me/library/albums/${libraryAlbum.id}/catalog`,
+    }).then((res) => {
+      if (res && res.data && res.data.length > 0) setAlbum(res.data[0]);
+    });
+  }, [libraryAlbum]);
+
   return (
     <>
       <IonGrid class="ion-no-padding">
@@ -95,21 +110,36 @@ const LibraryAlbumInfo = ({ album }: { album?: MusicKit.LibraryAlbums }) => {
             <SquareImage
               src={convertImageUrl({
                 px: 500,
-                url: album?.attributes?.artwork?.url,
+                url: libraryAlbum?.attributes?.artwork?.url,
               })}
             />
           </IonCol>
         </IonRow>
       </IonGrid>
-      {album ? (
+      {libraryAlbum ? (
         <IonList>
           <IonItem className="ion-text-wrap text-select" lines="none">
             <IonLabel className="ion-text-wrap text-select">
-              {album.attributes.name}
+              {libraryAlbum.attributes.name}
             </IonLabel>
           </IonItem>
+          {album && (
+            <IonItem lines="none" routerLink={`/catalog-albums/${album.id}`}>
+              <IonButtons slot="start">
+                <LogoIcon
+                  name={album.attributes.playParams ? "apple-music" : "itunes"}
+                  size="s"
+                />
+              </IonButtons>
+              <IonLabel
+                color={album.attributes.playParams ? "apple-music" : "white"}
+              >
+                コンプリートアルバムを表示
+              </IonLabel>
+            </IonItem>
+          )}
           <IonItem lines="none">
-            <LibraryAlbumMenuButtons album={album} />
+            <LibraryAlbumMenuButtons album={libraryAlbum} />
           </IonItem>
         </IonList>
       ) : (
