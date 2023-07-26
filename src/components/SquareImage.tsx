@@ -1,4 +1,5 @@
 import { IonImg } from "@ionic/react";
+import { useState } from "react";
 
 export const SquareImage = ({
   src: imgSrc,
@@ -7,13 +8,13 @@ export const SquareImage = ({
   src?: string;
   maxWidth?: string;
 }) => {
-  const src = imgSrc ?? "/assets/no-image.png";
+  const [src, setSrc] = useState(imgSrc ?? "/assets/no-image.png");
   return (
     <IonImg
       src={src}
-      onError={(e: any) => {
+      onIonError={(e: any) => {
         e.target.onerror = null;
-        e.target.src = "/assets/no-image.png";
+        setSrc("/assets/no-image.png");
       }}
       style={{
         aspectRatio: "auto 1 / 1",

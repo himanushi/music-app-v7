@@ -24,7 +24,7 @@ import {
   SkeletonItems,
   SquareImage,
 } from "~/components";
-import { LogoIcon } from "~/components/LogoIcon";
+import { AppleMusicItem } from "~/components/searchItem/appleMusicItem";
 import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
@@ -108,6 +108,7 @@ const LibraryAlbumInfo = ({
         <IonRow>
           <IonCol>
             <SquareImage
+              key={libraryAlbum?.attributes?.artwork?.url}
               src={convertImageUrl({
                 px: 500,
                 url: libraryAlbum?.attributes?.artwork?.url,
@@ -124,19 +125,10 @@ const LibraryAlbumInfo = ({
             </IonLabel>
           </IonItem>
           {album && (
-            <IonItem lines="none" routerLink={`/catalog-albums/${album.id}`}>
-              <IonButtons slot="start">
-                <LogoIcon
-                  name={album.attributes.playParams ? "apple-music" : "itunes"}
-                  size="s"
-                />
-              </IonButtons>
-              <IonLabel
-                color={album.attributes.playParams ? "apple-music" : "white"}
-              >
-                コンプリートアルバムを表示
-              </IonLabel>
-            </IonItem>
+            <AppleMusicItem
+              isAppleMusic={!!album.attributes.playParams}
+              appleMusicId={album.id}
+            />
           )}
           <IonItem lines="none">
             <LibraryAlbumMenuButtons album={libraryAlbum} />
