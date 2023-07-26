@@ -34,6 +34,7 @@ import {
   useFetchLibraryItems,
   useMenu,
   useMusicKit,
+  useMusicKitAPI,
   useScrollElement,
 } from "~/hooks";
 import { convertImageUrl, convertTime, toMs } from "~/lib";
@@ -92,15 +93,11 @@ const LibraryAlbumInfo = ({
 }: {
   libraryAlbum?: MusicKit.LibraryAlbums;
 }) => {
-  const [album, setAlbum] = useState<MusicKit.Albums>();
-  useEffect(() => {
-    if (!libraryAlbum) return;
-    CapacitorMusicKit.api<MusicKit.Albums>({
-      url: `/v1/me/library/albums/${libraryAlbum.id}/catalog`,
-    }).then((res) => {
-      if (res && res.data && res.data.length > 0) setAlbum(res.data[0]);
-    });
-  }, [libraryAlbum]);
+  const { items } = useMusicKitAPI<MusicKit.Albums>({
+    url: `/v1/me/library/albums/${libraryAlbum?.id}/catalog`,
+    skip: !libraryAlbum,
+  });
+  const album = items[0];
 
   return (
     <>

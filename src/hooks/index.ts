@@ -9,4 +9,5 @@ export * from "./useStartedServiceState";
 export * from "./useAddPlaylistItems";
 export * from "./useMenu";
 export * from "./useMusicKit";
+export * from "./useMusicKitAPI";
 export * from "./useFetchLibraryItems";
