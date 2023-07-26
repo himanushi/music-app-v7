@@ -14,6 +14,7 @@ export const useInitialize = () => {
             name: "video-game-music.net",
           },
           developerToken: data.appleMusicToken,
+          storefrontId: "jp",
         },
         type: "SET_TOKEN",
       });
