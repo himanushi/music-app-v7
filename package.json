@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && mv ./dist/prod-index.html ./dist/index.html && npx cap sync",
-    "codegen": "graphql-codegen --config codegen.ts",
-    "generate": "graphql-codegen"
+    "build": "vite build && mv ./dist/prod-index.html ./dist/index.html && npx cap sync",
+    "generate": "graphql-codegen",
+    "update:packages": "ncu"
   },
   "dependencies": {
     "@apollo/client": "^3.7.16",
@@ -51,6 +51,7 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "npm-check-updates": "^16.10.17",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6",
     "vite": "^4.3.9",
