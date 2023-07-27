@@ -32,7 +32,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.3.4",
     "react-virtuoso": "^4.3.10",
-    "xstate": "^4.38.1"
+    "xstate": "^4.38.2"
   },
   "devDependencies": {
     "@capacitor/cli": "^5.1.1",
