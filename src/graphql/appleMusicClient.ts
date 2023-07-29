@@ -3,6 +3,21 @@ import type { Operation } from "@apollo/client/core";
 import { Observable } from "@apollo/client/utilities";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 
+const applyDefaultFields = (obj: any, defaultValues: any) => {
+  for (const key in defaultValues) {
+    if (typeof defaultValues[key] === "object" && defaultValues[key] !== null) {
+      if (typeof obj[key] !== "object" || obj[key] === null) {
+        obj[key] = { ...defaultValues[key] };
+      } else {
+        applyDefaultFields(obj[key], defaultValues[key]);
+      }
+    } else if (!obj[key]) {
+      obj[key] = defaultValues[key];
+    }
+  }
+  return obj;
+};
+
 const libraryItemsObservable = ({
   musicKitFunction,
   operation,
@@ -20,13 +35,8 @@ const libraryItemsObservable = ({
     musicKitFunction(operation.variables)
       .then((data) => {
         const items = data.data.map((item: any) => {
-          const newAttributes: any = { ...item.attributes };
-
-          for (const field in libraryFields) {
-            if (!newAttributes[field]) {
-              newAttributes[field] = libraryFields[field];
-            }
-          }
+          let newAttributes: any = { ...item.attributes };
+          newAttributes = applyDefaultFields(newAttributes, libraryFields);
 
           return {
             __typename: typeName,
@@ -62,6 +72,78 @@ const libraryItemsObservable = ({
       });
   });
 
+const libraryTracksObservable = ({
+  musicKitFunction,
+  operation,
+  libraryFields,
+  typeName,
+}: {
+  musicKitFunction: (variables: any) => Promise<any>;
+  operation: Operation;
+  libraryFields: any;
+  typeName: string;
+}) =>
+  new Observable<any>((observer) => {
+    const metaId = operation.variables.albumId ?? operation.variables.ids ?? "";
+
+    musicKitFunction(operation.variables)
+      .then((data) => {
+        const CatalogTracks: any[] = [];
+
+        const items = data.data.map((item: any) => {
+          let newAttributes: any = { ...item.attributes };
+          newAttributes = applyDefaultFields(newAttributes, libraryFields);
+
+          const catalogId =
+            newAttributes?.playParams?.catalogId ||
+            newAttributes?.playParams?.purchasedId;
+          if (catalogId) {
+            const catalogTrack = {
+              __typename: "CatalogTrack",
+              ...item,
+              attributes: newAttributes,
+              id: catalogId,
+            };
+            catalogTrack.attributes.playParams.libraryId = item.id;
+            CatalogTracks.push(catalogTrack);
+          }
+
+          return {
+            __typename: typeName,
+            ...item,
+            attributes: newAttributes,
+          };
+        });
+
+        observer.next({
+          data: {
+            items,
+            CatalogTracks,
+            meta: {
+              __typename: `${typeName}Meta`,
+              id: metaId,
+              total: data.meta?.total ?? 0,
+            },
+          },
+        });
+        observer.complete();
+      })
+      .catch(() => {
+        observer.next({
+          data: {
+            items: [],
+            CatalogTracks: [],
+            meta: {
+              __typename: `${typeName}Meta`,
+              id: metaId,
+              total: 0,
+            },
+          },
+        });
+        observer.complete();
+      });
+  });
+
 export const capacitorLink = new ApolloLink((operation, forward) => {
   if (operation.operationName === "LibraryAlbums") {
     return libraryItemsObservable({
@@ -71,7 +153,7 @@ export const capacitorLink = new ApolloLink((operation, forward) => {
       typeName: "LibraryAlbum",
     });
   } else if (operation.operationName === "LibraryTracks") {
-    return libraryItemsObservable({
+    return libraryTracksObservable({
       musicKitFunction: CapacitorMusicKit.getLibrarySongs,
       operation,
       libraryFields: libraryTracksFields,
@@ -103,6 +185,7 @@ export const libraryPolicies = {
   LibraryAlbums: libraryItemsPolicy,
   LibraryArtists: libraryItemsPolicy,
   LibraryTracks: libraryItemsPolicy,
+  CatalogTracks: libraryItemsPolicy,
   LibraryPlaylists: libraryItemsPolicy,
 };
 
@@ -134,23 +217,32 @@ const libraryAlbumsFields = {
   trackCount: 0,
 } as any;
 
+export const LibraryTracksAttributes = `
+id
+attributes {
+  artwork {
+    url
+  }
+  discNumber
+  trackNumber
+  name
+  releaseDate
+  durationInMillis
+  playParams {
+    id
+    catalogId # Apple Music ID
+    purchasedId # iTunes Store ID
+  }
+}
+`;
+
 export const LibraryTracksDocument = gql`
   query LibraryTracks($limit: Int, $offset: Int, $albumId: String) {
     items: LibraryTracks(limit: $limit, offset: $offset, albumId: $albumId) {
-      id
-      attributes {
-        artwork {
-          url
-        }
-        discNumber
-        trackNumber
-        name
-        releaseDate
-        durationInMillis
-        playParams {
-          id
-        }
-      }
+      ${LibraryTracksAttributes}
+    }
+    CatalogTracks(albumId: $albumId) {
+      ${LibraryTracksAttributes}
     }
     meta: LibraryTrackMeta(albumId: $albumId) {
       total
@@ -169,6 +261,9 @@ const libraryTracksFields = {
   durationInMillis: 0,
   playParams: {
     id: "",
+    catalogId: "",
+    purchasedId: "",
+    libraryId: "",
   },
 } as any;
 
