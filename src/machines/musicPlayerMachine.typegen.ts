@@ -19,7 +19,7 @@
           "changeCurrentTrack": "NEXT_PLAY" | "REPLACE_AND_PLAY";
 "nextPlaybackNo": "NEXT_PLAY";
 "pause": "PLAY_OR_PAUSE";
-"play": "PLAY" | "PLAY_OR_PAUSE";
+"play": "PLAY_OR_PAUSE";
 "setCurrentPlaybackNo": "REPLACE_AND_PLAY";
 "setTracks": "REPLACE_AND_PLAY";
 "stop": "NEXT_PLAY";
