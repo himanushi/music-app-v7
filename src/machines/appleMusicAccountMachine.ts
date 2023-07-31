@@ -23,7 +23,7 @@ type State =
   | { value: "authorized"; context: Context }
   | { value: "unauthorized"; context: Context };
 
-const appleMusicAccountMachine = createMachine<Context, Event, State>(
+const machine = createMachine<Context, Event, State>(
   {
     // https://xstate.js.org/docs/guides/actions.html#actions
     predictableActionArguments: true,
@@ -170,6 +170,4 @@ const appleMusicAccountMachine = createMachine<Context, Event, State>(
   }
 );
 
-export const appleMusicAccountService = interpret(
-  appleMusicAccountMachine
-).start();
+export const appleMusicAccountService = interpret(machine).start();
