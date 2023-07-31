@@ -32,6 +32,8 @@ import type {
   ModalBreakpointChangeEventDetail,
 } from "@ionic/core";
 import { useHistory, useLocation } from "react-router-dom";
+import { useStartedServiceState } from "~/hooks";
+import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
@@ -72,6 +74,54 @@ export const FooterModal = () => {
   );
 };
 
+const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
+  return (
+    <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
+      <IonHeader class="ion-no-border">
+        <ClosePlayer switchBreakpoint={switchBreakpoint} />
+        <Tab />
+      </IonHeader>
+    </IonContent>
+  );
+};
+
+const ClosePlayer = ({
+  switchBreakpoint,
+}: {
+  switchBreakpoint: () => void;
+}) => {
+  const { state } = useStartedServiceState(musicPlayerService);
+  const track = musicPlayerService.getSnapshot().context.currentTrack;
+
+  return (
+    <IonToolbar onClick={switchBreakpoint} color="dark-gray" class="clickable">
+      <IonThumbnail>
+        <SquareImage src={`https://picsum.photos/id/101/300`} />
+      </IonThumbnail>
+      <IonTitle className="label-long-text">{track?.name}</IonTitle>
+      <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
+        <IonButton
+          onClick={() => musicPlayerService.send("PLAY_OR_PAUSE")}
+          disabled={state?.matches("loading")}
+        >
+          <Icon
+            size="s"
+            color="white"
+            slot="icon-only"
+            name={state?.matches("playing") ? "pause" : "play_arrow"}
+          />
+        </IonButton>
+        <IonButton
+          onClick={() => musicPlayerService.send("NEXT_PLAY")}
+          disabled={state?.matches("loading")}
+        >
+          <Icon size="s" color="white" slot="icon-only" name="fast_forward" />
+        </IonButton>
+      </IonButtons>
+    </IonToolbar>
+  );
+};
+
 const pathMap = [
   {
     title: "見つける",
@@ -102,68 +152,36 @@ const pathMap = [
   },
 ];
 
-const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
+const Tab = () => {
   const history = useHistory();
   const location = useLocation();
-
   return (
-    <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
-      <IonHeader class="ion-no-border">
-        <IonToolbar
-          onClick={switchBreakpoint}
-          color="dark-gray"
-          class="clickable"
-        >
-          <IonThumbnail>
-            <SquareImage src={`https://picsum.photos/id/101/300`} />
-          </IonThumbnail>
-          <IonTitle className="label-long-text">
-            タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル
-          </IonTitle>
-          <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
-            <IonButton>
-              <Icon size="s" color="white" slot="icon-only" name="play_arrow" />
-            </IonButton>
-            <IonButton>
-              <Icon
-                size="s"
-                color="white"
-                slot="icon-only"
-                name="fast_forward"
-              />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-        <IonToolbar color="dark-gray">
-          <IonButtons>
-            {pathMap.map(({ title, path, icon, locations, color }) => {
-              const isSelected = locations.includes(
-                location.pathname.split("/")[1]
-              );
-              return (
-                <IonSegmentButton
-                  onClick={() =>
-                    history.location.pathname !== path && history.push(path)
-                  }
-                  key={path}
-                >
-                  <IonButton>
-                    <Icon
-                      name={icon as any}
-                      slot="start"
-                      color={isSelected ? color : "white"}
-                    />
-                  </IonButton>
-                  <IonLabel color={isSelected ? color : "white"}>
-                    {title}
-                  </IonLabel>
-                </IonSegmentButton>
-              );
-            })}
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-    </IonContent>
+    <IonToolbar color="dark-gray">
+      <IonButtons>
+        {pathMap.map(({ title, path, icon, locations, color }) => {
+          const isSelected = locations.includes(
+            location.pathname.split("/")[1]
+          );
+          return (
+            <IonSegmentButton
+              onClick={() =>
+                history.location.pathname !== path && history.push(path)
+              }
+              key={path}
+            >
+              <IonButton>
+                <Icon
+                  name={icon as any}
+                  slot="start"
+                  color={isSelected ? color : "white"}
+                />
+              </IonButton>
+              <IonLabel color={isSelected ? color : "white"}>{title}</IonLabel>
+            </IonSegmentButton>
+          );
+        })}
+      </IonButtons>
+    </IonToolbar>
   );
 };
 
