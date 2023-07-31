@@ -34,6 +34,7 @@ import type {
 import { useHistory, useLocation } from "react-router-dom";
 import { useStartedServiceState } from "~/hooks";
 import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
+import { convertImageUrl } from "~/lib";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
@@ -96,7 +97,10 @@ const ClosePlayer = ({
   return (
     <IonToolbar onClick={switchBreakpoint} color="dark-gray" class="clickable">
       <IonThumbnail>
-        <SquareImage src={`https://picsum.photos/id/101/300`} />
+        <SquareImage
+          key={track?.artworkUrl}
+          src={convertImageUrl({ url: track?.artworkUrl, px: 300 })}
+        />
       </IonThumbnail>
       <IonTitle className="label-long-text">{track?.name}</IonTitle>
       <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
