@@ -1,5 +1,6 @@
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useMusicKit } from ".";
 
 export const useMusicKitAPI = <T>({
   url,
@@ -8,15 +9,23 @@ export const useMusicKitAPI = <T>({
   url: string;
   skip?: boolean;
 }) => {
+  const { isAuthorized } = useMusicKit();
   const [items, setItems] = useState<T[]>([]);
+  const isFirstRun = useRef<Record<string, boolean>>({});
+
   useEffect(() => {
-    if (skip) return;
-    CapacitorMusicKit.api<T>({
-      url,
-    }).then((res) => {
-      if (res && res.data && res.data.length > 0) setItems(res.data);
+    if (!isAuthorized || skip) {
+      return;
+    }
+    if (!isFirstRun.current[url]) {
+      isFirstRun.current[url] = true;
+      return;
+    }
+    CapacitorMusicKit.api<T>({ url }).then((res) => {
+      if (res && "data" in res && res.data && res.data.length > 0)
+        setItems(res.data);
     });
-  }, [skip, url]);
+  }, [isAuthorized, url, skip]);
 
   return { items };
 };
