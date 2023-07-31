@@ -4,7 +4,8 @@ import { Sender, assign, createMachine, interpret } from "xstate";
 import { LibraryTracksAttributes } from "~/graphql/appleMusicClient";
 import { getApolloData } from "~/lib";
 
-type Track = {
+export type Track = {
+  artworkUrl?: string;
   appleMusicId: string;
   name: string;
 };
@@ -46,11 +47,6 @@ const machine = createMachine(
       ready: {},
 
       loading: {
-        on: {
-          PLAYING: "playing",
-          PAUSED: "paused",
-          STOPPED: "stopped",
-        },
         states: {
           waiting: {
             invoke: {
@@ -62,7 +58,7 @@ const machine = createMachine(
             invoke: {
               src: ({ currentTrack }) => (callback) => {
                 if (!currentTrack) {
-                  // callback("NEXT_PLAY");
+                  callback({ type: "NEXT_PLAY" });
                   return;
                 }
 
@@ -81,13 +77,15 @@ const machine = createMachine(
 
                 console.log("appleMusicId", appleMusicId);
 
+                const cleaner = setEvents(callback, [["playing", { type: "PLAYING" }]]);
+
                 (async () => {
                   await CapacitorMusicKit.stop();
                   await CapacitorMusicKit.setQueue({ ids: [appleMusicId] });
                   await CapacitorMusicKit.play({});
                 })()
 
-                return setEvents(callback, [["playing", { type: "PLAYING" }]]);
+                return cleaner;
               }
             }
           }
@@ -97,22 +95,21 @@ const machine = createMachine(
       playing: {
         invoke: {
           src: () => (callback) => setEvents(callback, [
+            ["completed", { type: "NEXT_PLAY" }],
             ["paused", { type: "PAUSED" }],
             ["waiting", { type: "WAITING" }],
-            ["completed", { type: "STOPPED" }],
           ])
         },
 
         on: {
           PLAY_OR_PAUSE: { actions: "pause" },
-          WAITING: "loading.waiting",
-          STOPPED: "stopped",
         },
       },
 
       paused: {
         invoke: {
           src: () => (callback) => setEvents(callback, [
+            ["completed", { type: "NEXT_PLAY" }],
             ["stopped", { type: "STOPPED" }],
             ["ended", { type: "STOPPED" }],
             ["playing", { type: "PLAYING" }],
@@ -121,9 +118,6 @@ const machine = createMachine(
         },
         on: {
           PLAY_OR_PAUSE: { actions: "play" },
-          PLAYING: "playing",
-          WAITING: "loading.waiting",
-          STOPPED: "stopped",
         },
       },
 
@@ -132,23 +126,24 @@ const machine = createMachine(
           src: () => (callback) => setEvents(callback, [
             ["completed", { type: "NEXT_PLAY" }],
             ["playing", { type: "PLAYING" }],
+            ["paused", { type: "PAUSED" }],
             ["loading", { type: "WAITING" }],
           ]),
-        },
-        on: {
-          PLAY: {
-            target: "playing",
-            actions: "play",
-          },
         },
       },
     },
 
     on: {
+      PLAYING: "playing",
+      PAUSED: "paused",
+      WAITING: "loading.waiting",
+      STOPPED: "stopped",
+
       REPLACE_AND_PLAY: {
         actions: ["setTracks", "setCurrentPlaybackNo", "changeCurrentTrack"],
         target: "loading.loadingPlay"
       },
+
       NEXT_PLAY: [
         {
           actions: ["nextPlaybackNo", "changeCurrentTrack"],
@@ -168,7 +163,7 @@ const machine = createMachine(
   },
   {
     actions: {
-      setTracks: assign({ tracks: (_, event) => event.tracks.map((track) => ({ name: track.name, appleMusicId: track.appleMusicId })) }),
+      setTracks: assign({ tracks: (_, event) => event.tracks }),
 
       setCurrentPlaybackNo: assign({ currentPlaybackNo: (_, event) => event.currentPlaybackNo }),
 
@@ -194,7 +189,6 @@ export const musicPlayerService = interpret(machine).start();
 
 const setEvents = (callback: Sender<typeof schema.events>, events: [string, typeof schema.events][]) => {
   const didChange: PlaybackStateDidChangeListener = (state) => {
-    console.log("state", state);
     events.forEach((event) => state.state === event[0] && callback(event[1]));
   }
 
@@ -204,7 +198,4 @@ const setEvents = (callback: Sender<typeof schema.events>, events: [string, type
   return () => listener?.remove();
 };
 
-window.musicPlayerService = musicPlayerService;
-
-// musicPlayerService.send({ type: "REPLACE_AND_PLAY", tracks: [{ appleMusicId: "i.LVkmBa6tk3baXJ", name: "ダイナフォー" }], currentPlaybackNo: 0 });
-// musicPlayerService.send({ type: "PLAY" });
+// window.musicPlayerService = musicPlayerService;
