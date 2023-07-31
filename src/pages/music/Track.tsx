@@ -90,7 +90,7 @@ const TrackInfo = ({ track }: { track?: TrackObject }) => {
               {convertTime(toMs([track.durationMs]))}
             </IonNote>
           </IonItem>
-          <TrackItem track={track} displayThumbnail />
+          <TrackItem tracks={[track]} track={track} displayThumbnail />
           {track.status !== "ACTIVE" && (
             <IonItem color={track.status === "PENDING" ? "yellow" : "red"}>
               {track.status}

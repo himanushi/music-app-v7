@@ -24,23 +24,27 @@ export const useSearchLibraryAlbum = ({
       url: `/v1/catalog/jp/albums/${catalogAlbumId}/library`,
     })
       .then((response) => {
-        console.log("response");
-        console.log(response);
-        if (response && response.data && response.data.length > 0)
+        if (
+          response &&
+          "data" in response &&
+          response.data &&
+          response.data.length > 0
+        )
           setLibraryAlbum(response.data[0]);
       })
       .catch(() => {
-        console.log("error");
         CapacitorMusicKit.api<any>({
-          url: `/v1/me/library/search?types=library-albums&limit=25&term=${replaceName(
-            catalogAlbumName
-          )}`,
-        }).then((response: any) => {
-          console.log("response2");
-          console.log(response);
-          const albums = response.results["library-albums"] as
-            | { data: MusicKit.LibraryAlbums[] }
-            | undefined;
+          url: "/v1/me/library/search",
+          params: {
+            types: "library-albums",
+            limit: 25,
+            term: replaceName(catalogAlbumName),
+          },
+        }).then((response) => {
+          const albums =
+            "results" in response
+              ? response.results["library-albums"]
+              : undefined;
           if (albums) {
             const album = albums.data.find(
               (album) => album.attributes.name === catalogAlbumName

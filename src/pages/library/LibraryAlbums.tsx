@@ -170,6 +170,7 @@ export const LibraryAlbumItem = ({
     <IonItem button detail={false} routerLink={`/library-albums/${album.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <SquareImage
+          key={album.attributes.artwork?.url}
           src={convertImageUrl({ url: album.attributes.artwork?.url, px: 200 })}
         />
       </IonThumbnail>

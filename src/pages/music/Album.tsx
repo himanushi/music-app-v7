@@ -36,6 +36,7 @@ import {
 import { useFetchItems, useMenu, useScrollElement } from "~/hooks";
 import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
 import { ArtistItem, TrackItem } from ".";
+import { useSearchLibraryAlbum } from "~/hooks";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -77,12 +78,18 @@ export const Album: React.FC<
 };
 
 const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
+  const { libraryAlbum } = useSearchLibraryAlbum({
+    catalogAlbumName: album?.name,
+    catalogAlbumId: album?.appleMusicId,
+  });
+
   return (
     <>
       <IonGrid class="ion-no-padding">
         <IonRow>
           <IonCol>
             <SquareImage
+              key={album?.artworkL?.url}
               src={convertImageUrl({
                 px: 300,
                 url: album?.artworkL?.url,
@@ -100,6 +107,15 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
             isAppleMusic={album.appleMusicPlayable}
             appleMusicId={album.appleMusicId}
           />
+          {libraryAlbum && (
+            <IonItem
+              routerLink={`/library-albums/${libraryAlbum.id}`}
+              lines="none"
+            >
+              <Icon name="sync" color="red" slot="start" />
+              <IonLabel>ライブラリアルバムを同期</IonLabel>
+            </IonItem>
+          )}
           <IonItem lines="none">
             <AlbumMenuButtons album={album as AlbumObject} />
           </IonItem>
@@ -158,7 +174,9 @@ const AlbumTracks = ({
         useWindowScroll
         customScrollParent={scrollElement}
         totalCount={tracks.length}
-        itemContent={(index) => <TrackItem track={tracks[index]} />}
+        itemContent={(index) => (
+          <TrackItem tracks={tracks} track={tracks[index]} />
+        )}
       />
     </IonList>
   );

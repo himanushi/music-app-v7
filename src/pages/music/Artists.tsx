@@ -190,6 +190,7 @@ export const ArtistItem = ({ artist }: { artist: ArtistObject }) => {
     <IonItem button detail={false} routerLink={`/artists/${artist.id}`}>
       <IonAvatar slot="start" style={{ height: "50px", width: "50px" }}>
         <SquareImage
+          key={artist.artworkM?.url}
           src={convertImageUrl({ url: artist.artworkM?.url, px: 50 })}
         />
       </IonAvatar>

@@ -50,6 +50,8 @@ import "@ionic/react/css/display.css";
 import "~/theme/variables.css";
 import "~/theme/custom.css";
 
+import "./machines/musicPlayerMachine";
+
 setupIonicReact({ mode: "ios" });
 
 const Initialize = () => {

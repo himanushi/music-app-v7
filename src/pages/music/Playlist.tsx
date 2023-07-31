@@ -26,9 +26,21 @@ import {
   SquareImage,
 } from "~/components";
 import { PlaylistDocument, PlaylistObject, TrackObject } from "~/graphql/types";
-import { useMenu, useScrollElement } from "~/hooks";
-import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
+import {
+  useMenu,
+  useMusicKit,
+  useMusicKitAPI,
+  useScrollElement,
+} from "~/hooks";
+import {
+  convertDate,
+  convertImageUrl,
+  convertTime,
+  playableTrackIds,
+  toMs,
+} from "~/lib";
 import { TrackItem } from ".";
+import { useEffect, useState } from "react";
 
 export const Playlist: React.FC<
   RouteComponentProps<{
@@ -70,6 +82,7 @@ const PlaylistInfo = ({ playlist }: { playlist?: PlaylistObject }) => {
         <IonRow>
           <IonCol>
             <SquareImage
+              key={playlist?.track?.artworkL?.url}
               src={convertImageUrl({
                 px: 300,
                 url: playlist?.track?.artworkL?.url,
@@ -154,7 +167,7 @@ const PlaylistTracks = ({
         customScrollParent={scrollElement}
         totalCount={tracks.length}
         itemContent={(index) => (
-          <TrackItem track={tracks[index]} displayThumbnail />
+          <TrackItem tracks={tracks} track={tracks[index]} displayThumbnail />
         )}
       />
     </IonList>

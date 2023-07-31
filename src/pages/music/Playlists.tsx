@@ -155,6 +155,7 @@ export const PlaylistItem = ({ playlist }: { playlist: PlaylistObject }) => {
     <IonItem button detail={false} routerLink={`/playlists/${playlist.id}`}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <SquareImage
+          key={playlist.track?.artworkM?.url}
           src={convertImageUrl({ url: playlist.track?.artworkM?.url, px: 110 })}
         />
       </IonThumbnail>

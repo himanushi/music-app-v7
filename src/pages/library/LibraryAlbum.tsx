@@ -14,7 +14,7 @@ import {
   IonButtons,
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
@@ -57,7 +57,7 @@ export const LibraryAlbum: React.FC<
     fetchPolicy: "network-only",
   });
 
-  const album = useMemo(() => items[0], [items]);
+  const album: MusicKit.LibraryAlbums = useMemo(() => items[0], [items]);
 
   return (
     <IonPage>
@@ -65,7 +65,7 @@ export const LibraryAlbum: React.FC<
         <IonToolbar />
       </IonHeader>
       <IonContent ref={contentRef}>
-        <LibraryAlbumInfo libraryAlbum={album} />
+        <LibraryAlbumInfo libraryAlbum={album} key={album?.id} />
         {match.params.id ? (
           <LibraryAlbumTracks
             albumId={match.params.id}
@@ -180,8 +180,8 @@ const LibraryAlbumTracks = ({
   });
 
   useEffect(() => {
-    if (meta.total > 0 && meta.total > tracks.length) fetchMore();
-  }, [meta.total, tracks.length, fetchMore]);
+    if (meta.total > tracks.length) fetchMore();
+  }, [fetchMore, meta.total, tracks.length]);
 
   return (
     <IonList>

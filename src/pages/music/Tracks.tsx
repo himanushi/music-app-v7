@@ -28,6 +28,7 @@ import {
   Refresher,
   SquareImage,
 } from "~/components";
+import { LibraryTracksAttributes } from "~/graphql/appleMusicClient";
 import {
   TrackObject,
   TracksDocument,
@@ -40,7 +41,8 @@ import {
   useScrollElement,
   useVariablesItems,
 } from "~/hooks";
-import { convertImageUrl } from "~/lib";
+import { convertImageUrl, getApolloData } from "~/lib";
+import { musicPlayerService } from "~/machines/musicPlayerMachine";
 
 const limit = 50;
 
@@ -148,7 +150,7 @@ export const Tracks = () => {
           totalCount={items.length}
           endReached={() => items.length >= limit && fetchMore()}
           itemContent={(index) => (
-            <TrackItem track={items[index]} displayThumbnail />
+            <TrackItem tracks={items} track={items[index]} displayThumbnail />
           )}
         />
         <FooterPadding />
@@ -159,21 +161,46 @@ export const Tracks = () => {
 
 export const TrackItem = ({
   track,
+  tracks,
   displayThumbnail = false,
 }: {
   track: TrackObject;
+  tracks: TrackObject[];
   displayThumbnail?: boolean;
 }) => {
+  const index = tracks.findIndex((t) => t.id === track.id);
+  const appleMusicIds = tracks.map((t) => t.appleMusicId);
+
   const onClick = useCallback(async () => {
-    await CapacitorMusicKit.setQueue({ ids: [track.appleMusicId] });
-    CapacitorMusicKit.play({});
-  }, [track]);
+    // const ids = appleMusicIds.map((appleMusicId) => {
+    //   const song = getApolloData<MusicKit.LibrarySongs>({
+    //     typeName: "CatalogTrack",
+    //     id: appleMusicId,
+    //     attributes: LibraryTracksAttributes,
+    //   });
+    //   return song?.attributes.playParams?.id ?? appleMusicId;
+    // });
+
+    // await CapacitorMusicKit.setQueue({ ids });
+    // await CapacitorMusicKit.play({ index });
+
+    musicPlayerService.send({
+      type: "REPLACE_AND_PLAY",
+      tracks: tracks.map((t) => ({
+        name: t.name,
+        appleMusicId: t.appleMusicId,
+        artworkUrl: t.artworkM?.url,
+      })),
+      currentPlaybackNo: index,
+    });
+  }, [tracks, index]);
 
   return (
     <IonItem button detail={false} onClick={onClick}>
       {displayThumbnail ? (
         <IonThumbnail slot="start" style={{ height: "50px", width: "50px" }}>
           <SquareImage
+            key={track.artworkM?.url}
             src={convertImageUrl({ url: track.artworkM?.url, px: 50 })}
           />
         </IonThumbnail>
@@ -193,6 +220,7 @@ const TrackItemButtons = ({ track }: { track: TrackObject }) => {
       <IonContent onClick={() => onDismiss()}>
         <AddPlaylistMenuItem trackIds={[track.id]} />
         <IonItem
+          button
           color="dark"
           detail={false}
           onClick={() => history.push(`/tracks/${track.id}`)}
