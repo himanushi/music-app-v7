@@ -20,7 +20,7 @@
     "@ionic/react-router": "^7.0.14",
     "@xstate/react": "^3.2.2",
     "apollo3-cache-persist": "^0.14.1",
-    "capacitor-plugin-musickit": "^0.0.75",
+    "capacitor-plugin-musickit": "^0.0.76",
     "dompurify": "^3.0.4",
     "graphql": "^16.7.1",
     "lodash.camelcase": "^4.3.0",
