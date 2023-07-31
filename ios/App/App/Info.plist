@@ -34,8 +34,11 @@
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Apple Music と Tunes で購入した曲を再生します。</string>
-	<key>NSHumanReadableCopyright</key>
-	<string></string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>App plays audio or streams audio/video using AirPlay</string>
+		<string>audio</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
