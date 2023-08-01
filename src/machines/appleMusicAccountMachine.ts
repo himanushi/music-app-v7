@@ -52,19 +52,19 @@ const machine = createMachine<Context, Event, State>(
         invoke: {
           src:
             ({ config }) =>
-            (callback) => {
-              (async () => {
-                if (config) {
-                  await CapacitorMusicKit.configure({ config });
-                }
+              (callback) => {
+                (async () => {
+                  if (config) {
+                    await CapacitorMusicKit.configure({ config });
+                  }
 
-                if ((await CapacitorMusicKit.isAuthorized()).result) {
-                  callback({ type: "LOGIN" });
-                } else {
-                  callback({ type: "LOGOUT" });
-                }
-              })();
-            },
+                  if ((await CapacitorMusicKit.isAuthorized()).result) {
+                    callback({ type: "LOGIN" });
+                  } else {
+                    callback({ type: "LOGOUT" });
+                  }
+                })();
+              },
         },
         on: {
           LOGIN: {
