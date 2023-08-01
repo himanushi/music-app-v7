@@ -39,6 +39,7 @@ import {
   useMenu,
   useNestedState,
   useScrollElement,
+  useStartedServiceState,
   useVariablesItems,
 } from "~/hooks";
 import { convertImageUrl, getApolloData, toTrack } from "~/lib";
@@ -170,6 +171,8 @@ export const TrackItem = ({
   tracks: Track[];
   displayThumbnail?: boolean;
 }) => {
+  useStartedServiceState(musicPlayerService);
+
   const index = tracks.findIndex((t) => t.appleMusicId === track.appleMusicId);
   const onClick = useCallback(async () => {
     musicPlayerService.send({
@@ -179,8 +182,17 @@ export const TrackItem = ({
     });
   }, [tracks, index]);
 
+  const playing =
+    musicPlayerService.getSnapshot().context.currentTrack?.appleMusicId ===
+    track.appleMusicId;
+
   return (
-    <IonItem button detail={false} onClick={onClick}>
+    <IonItem
+      button
+      detail={false}
+      onClick={onClick}
+      color={playing ? "main" : ""}
+    >
       {displayThumbnail ? (
         <IonThumbnail slot="start" style={{ height: "50px", width: "50px" }}>
           <SquareImage
