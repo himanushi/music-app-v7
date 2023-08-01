@@ -13,8 +13,7 @@ import {
   IonButton,
   IonButtons,
 } from "@ionic/react";
-import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
@@ -37,7 +36,8 @@ import {
   useMusicKitAPI,
   useScrollElement,
 } from "~/hooks";
-import { convertImageUrl, convertTime, toMs } from "~/lib";
+import { convertImageUrl, convertTime, toMs, toTrack } from "~/lib";
+import { TrackItem } from "..";
 
 export const LibraryAlbum: React.FC<
   RouteComponentProps<{
@@ -168,11 +168,10 @@ const LibraryAlbumTracks = ({
   scrollElement: HTMLElement | undefined;
 }) => {
   const limit = 100;
-  const {
-    items: tracks,
-    fetchMore,
-    meta,
-  } = useFetchLibraryItems<MusicKit.LibrarySongs, any>({
+  const { items, fetchMore, meta } = useFetchLibraryItems<
+    MusicKit.LibrarySongs,
+    any
+  >({
     doc: LibraryTracksDocument,
     limit,
     variables: { limit, offset: 0, albumId },
@@ -180,15 +179,17 @@ const LibraryAlbumTracks = ({
   });
 
   useEffect(() => {
-    if (meta.total > tracks.length) fetchMore();
-  }, [fetchMore, meta.total, tracks.length]);
+    if (meta.total > items.length) fetchMore();
+  }, [fetchMore, meta.total, items.length]);
+
+  const tracks = items.map((item) => toTrack(item));
 
   return (
     <IonList>
       <IonItem className="ion-text-wrap text-select">
         <IonNote slot="end">
-          {tracks.length}曲,{" "}
-          {convertTime(toMs(tracks.map((t) => t.attributes.durationInMillis)))}
+          {items.length}曲,{" "}
+          {convertTime(toMs(items.map((t) => t.attributes.durationInMillis)))}
         </IonNote>
       </IonItem>
       <Virtuoso
@@ -196,38 +197,10 @@ const LibraryAlbumTracks = ({
         customScrollParent={scrollElement}
         totalCount={tracks.length}
         itemContent={(index) => (
-          <LibraryTrackItem tracks={tracks} track={tracks[index]} />
+          <TrackItem tracks={tracks} track={tracks[index]} />
         )}
       />
     </IonList>
-  );
-};
-
-export const LibraryTrackItem = ({
-  tracks,
-  track,
-}: {
-  tracks: MusicKit.LibrarySongs[];
-  track: MusicKit.LibrarySongs;
-  displayThumbnail?: boolean;
-}) => {
-  const onClick = useCallback(async () => {
-    await CapacitorMusicKit.setQueue({ ids: tracks.map((t) => t.id) });
-    CapacitorMusicKit.play({
-      index: tracks.findIndex((t) => t.id === track.id),
-    });
-  }, [track.id, tracks]);
-
-  return (
-    <IonItem
-      button
-      detail={false}
-      disabled={!track.attributes.playParams?.id}
-      onClick={onClick}
-    >
-      <IonNote slot="start">{track.attributes.trackNumber}</IonNote>
-      <IonLabel class="ion-text-wrap">{track.attributes.name}</IonLabel>
-    </IonItem>
   );
 };
 
