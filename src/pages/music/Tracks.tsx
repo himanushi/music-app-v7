@@ -16,7 +16,6 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
@@ -28,7 +27,6 @@ import {
   Refresher,
   SquareImage,
 } from "~/components";
-import { LibraryTracksAttributes } from "~/graphql/appleMusicClient";
 import {
   TrackObject,
   TracksDocument,
@@ -42,7 +40,7 @@ import {
   useStartedServiceState,
   useVariablesItems,
 } from "~/hooks";
-import { convertImageUrl, getApolloData, toTrack } from "~/lib";
+import { convertImageUrl, toTrack } from "~/lib";
 import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
 
 const limit = 50;

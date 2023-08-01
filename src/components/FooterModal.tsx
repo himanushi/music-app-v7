@@ -33,7 +33,7 @@ import type {
 } from "@ionic/core";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStartedServiceState } from "~/hooks";
-import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
+import { musicPlayerService } from "~/machines/musicPlayerMachine";
 import { convertImageUrl } from "~/lib";
 
 // 1 にしてしまうとドラッグしても閉じない
