@@ -38,7 +38,7 @@ import { convertImageUrl } from "~/lib";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
-const min = 0.15;
+const min = 0.18;
 
 export const FooterModal = () => {
   const modal = useRef<HTMLIonModalElement>(null);
@@ -93,6 +93,7 @@ const ClosePlayer = ({
 }) => {
   const { state } = useStartedServiceState(musicPlayerService);
   const track = musicPlayerService.getSnapshot().context.currentTrack;
+  const isLoading = state?.matches("loading");
 
   return (
     <IonToolbar onClick={switchBreakpoint} color="dark-gray" class="clickable">
@@ -103,25 +104,27 @@ const ClosePlayer = ({
         />
       </IonThumbnail>
       <IonTitle className="label-long-text">{track?.name}</IonTitle>
-      <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
-        <IonButton
-          onClick={() => musicPlayerService.send("PLAY_OR_PAUSE")}
-          disabled={state?.matches("loading")}
-        >
-          <Icon
-            size="s"
-            color="white"
-            slot="icon-only"
-            name={state?.matches("playing") ? "pause" : "play_arrow"}
-          />
-        </IonButton>
-        <IonButton
-          onClick={() => musicPlayerService.send("NEXT_PLAY")}
-          disabled={state?.matches("loading")}
-        >
-          <Icon size="s" color="white" slot="icon-only" name="fast_forward" />
-        </IonButton>
-      </IonButtons>
+      {isLoading ? (
+        <IonButtons slot="end">
+          <IonButton disabled={true}>
+            <Icon size="s" color="white" slot="icon-only" name="sync" />
+          </IonButton>
+        </IonButtons>
+      ) : (
+        <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
+          <IonButton onClick={() => musicPlayerService.send("PLAY_OR_PAUSE")}>
+            <Icon
+              size="s"
+              color="white"
+              slot="icon-only"
+              name={state?.matches("playing") ? "pause" : "play_arrow"}
+            />
+          </IonButton>
+          <IonButton onClick={() => musicPlayerService.send("NEXT_PLAY")}>
+            <Icon size="s" color="white" slot="icon-only" name="fast_forward" />
+          </IonButton>
+        </IonButtons>
+      )}
     </IonToolbar>
   );
 };
