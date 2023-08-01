@@ -35,6 +35,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { useStartedServiceState } from "~/hooks";
 import { musicPlayerService } from "~/machines/musicPlayerMachine";
 import { convertImageUrl } from "~/lib";
+import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.99999;
@@ -223,16 +224,7 @@ const OpenModal = () => {
 const Player = () => {
   return (
     <IonGrid style={{ height: "100%" }}>
-      <IonRow style={{ height: "50%", maxHeight: "500px" }} class="ion-padding">
-        <SquareImage src={`https://picsum.photos/id/101/600`} />
-      </IonRow>
-      <IonRow>
-        <IonItem color="dark-gray" lines="none">
-          <IonLabel class="ion-text-wrap">
-            タイトルタイトルタイトルタイトルタイトルタイトルタイトル
-          </IonLabel>
-        </IonItem>
-      </IonRow>
+      <PlayerInfo />
       <div style={{ height: "13%" }}>
         <PlayerSeekBar />
       </div>
@@ -269,17 +261,43 @@ const Player = () => {
   );
 };
 
+const PlayerInfo = () => {
+  useStartedServiceState(musicPlayerService);
+  const track = musicPlayerService.getSnapshot().context.currentTrack;
+
+  return (
+    <>
+      <IonRow style={{ height: "50%", maxHeight: "500px" }} class="ion-padding">
+        <SquareImage
+          key={track?.artworkUrl}
+          src={convertImageUrl({ url: track?.artworkUrl, px: 500 })}
+        />
+      </IonRow>
+      <IonRow>
+        <IonItem color="dark-gray" lines="none">
+          <IonLabel class="ion-text-wrap">{track?.name}</IonLabel>
+        </IonItem>
+      </IonRow>
+    </>
+  );
+};
+
 const PlayerSeekBar = () => {
+  useStartedServiceState(musicPlayerService);
+  const track = musicPlayerService.getSnapshot().context.currentTrack;
+
   const [seek, setSeek] = useState(0);
   const [seeking, setSeeking] = useState(false);
   const [seekValue, setSeekValue] = useState(0);
 
   useLayoutEffect(() => {
-    const interval = setInterval(() => {
-      setSeek((prevSeek) => prevSeek + 1000);
+    const interval = setInterval(async () => {
+      if (seeking) return;
+      const result = await CapacitorMusicKit.getCurrentPlaybackTime();
+      setSeek(result.time * 1000);
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [seeking]);
 
   useEffect(() => {
     if (seeking) return;
@@ -302,7 +320,7 @@ const PlayerSeekBar = () => {
       setSeeking(false);
 
       if (typeof event.detail.value === "number") {
-        setSeek(event.detail.value);
+        CapacitorMusicKit.seekToTime({ time: event.detail.value / 1000 });
       }
     },
     []
@@ -311,14 +329,14 @@ const PlayerSeekBar = () => {
   return (
     <>
       <IonItem color="dark-gray" lines="none">
-        <IonNote slot="start">00:00</IonNote>
-        <IonNote slot="end">00:30</IonNote>
+        <IonNote slot="start">{toMMSS(seek)}</IonNote>
+        <IonNote slot="end">{toMMSS(track?.durationMs ?? 0)}</IonNote>
       </IonItem>
       <IonRange
         pinFormatter={toMMSS}
         class="player-seek-bar ion-no-padding"
         value={seekValue}
-        max={60000}
+        max={track?.durationMs ?? 0}
         min={0}
         pin
         onIonKnobMoveStart={onStart}

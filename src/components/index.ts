@@ -2,7 +2,7 @@ export * from "./menuItem";
 export * from "./searchItem";
 export * from "./SquareImage";
 export * from "./Icon";
-export * from "./FooterModal";
+export * from "./MusicPlayer";
 export * from "./FooterPadding";
 export * from "./FavoriteButton";
 export * from "./AddPlaylistItemsModal";
