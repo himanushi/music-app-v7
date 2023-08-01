@@ -5,9 +5,11 @@ import { LibraryTracksAttributes } from "~/graphql/appleMusicClient";
 import { getApolloData } from "~/lib";
 
 export type Track = {
-  artworkUrl?: string;
+  id: string;
   appleMusicId: string;
   name: string;
+  artworkUrl?: string;
+  trackNumber: number;
 };
 
 const schema = {

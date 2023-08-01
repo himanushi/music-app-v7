@@ -24,8 +24,9 @@ import {
   TrackObject,
 } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
-import { convertImageUrl, convertTime, toMs } from "~/lib";
+import { convertImageUrl, convertTime, toMs, toTrack } from "~/lib";
 import { AlbumItem, ArtistItem, TrackItem } from ".";
+import { Track as TrackType } from "~/machines/musicPlayerMachine";
 
 export const Track: React.FC<
   RouteComponentProps<{
@@ -90,7 +91,11 @@ const TrackInfo = ({ track }: { track?: TrackObject }) => {
               {convertTime(toMs([track.durationMs]))}
             </IonNote>
           </IonItem>
-          <TrackItem tracks={[track]} track={track} displayThumbnail />
+          <TrackItem
+            tracks={[toTrack(track)]}
+            track={toTrack(track)}
+            displayThumbnail
+          />
           {track.status !== "ACTIVE" && (
             <IonItem color={track.status === "PENDING" ? "yellow" : "red"}>
               {track.status}

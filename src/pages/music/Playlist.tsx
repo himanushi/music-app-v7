@@ -38,9 +38,11 @@ import {
   convertTime,
   playableTrackIds,
   toMs,
+  toTrack,
 } from "~/lib";
 import { TrackItem } from ".";
 import { useEffect, useState } from "react";
+import { Track } from "~/machines/musicPlayerMachine";
 
 export const Playlist: React.FC<
   RouteComponentProps<{
@@ -55,6 +57,9 @@ export const Playlist: React.FC<
   });
 
   const playlist = data?.playlist;
+  const tracks: Track[] = (playlist?.items ?? []).map((item) =>
+    toTrack(item.track)
+  );
 
   return (
     <IonPage>
@@ -64,10 +69,7 @@ export const Playlist: React.FC<
       <IonContent ref={contentRef}>
         <PlaylistInfo playlist={playlist as PlaylistObject} />
         {playlist && (
-          <PlaylistTracks
-            tracks={playlist.items.map((i) => i.track)}
-            scrollElement={scrollElement}
-          />
+          <PlaylistTracks tracks={tracks} scrollElement={scrollElement} />
         )}
         <FooterPadding />
       </IonContent>
@@ -157,7 +159,7 @@ const PlaylistTracks = ({
   tracks,
   scrollElement,
 }: {
-  tracks: TrackObject[];
+  tracks: Track[];
   scrollElement: HTMLElement | undefined;
 }) => {
   return (

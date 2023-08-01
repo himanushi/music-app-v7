@@ -34,9 +34,16 @@ import {
   TrackObject,
 } from "~/graphql/types";
 import { useFetchItems, useMenu, useScrollElement } from "~/hooks";
-import { convertDate, convertImageUrl, convertTime, toMs } from "~/lib";
+import {
+  convertDate,
+  convertImageUrl,
+  convertTime,
+  toMs,
+  toTrack,
+} from "~/lib";
 import { ArtistItem, TrackItem } from ".";
 import { useSearchLibraryAlbum } from "~/hooks";
+import { Track } from "~/machines/musicPlayerMachine";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -51,7 +58,7 @@ export const Album: React.FC<
   });
 
   const album = data?.album;
-  const tracks = album?.tracks ?? [];
+  const tracks: Track[] = (album?.tracks ?? []).map((track) => toTrack(track));
 
   return (
     <IonPage>
@@ -62,10 +69,7 @@ export const Album: React.FC<
         <AlbumInfo album={album as AlbumObject} />
         {album ? (
           <>
-            <AlbumTracks
-              tracks={tracks as TrackObject[]}
-              scrollElement={scrollElement}
-            />
+            <AlbumTracks tracks={tracks} scrollElement={scrollElement} />
             <AlbumArtists albumId={album.id} scrollElement={scrollElement} />
           </>
         ) : (
@@ -165,7 +169,7 @@ const AlbumTracks = ({
   tracks,
   scrollElement,
 }: {
-  tracks: TrackObject[];
+  tracks: Track[];
   scrollElement: HTMLElement | undefined;
 }) => {
   return (

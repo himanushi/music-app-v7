@@ -41,8 +41,8 @@ import {
   useScrollElement,
   useVariablesItems,
 } from "~/hooks";
-import { convertImageUrl, getApolloData } from "~/lib";
-import { musicPlayerService } from "~/machines/musicPlayerMachine";
+import { convertImageUrl, getApolloData, toTrack } from "~/lib";
+import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
 
 const limit = 50;
 
@@ -70,6 +70,8 @@ export const Tracks = () => {
     variables,
     refreshName: "tracks",
   });
+
+  const tracks: Track[] = items.map((item) => toTrack(item));
 
   const { changeInput, changeFavorite, changeSort } = useVariablesItems({
     scrollElement,
@@ -150,7 +152,7 @@ export const Tracks = () => {
           totalCount={items.length}
           endReached={() => items.length >= limit && fetchMore()}
           itemContent={(index) => (
-            <TrackItem tracks={items} track={items[index]} displayThumbnail />
+            <TrackItem tracks={tracks} track={tracks[index]} displayThumbnail />
           )}
         />
         <FooterPadding />
@@ -164,33 +166,15 @@ export const TrackItem = ({
   tracks,
   displayThumbnail = false,
 }: {
-  track: TrackObject;
-  tracks: TrackObject[];
+  track: Track;
+  tracks: Track[];
   displayThumbnail?: boolean;
 }) => {
-  const index = tracks.findIndex((t) => t.id === track.id);
-  const appleMusicIds = tracks.map((t) => t.appleMusicId);
-
+  const index = tracks.findIndex((t) => t.appleMusicId === track.appleMusicId);
   const onClick = useCallback(async () => {
-    // const ids = appleMusicIds.map((appleMusicId) => {
-    //   const song = getApolloData<MusicKit.LibrarySongs>({
-    //     typeName: "CatalogTrack",
-    //     id: appleMusicId,
-    //     attributes: LibraryTracksAttributes,
-    //   });
-    //   return song?.attributes.playParams?.id ?? appleMusicId;
-    // });
-
-    // await CapacitorMusicKit.setQueue({ ids });
-    // await CapacitorMusicKit.play({ index });
-
     musicPlayerService.send({
       type: "REPLACE_AND_PLAY",
-      tracks: tracks.map((t) => ({
-        name: t.name,
-        appleMusicId: t.appleMusicId,
-        artworkUrl: t.artworkM?.url,
-      })),
+      tracks,
       currentPlaybackNo: index,
     });
   }, [tracks, index]);
@@ -200,8 +184,8 @@ export const TrackItem = ({
       {displayThumbnail ? (
         <IonThumbnail slot="start" style={{ height: "50px", width: "50px" }}>
           <SquareImage
-            key={track.artworkM?.url}
-            src={convertImageUrl({ url: track.artworkM?.url, px: 50 })}
+            key={track.artworkUrl}
+            src={convertImageUrl({ url: track.artworkUrl, px: 50 })}
           />
         </IonThumbnail>
       ) : (
@@ -213,7 +197,7 @@ export const TrackItem = ({
   );
 };
 
-const TrackItemButtons = ({ track }: { track: TrackObject }) => {
+const TrackItemButtons = ({ track }: { track: Track }) => {
   const history = useHistory();
   const { open } = useMenu({
     component: ({ onDismiss }) => (
