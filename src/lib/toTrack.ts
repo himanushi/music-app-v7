@@ -9,7 +9,8 @@ export const toTrack = (track: TrackObject | MusicKit.LibrarySongs): Track => {
       appleMusicId: track.id,
       name: track.attributes.name,
       artworkUrl: track.attributes.artwork.url,
-      trackNumber: track.attributes.trackNumber
+      trackNumber: track.attributes.trackNumber,
+      durationMs: track.attributes.durationInMillis
     }
   } else {
     return {
@@ -17,7 +18,8 @@ export const toTrack = (track: TrackObject | MusicKit.LibrarySongs): Track => {
       appleMusicId: track.appleMusicId,
       name: track.name,
       artworkUrl: track.artworkM.url,
-      trackNumber: track.trackNumber
+      trackNumber: track.trackNumber,
+      durationMs: track.durationMs
     }
   }
 }

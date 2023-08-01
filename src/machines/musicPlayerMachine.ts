@@ -10,6 +10,7 @@ export type Track = {
   name: string;
   artworkUrl?: string;
   trackNumber: number;
+  durationMs: number;
 };
 
 const schema = {
