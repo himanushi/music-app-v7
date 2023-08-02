@@ -17,6 +17,7 @@ const schema = {
   events: {} as
     | { type: "REPLACE_AND_PLAY", tracks: Track[], currentPlaybackNo: number }
     | { type: "NEXT_PLAY" }
+    | { type: "PREVIOUS_PLAY" }
     | { type: "PLAY_OR_PAUSE" }
     | { type: "PLAY" }
     | { type: "PLAYING" }
@@ -157,6 +158,22 @@ const machine = createMachine(
           actions: ["nextPlaybackNo", "changeCurrentTrack", "stop", "changeCurrentTrack"],
         },
       ],
+
+      PREVIOUS_PLAY: [
+        {
+          actions: ["previousPlaybackNo", "changeCurrentTrack"],
+          cond: "canPreviousPlay",
+          target: "loading.loadingPlay",
+        },
+        {
+          actions: [
+            "previousPlaybackNo",
+            "changeCurrentTrack",
+            "stop",
+            "changeCurrentTrack",
+          ],
+        },
+      ],
     },
 
     schema,
@@ -176,6 +193,10 @@ const machine = createMachine(
         currentPlaybackNo: ({ tracks, currentPlaybackNo }) => currentPlaybackNo + 1 === tracks.length ? 0 : currentPlaybackNo + 1,
       }),
 
+      previousPlaybackNo: assign({
+        currentPlaybackNo: ({ currentPlaybackNo }) => currentPlaybackNo === 0 ? 0 : currentPlaybackNo - 1,
+      }),
+
       play: (context, event) => CapacitorMusicKit.play({}),
       pause: (context, event) => CapacitorMusicKit.pause(),
       stop: (context, event) => CapacitorMusicKit.stop(),
@@ -183,6 +204,7 @@ const machine = createMachine(
     services: {},
     guards: {
       canNextPlay: ({ repeat, tracks, currentPlaybackNo }) => repeat || currentPlaybackNo + 1 !== tracks.length,
+      canPreviousPlay: ({ currentPlaybackNo }) => currentPlaybackNo !== 0,
     },
     delays: {},
   }

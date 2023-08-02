@@ -355,12 +355,17 @@ const toMMSS = (duration: number) => {
 const PlayerController = () => {
   const { state } = useStartedServiceState(musicPlayerService);
   const playing = state?.matches("playing");
+  const loading = state?.matches("loading");
 
   return (
     <>
       <IonRow style={{ height: "13%" }} class="ion-text-center">
         <IonCol>
-          <IonButton color="dark-gray" size="large">
+          <IonButton
+            color="dark-gray"
+            size="large"
+            onClick={() => musicPlayerService.send("PREVIOUS_PLAY")}
+          >
             <Icon name="fast_rewind" size="l" slot="icon-only" color="white" />
           </IonButton>
         </IonCol>
@@ -369,9 +374,10 @@ const PlayerController = () => {
             color="dark-gray"
             size="large"
             onClick={() => musicPlayerService.send("PLAY_OR_PAUSE")}
+            disabled={loading}
           >
             <Icon
-              name={playing ? "pause" : "play_arrow"}
+              name={loading ? "sync" : playing ? "pause" : "play_arrow"}
               size="l"
               slot="icon-only"
             />
