@@ -19,6 +19,7 @@ export const Settings = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar />
+        <IonToolbar />
       </IonHeader>
       <IonContent>
         <IonHeader collapse="condense">

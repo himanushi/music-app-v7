@@ -15,6 +15,7 @@ export const Music = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar />
+        <IonToolbar />
       </IonHeader>
       <IonContent>
         <IonHeader collapse="condense">
@@ -26,11 +27,11 @@ export const Music = () => {
         </IonHeader>
         <IonList>
           <IonItem button routerLink="/artists">
-            <Icon name="group" slot="start" color="main" />
+            <Icon name="mic" slot="start" color="main" />
             <IonLabel>アーティスト</IonLabel>
           </IonItem>
           <IonItem button routerLink="/">
-            <Icon name="album" slot="start" color="main" />
+            <Icon name="art_track" slot="start" color="main" />
             <IonLabel>アルバム</IonLabel>
           </IonItem>
           <IonItem button routerLink="/tracks">
@@ -38,7 +39,7 @@ export const Music = () => {
             <IonLabel>曲</IonLabel>
           </IonItem>
           <IonItem button routerLink="/playlists">
-            <Icon name="playlist_play" slot="start" color="main" />
+            <Icon name="queue_music" slot="start" color="main" />
             <IonLabel>プレイリスト</IonLabel>
           </IonItem>
         </IonList>

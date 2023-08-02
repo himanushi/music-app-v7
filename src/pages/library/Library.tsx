@@ -18,6 +18,7 @@ export const Library = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar />
+        <IonToolbar />
       </IonHeader>
       <IonContent>
         <IonHeader collapse="condense">
@@ -33,11 +34,11 @@ export const Library = () => {
             button
             routerLink="/library-artists"
           >
-            <Icon name="group" slot="start" color="red" />
+            <Icon name="mic" slot="start" color="red" />
             <IonLabel>ライブラリアーティスト</IonLabel>
           </IonItem>
           <IonItem disabled={!isAuthorized} button routerLink="/library-albums">
-            <Icon name="album" slot="start" color="red" />
+            <Icon name="art_track" slot="start" color="red" />
             <IonLabel>ライブラリアルバム</IonLabel>
           </IonItem>
           <IonItem disabled={!isAuthorized} button routerLink="/library-tracks">
@@ -49,7 +50,7 @@ export const Library = () => {
             button
             routerLink="/library-playlists"
           >
-            <Icon name="playlist_play" slot="start" color="red" />
+            <Icon name="queue_music" slot="start" color="red" />
             <IonLabel>ライブラリプレイリスト</IonLabel>
           </IonItem>
         </IonList>
