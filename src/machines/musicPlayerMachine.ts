@@ -125,6 +125,9 @@ const machine = createMachine(
       },
 
       stopped: {
+        on: {
+          PLAY_OR_PAUSE: "loading.loadingPlay",
+        },
         invoke: {
           src: () => (callback) => setEvents(callback, [
             ["completed", { type: "NEXT_PLAY" }],
@@ -157,7 +160,7 @@ const machine = createMachine(
         },
         {
           actions: ["nextPlaybackNo", "changeCurrentTrack"],
-          target: "paused",
+          target: "stopped",
         },
       ],
 
