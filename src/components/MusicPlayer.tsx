@@ -20,13 +20,7 @@ import {
   RangeKnobMoveStartEventDetail,
 } from "@ionic/react";
 import { Icon, SquareImage } from ".";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   IonModalCustomEvent,
   ModalBreakpointChangeEventDetail,
@@ -38,7 +32,7 @@ import { convertImageUrl } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 
 // 1 にしてしまうとドラッグしても閉じない
-const max = 0.99999;
+const max = 0.95;
 const min = 0.18;
 
 export const FooterModal = () => {
@@ -290,7 +284,14 @@ const PlayerSeekBar = () => {
   const [seeking, setSeeking] = useState(false);
   const [seekValue, setSeekValue] = useState(0);
 
-  useLayoutEffect(() => {
+  // デフォルト値
+  useEffect(() => {
+    CapacitorMusicKit.getCurrentPlaybackTime().then((result) => {
+      setSeek(result.time * 1000);
+    });
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(async () => {
       if (seeking) return;
       const result = await CapacitorMusicKit.getCurrentPlaybackTime();
