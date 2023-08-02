@@ -5,6 +5,7 @@ export * from "./useErrorMessages";
 export * from "./useMe";
 export * from "./useVariablesItems";
 export * from "./useInitialize";
+export * from "./useStartedServiceContext";
 export * from "./useStartedServiceState";
 export * from "./useAddPlaylistItems";
 export * from "./useMenu";
