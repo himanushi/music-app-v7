@@ -224,7 +224,7 @@ const OpenModal = () => {
             </IonSegmentButton>
           </IonButtons>
         </IonToolbar>
-        <IonToolbar />
+        <IonToolbar style={{ height: "60px" }} />
       </IonFooter>
     </>
   );
@@ -347,7 +347,7 @@ const toMMSS = (duration: number) => {
 const PlayerController = () => {
   const { state } = useStartedServiceState(musicPlayerService);
   const track = musicPlayerService.getSnapshot().context.currentTrack;
-  const isLoading = state?.matches("loading");
+  const playing = state?.matches("playing");
 
   return (
     <>
@@ -358,12 +358,24 @@ const PlayerController = () => {
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="play_arrow" size="l" slot="icon-only" />
+          <IonButton
+            color="dark-gray"
+            size="large"
+            onClick={() => musicPlayerService.send("PLAY_OR_PAUSE")}
+          >
+            <Icon
+              name={playing ? "pause" : "play_arrow"}
+              size="l"
+              slot="icon-only"
+            />
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray" size="large">
+          <IonButton
+            color="dark-gray"
+            size="large"
+            onClick={() => musicPlayerService.send("NEXT_PLAY")}
+          >
             <Icon name="fast_forward" size="l" slot="icon-only" />
           </IonButton>
         </IonCol>
