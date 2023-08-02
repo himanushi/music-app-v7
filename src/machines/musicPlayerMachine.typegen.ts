@@ -17,6 +17,7 @@
         };
         eventsCausingActions: {
           "changeCurrentTrack": "NEXT_PLAY" | "PREVIOUS_PLAY" | "REPLACE_AND_PLAY";
+"changeRepeat": "CHANGE_REPEAT";
 "nextPlaybackNo": "NEXT_PLAY";
 "pause": "PLAY_OR_PAUSE";
 "play": "PLAY_OR_PAUSE";

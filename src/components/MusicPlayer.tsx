@@ -25,7 +25,7 @@ import type {
   ModalBreakpointChangeEventDetail,
 } from "@ionic/core";
 import { useHistory, useLocation } from "react-router-dom";
-import { useStartedServiceState } from "~/hooks";
+import { useStartedServiceContext, useStartedServiceState } from "~/hooks";
 import { musicPlayerService } from "~/machines/musicPlayerMachine";
 import { convertImageUrl } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
@@ -354,9 +354,12 @@ const toMMSS = (duration: number) => {
 
 const PlayerController = () => {
   const { state } = useStartedServiceState(musicPlayerService);
-  const { repeat } = musicPlayerService.getSnapshot().context;
+  const { context } = useStartedServiceContext(musicPlayerService);
+  const { repeat } = context;
   const playing = state?.matches("playing");
   const loading = state?.matches("loading");
+
+  console.log(repeat);
 
   return (
     <>
@@ -401,20 +404,19 @@ const PlayerController = () => {
           </IonButton>
         </IonCol>
         <IonCol>
-          <IonButton color="dark-gray" size="large">
+          <IonButton
+            color="dark-gray"
+            size="large"
+            onClick={() => musicPlayerService.send("CHANGE_REPEAT")}
+          >
             <Icon
-              name={repeat === "one" ? "repeat_one" : "repeat"}
               color={["all", "one"].includes(repeat) ? "main" : "white"}
+              name={repeat === "one" ? "repeat_one" : "repeat"}
               size="l"
               slot="icon-only"
             />
           </IonButton>
         </IonCol>
-        {/* <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="shuffle" color="main" size="l" slot="icon-only" />
-          </IonButton>
-        </IonCol> */}
       </IonRow>
     </>
   );

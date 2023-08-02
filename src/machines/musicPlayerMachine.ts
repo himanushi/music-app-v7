@@ -142,6 +142,8 @@ const machine = createMachine(
       WAITING: "loading.waiting",
       STOPPED: "stopped",
 
+      CHANGE_REPEAT: { actions: "changeRepeat" },
+
       REPLACE_AND_PLAY: {
         actions: ["setTracks", "setCurrentPlaybackNo", "changeCurrentTrack"],
         target: "loading.loadingPlay"
@@ -194,11 +196,26 @@ const machine = createMachine(
       changeCurrentTrack: assign(({ tracks, currentPlaybackNo }) => ({ currentTrack: tracks[currentPlaybackNo] })),
 
       nextPlaybackNo: assign({
-        currentPlaybackNo: ({ tracks, currentPlaybackNo }) => currentPlaybackNo + 1 === tracks.length ? 0 : currentPlaybackNo + 1,
+        currentPlaybackNo: ({ repeat, tracks, currentPlaybackNo }) =>
+          repeat === "one" ? currentPlaybackNo : currentPlaybackNo + 1 === tracks.length ? 0 : currentPlaybackNo + 1
       }),
 
       previousPlaybackNo: assign({
-        currentPlaybackNo: ({ currentPlaybackNo }) => currentPlaybackNo === 0 ? 0 : currentPlaybackNo - 1,
+        currentPlaybackNo: ({ repeat, currentPlaybackNo }) =>
+          repeat === "one" ? currentPlaybackNo : currentPlaybackNo === 0 ? 0 : currentPlaybackNo - 1,
+      }),
+
+      changeRepeat: assign({
+        repeat: ({ repeat }) => {
+          switch (repeat) {
+            case "none":
+              return "all";
+            case "all":
+              return "one";
+            case "one":
+              return "none";
+          }
+        }
       }),
 
       play: (context, event) => CapacitorMusicKit.play({}),
@@ -207,7 +224,7 @@ const machine = createMachine(
     },
     services: {},
     guards: {
-      canNextPlay: ({ repeat, tracks, currentPlaybackNo }) => repeat === "all" || currentPlaybackNo + 1 !== tracks.length,
+      canNextPlay: ({ repeat, tracks, currentPlaybackNo }) => ["all", "one"].includes(repeat) || currentPlaybackNo + 1 !== tracks.length,
       canPreviousPlay: ({ currentPlaybackNo }) => currentPlaybackNo !== 0,
     },
     delays: {},
@@ -227,4 +244,4 @@ const setEvents = (callback: Sender<typeof schema.events>, events: [string, type
   return () => listener?.remove();
 };
 
-// window.musicPlayerService = musicPlayerService;
+window.musicPlayerService = musicPlayerService;
