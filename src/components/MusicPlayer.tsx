@@ -354,6 +354,7 @@ const toMMSS = (duration: number) => {
 
 const PlayerController = () => {
   const { state } = useStartedServiceState(musicPlayerService);
+  const { repeat } = musicPlayerService.getSnapshot().context;
   const playing = state?.matches("playing");
   const loading = state?.matches("loading");
 
@@ -401,14 +402,19 @@ const PlayerController = () => {
         </IonCol>
         <IonCol>
           <IonButton color="dark-gray" size="large">
-            <Icon name="repeat" color="main" size="l" slot="icon-only" />
+            <Icon
+              name={repeat === "one" ? "repeat_one" : "repeat"}
+              color={["all", "one"].includes(repeat) ? "main" : "white"}
+              size="l"
+              slot="icon-only"
+            />
           </IonButton>
         </IonCol>
-        <IonCol>
+        {/* <IonCol>
           <IonButton color="dark-gray" size="large">
             <Icon name="shuffle" color="main" size="l" slot="icon-only" />
           </IonButton>
-        </IonCol>
+        </IonCol> */}
       </IonRow>
     </>
   );

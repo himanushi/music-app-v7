@@ -19,11 +19,10 @@ const schema = {
     | { type: "NEXT_PLAY" }
     | { type: "PREVIOUS_PLAY" }
     | { type: "PLAY_OR_PAUSE" }
-    | { type: "PLAY" }
+    | { type: "CHANGE_REPEAT" }
+
     | { type: "PLAYING" }
-    | { type: "PAUSE" }
     | { type: "PAUSED" }
-    | { type: "STOP" }
     | { type: "STOPPED" }
     | { type: "WAITING" },
 
@@ -31,7 +30,7 @@ const schema = {
     tracks: Track[];
     currentTrack?: Track;
     currentPlaybackNo: number;
-    repeat: boolean;
+    repeat: "none" | "all" | "one";
   },
 } as const;
 
@@ -42,7 +41,7 @@ const machine = createMachine(
     context: {
       tracks: [],
       currentPlaybackNo: 0,
-      repeat: false,
+      repeat: "none",
     },
 
     initial: "ready",
@@ -155,7 +154,12 @@ const machine = createMachine(
           target: "loading.loadingPlay",
         },
         {
-          actions: ["nextPlaybackNo", "changeCurrentTrack", "stop", "changeCurrentTrack"],
+          actions: [
+            "nextPlaybackNo",
+            "changeCurrentTrack",
+            "stop",
+            "changeCurrentTrack"
+          ],
         },
       ],
 
@@ -203,7 +207,7 @@ const machine = createMachine(
     },
     services: {},
     guards: {
-      canNextPlay: ({ repeat, tracks, currentPlaybackNo }) => repeat || currentPlaybackNo + 1 !== tracks.length,
+      canNextPlay: ({ repeat, tracks, currentPlaybackNo }) => repeat === "all" || currentPlaybackNo + 1 !== tracks.length,
       canPreviousPlay: ({ currentPlaybackNo }) => currentPlaybackNo !== 0,
     },
     delays: {},
