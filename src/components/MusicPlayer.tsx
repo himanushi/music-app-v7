@@ -188,28 +188,43 @@ const Tab = () => {
 };
 
 const OpenModal = () => {
+  const [page, setPage] = useState<"player" | "queue">("player");
+
   return (
     <>
       <IonContent color="dark-gray" scrollY={false} forceOverscroll={false}>
-        <Player />
+        {page === "player" ? <Player /> : <Player />}
       </IonContent>
       <IonFooter>
         <IonToolbar>
           <IonButtons>
-            <IonSegmentButton layout="icon-top" value="default">
-              <Icon name="queue_music" slot="start" color="white" />
-            </IonSegmentButton>
-            <IonSegmentButton value="segment">
-              <Icon name="music_note" color="red" size="s" />
-            </IonSegmentButton>
-            <IonSegmentButton value="aa">
-              <IonButton color="dark-gray" size="small">
-                <Icon name="queue_music" color="white" />
-                <IonRippleEffect type="unbounded" />
+            <IonSegmentButton onClick={() => setPage("player")}>
+              <IonButton>
+                <Icon
+                  name="music_note"
+                  slot="start"
+                  color={page === "player" ? "main" : "white"}
+                />
               </IonButton>
+              <IonLabel color={page === "player" ? "main" : "white"}>
+                プレイヤー
+              </IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton onClick={() => setPage("queue")}>
+              <IonButton>
+                <Icon
+                  name="queue_music"
+                  slot="start"
+                  color={page === "queue" ? "main" : "white"}
+                />
+              </IonButton>
+              <IonLabel color={page === "queue" ? "main" : "white"}>
+                リスト
+              </IonLabel>
             </IonSegmentButton>
           </IonButtons>
         </IonToolbar>
+        <IonToolbar />
       </IonFooter>
     </>
   );
@@ -222,35 +237,7 @@ const Player = () => {
       <div style={{ height: "13%" }}>
         <PlayerSeekBar />
       </div>
-      <IonRow style={{ height: "13%" }} class="ion-text-center">
-        <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="fast_rewind" size="l" slot="icon-only" color="white" />
-          </IonButton>
-        </IonCol>
-        <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="play_arrow" size="l" slot="icon-only" />
-          </IonButton>
-        </IonCol>
-        <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="fast_forward" size="l" slot="icon-only" />
-          </IonButton>
-        </IonCol>
-      </IonRow>
-      <IonRow class="ion-text-center">
-        <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="favorite" color="red" size="l" slot="icon-only" />
-          </IonButton>
-        </IonCol>
-        <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="repeat" color="main" size="l" slot="icon-only" />
-          </IonButton>
-        </IonCol>
-      </IonRow>
+      <PlayerController />
     </IonGrid>
   );
 };
@@ -355,4 +342,49 @@ const toMMSS = (duration: number) => {
   const padding = (num: number) => `0${num}`.slice(-2);
 
   return `${padding(minutes)}:${padding(seconds)}`;
+};
+
+const PlayerController = () => {
+  const { state } = useStartedServiceState(musicPlayerService);
+  const track = musicPlayerService.getSnapshot().context.currentTrack;
+  const isLoading = state?.matches("loading");
+
+  return (
+    <>
+      <IonRow style={{ height: "13%" }} class="ion-text-center">
+        <IonCol>
+          <IonButton color="dark-gray" size="large">
+            <Icon name="fast_rewind" size="l" slot="icon-only" color="white" />
+          </IonButton>
+        </IonCol>
+        <IonCol>
+          <IonButton color="dark-gray" size="large">
+            <Icon name="play_arrow" size="l" slot="icon-only" />
+          </IonButton>
+        </IonCol>
+        <IonCol>
+          <IonButton color="dark-gray" size="large">
+            <Icon name="fast_forward" size="l" slot="icon-only" />
+          </IonButton>
+        </IonCol>
+      </IonRow>
+      <IonRow class="ion-text-center">
+        <IonCol>
+          <IonButton color="dark-gray" size="large">
+            <Icon name="favorite" color="red" size="l" slot="icon-only" />
+          </IonButton>
+        </IonCol>
+        <IonCol>
+          <IonButton color="dark-gray" size="large">
+            <Icon name="repeat" color="main" size="l" slot="icon-only" />
+          </IonButton>
+        </IonCol>
+        <IonCol>
+          <IonButton color="dark-gray" size="large">
+            <Icon name="shuffle" color="main" size="l" slot="icon-only" />
+          </IonButton>
+        </IonCol>
+      </IonRow>
+    </>
+  );
 };
