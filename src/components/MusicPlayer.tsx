@@ -57,7 +57,7 @@ export const FooterModal = () => {
       initialBreakpoint={min}
       breakpoints={[min, max]}
       backdropDismiss={false}
-      backdropBreakpoint={max}
+      backdropBreakpoint={0.5}
       onIonBreakpointDidChange={bcreakpointDidChange}
     >
       {open ? (
