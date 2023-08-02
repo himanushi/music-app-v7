@@ -11,7 +11,6 @@ import {
   IonModal,
   IonNote,
   IonRange,
-  IonRippleEffect,
   IonRow,
   IonSegmentButton,
   IonThumbnail,
@@ -355,7 +354,6 @@ const toMMSS = (duration: number) => {
 
 const PlayerController = () => {
   const { state } = useStartedServiceState(musicPlayerService);
-  const track = musicPlayerService.getSnapshot().context.currentTrack;
   const playing = state?.matches("playing");
 
   return (
