@@ -149,7 +149,16 @@ const pathMap = [
     title: "設定",
     path: "/settings",
     icon: "settings",
-    locations: ["settings", "me", "login"],
+    locations: [
+      "settings",
+      "me",
+      "login",
+      "about",
+      "teams",
+      "privacy",
+      "cookie-policy",
+      "cache",
+    ],
     color: "main",
   },
 ];
