@@ -156,12 +156,8 @@ const machine = createMachine(
           target: "loading.loadingPlay",
         },
         {
-          actions: [
-            "nextPlaybackNo",
-            "changeCurrentTrack",
-            "stop",
-            "changeCurrentTrack"
-          ],
+          actions: ["nextPlaybackNo", "changeCurrentTrack"],
+          target: "paused",
         },
       ],
 
@@ -172,12 +168,7 @@ const machine = createMachine(
           target: "loading.loadingPlay",
         },
         {
-          actions: [
-            "previousPlaybackNo",
-            "changeCurrentTrack",
-            "stop",
-            "changeCurrentTrack",
-          ],
+          actions: ["previousPlaybackNo", "changeCurrentTrack"],
         },
       ],
     },

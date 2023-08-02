@@ -24,7 +24,6 @@
 "previousPlaybackNo": "PREVIOUS_PLAY";
 "setCurrentPlaybackNo": "REPLACE_AND_PLAY";
 "setTracks": "REPLACE_AND_PLAY";
-"stop": "NEXT_PLAY" | "PREVIOUS_PLAY";
         };
         eventsCausingDelays: {
           
