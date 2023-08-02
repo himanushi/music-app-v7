@@ -17,7 +17,7 @@ export const toTrack = (track: TrackObject | MusicKit.LibrarySongs): Track => {
       id: track.id,
       appleMusicId: track.appleMusicId,
       name: track.name,
-      artworkUrl: track.artworkM.url,
+      artworkUrl: track.artworkL.url,
       trackNumber: track.trackNumber,
       durationMs: track.durationMs
     }
