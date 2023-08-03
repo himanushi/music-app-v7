@@ -12,7 +12,6 @@ import {
   IonModal,
   IonNote,
   IonRange,
-  IonReorder,
   IonReorderGroup,
   IonRow,
   IonSegmentButton,
@@ -31,7 +30,7 @@ import type {
 import { useHistory, useLocation } from "react-router-dom";
 import { useStartedServiceContext, useStartedServiceState } from "~/hooks";
 import { musicPlayerService } from "~/machines/musicPlayerMachine";
-import { convertImageUrl, toTrack } from "~/lib";
+import { convertImageUrl } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { TrackItem } from "~/pages";
 
@@ -427,8 +426,7 @@ const PlayerController = () => {
 };
 
 const Queue = () => {
-  const { tracks, currentPlaybackNo } =
-    useStartedServiceContext(musicPlayerService);
+  const { tracks } = useStartedServiceContext(musicPlayerService);
 
   const reorder = (event: CustomEvent<ItemReorderEventDetail>) => {
     musicPlayerService.send({
@@ -444,7 +442,7 @@ const Queue = () => {
       <IonHeader>
         <IonToolbar />
       </IonHeader>
-      <IonContent color="dark-gray">
+      <IonContent color="dark-gray" forceOverscroll={false}>
         <IonList>
           <IonReorderGroup disabled={false} onIonItemReorder={reorder}>
             {tracks.map((track) => (
