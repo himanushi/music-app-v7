@@ -1,10 +1,15 @@
 import { useQuery } from "@apollo/client";
+import { Capacitor } from "@capacitor/core";
 import { useEffect } from "react";
 import { AppleMusicTokenDocument } from "~/graphql/types";
 import { appleMusicAccountService } from "~/machines/appleMusicAccountMachine";
 
 export const useInitialize = () => {
-  const { data } = useQuery(AppleMusicTokenDocument);
+  const { data } = useQuery(AppleMusicTokenDocument, {
+    fetchPolicy: "cache-and-network", skip: Capacitor.getPlatform() === "ios"
+  });
+
+  // Web
   useEffect(() => {
     if (data?.appleMusicToken) {
       appleMusicAccountService.send({
@@ -20,4 +25,11 @@ export const useInitialize = () => {
       });
     }
   }, [data]);
+
+  // iOS
+  useEffect(() => {
+    if (Capacitor.getPlatform() === "ios") {
+      appleMusicAccountService.send({ type: "CHECKING" });
+    }
+  }, []);
 };
