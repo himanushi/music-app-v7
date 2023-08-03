@@ -17,5 +17,5 @@ export const useStartedServiceContext = <Context, Event extends EventObject>(
     return () => unsubscribe();
   }, [service, context]);
 
-  return { context };
+  return context;
 };
