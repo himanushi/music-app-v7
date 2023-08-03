@@ -206,7 +206,7 @@ export const TrackItem = ({
       )}
       <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
       <TrackItemButtons track={track} />
-      {reorder && <IonReorder slot="start" />}
+      {reorder && <IonReorder slot="end" />}
     </IonItem>
   );
 };
