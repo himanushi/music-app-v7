@@ -11,6 +11,7 @@ import {
   IonNote,
   IonPage,
   IonPopover,
+  IonReorder,
   IonSearchbar,
   IonThumbnail,
   IonTitle,
@@ -164,10 +165,12 @@ export const TrackItem = ({
   track,
   tracks,
   displayThumbnail = false,
+  reorder = false,
 }: {
   track: Track;
   tracks: Track[];
   displayThumbnail?: boolean;
+  reorder?: boolean;
 }) => {
   useStartedServiceState(musicPlayerService);
 
@@ -203,6 +206,7 @@ export const TrackItem = ({
       )}
       <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
       <TrackItemButtons track={track} />
+      {reorder && <IonReorder slot="start" />}
     </IonItem>
   );
 };
