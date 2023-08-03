@@ -31,7 +31,6 @@ import {
   AlbumObject,
   ArtistObject,
   ArtistsDocument,
-  TrackObject,
 } from "~/graphql/types";
 import { useFetchItems, useMenu, useScrollElement } from "~/hooks";
 import {
@@ -115,9 +114,10 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
             <IonItem
               routerLink={`/library-albums/${libraryAlbum.id}`}
               lines="none"
+              key={album.id}
             >
-              <Icon name="sync" color="red" slot="start" />
-              <IonLabel>ライブラリアルバムを同期</IonLabel>
+              <Icon name="art_track" size="s" slot="start" color="red" />
+              <IonLabel>購入済みライブラリアルバムを聴く</IonLabel>
             </IonItem>
           )}
           <IonItem lines="none">
