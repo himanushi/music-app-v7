@@ -8,14 +8,18 @@ import {
   IonHeader,
   IonItem,
   IonLabel,
+  IonList,
   IonModal,
   IonNote,
   IonRange,
+  IonReorder,
+  IonReorderGroup,
   IonRow,
   IonSegmentButton,
   IonThumbnail,
   IonTitle,
   IonToolbar,
+  ItemReorderEventDetail,
   RangeKnobMoveStartEventDetail,
 } from "@ionic/react";
 import { Icon, SquareImage } from ".";
@@ -27,8 +31,9 @@ import type {
 import { useHistory, useLocation } from "react-router-dom";
 import { useStartedServiceContext, useStartedServiceState } from "~/hooks";
 import { musicPlayerService } from "~/machines/musicPlayerMachine";
-import { convertImageUrl } from "~/lib";
+import { convertImageUrl, toTrack } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
+import { TrackItem } from "~/pages";
 
 // 1 にしてしまうとドラッグしても閉じない
 const max = 0.95;
@@ -201,7 +206,7 @@ const OpenModal = () => {
   return (
     <>
       <IonContent color="dark-gray" scrollY={false} forceOverscroll={false}>
-        {page === "player" ? <Player /> : <Player />}
+        {page === "player" ? <Player /> : <Queue />}
       </IonContent>
       <IonFooter>
         <IonToolbar>
@@ -221,7 +226,7 @@ const OpenModal = () => {
             <IonSegmentButton onClick={() => setPage("queue")}>
               <IonButton>
                 <Icon
-                  name="queue_music"
+                  name="playlist_play"
                   slot="start"
                   color={page === "queue" ? "main" : "white"}
                 />
@@ -354,8 +359,7 @@ const toMMSS = (duration: number) => {
 
 const PlayerController = () => {
   const { state } = useStartedServiceState(musicPlayerService);
-  const { context } = useStartedServiceContext(musicPlayerService);
-  const { repeat } = context;
+  const { repeat } = useStartedServiceContext(musicPlayerService);
   const playing = state?.matches("playing");
   const loading = state?.matches("loading");
 
@@ -418,6 +422,45 @@ const PlayerController = () => {
           </IonButton>
         </IonCol>
       </IonRow>
+    </>
+  );
+};
+
+const Queue = () => {
+  const { tracks, currentPlaybackNo } =
+    useStartedServiceContext(musicPlayerService);
+
+  const reorder = (event: CustomEvent<ItemReorderEventDetail>) => {
+    musicPlayerService.send({
+      type: "REORDER",
+      from: event.detail.from,
+      to: event.detail.to,
+    });
+    event.detail.complete();
+  };
+
+  return (
+    <>
+      <IonHeader>
+        <IonToolbar />
+      </IonHeader>
+      <IonContent color="dark-gray">
+        <IonList>
+          <IonReorderGroup disabled={false} onIonItemReorder={reorder}>
+            {tracks.map((track, index) => (
+              <TrackItem
+                displayThumbnail
+                reorder
+                track={track}
+                tracks={tracks}
+                key={track.id}
+              />
+            ))}
+          </IonReorderGroup>
+        </IonList>
+        <IonItem lines="none" color="dark-gray" />
+        <IonItem lines="none" color="dark-gray" />
+      </IonContent>
     </>
   );
 };

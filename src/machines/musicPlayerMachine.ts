@@ -20,6 +20,7 @@ const schema = {
     | { type: "PREVIOUS_PLAY" }
     | { type: "PLAY_OR_PAUSE" }
     | { type: "CHANGE_REPEAT" }
+    | { type: "REORDER"; from: number; to: number; }
 
     | { type: "PLAYING" }
     | { type: "PAUSED" }
@@ -67,7 +68,7 @@ const machine = createMachine(
 
                 let appleMusicId = currentTrack.appleMusicId;
 
-                // ライブラリの曲の場合
+                // ライブラリの曲ではない場合は、カタログから取得する
                 if (!currentTrack.appleMusicId.startsWith("l.")) {
                   const catalogTrack = getApolloData<MusicKit.LibrarySongs>({
                     typeName: "CatalogTrack",
@@ -152,6 +153,8 @@ const machine = createMachine(
         target: "loading.loadingPlay"
       },
 
+      REORDER: { actions: "moveTracks" },
+
       NEXT_PLAY: [
         {
           actions: ["nextPlaybackNo", "changeCurrentTrack"],
@@ -212,9 +215,30 @@ const machine = createMachine(
         }
       }),
 
+      moveTracks: assign({
+        currentPlaybackNo: ({ currentPlaybackNo }, event) => {
+          if (currentPlaybackNo === event.from) {
+            return event.to;
+          } else if (
+            event.from < currentPlaybackNo &&
+            currentPlaybackNo <= event.to
+          ) {
+            return currentPlaybackNo - 1;
+          } else if (
+            event.from > currentPlaybackNo &&
+            currentPlaybackNo >= event.to
+          ) {
+            return currentPlaybackNo + 1;
+          } else {
+            return currentPlaybackNo;
+          }
+        },
+        tracks: ({ tracks }, event) => move(tracks, event.from, event.to)
+      }),
+
       play: (context, event) => CapacitorMusicKit.play({}),
       pause: (context, event) => CapacitorMusicKit.pause(),
-      stop: (context, event) => CapacitorMusicKit.stop(),
+      // stop: (context, event) => CapacitorMusicKit.stop(),
     },
     services: {},
     guards: {
@@ -237,5 +261,16 @@ const setEvents = (callback: Sender<typeof schema.events>, events: [string, type
 
   return () => listener?.remove();
 };
+
+const move = (arr: any[], from: number, to: number) => {
+  const result = [...arr];
+
+  if (from !== to) {
+    const element = result.splice(from, 1)[0];
+    result.splice(to, 0, element);
+  }
+
+  return result;
+}
 
 window.musicPlayerService = musicPlayerService;
