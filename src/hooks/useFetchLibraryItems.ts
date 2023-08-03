@@ -6,7 +6,7 @@ import {
   useQuery,
 } from "@apollo/client";
 import { RefresherEventDetail } from "@ionic/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { client } from "~/graphql/client";
 
 type VariablesType<T extends TypedDocumentNode<any, any>> =
@@ -36,20 +36,17 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
     notifyOnNetworkStatusChange: true,
   });
 
-  const items = useMemo(() => data?.items ?? [], [data?.items]);
-  const meta = useMemo(() => data?.meta ?? { total: 0 }, [data?.meta]) as {
-    total: number;
-  };
-  const [previousItemsLength, setPreviousItemsLength] = useState<number>(
-    items.length
-  );
+  const items: any[] = useMemo(() => data?.items ?? [], [data?.items]);
+  const meta = useMemo(() => data?.meta ?? { total: 0 }, [data?.meta]) as { total: number };
+  const previousItemsLength = useRef<number>();
 
   const fetchMore = useCallback(async () => {
-    if (items.length % limit !== 0 || items.length === previousItemsLength) {
+    if (items.length % limit !== 0 || items.length === previousItemsLength.current) {
       return;
     }
 
-    setPreviousItemsLength(items.length);
+    previousItemsLength.current = items.length;
+
     await fetchMoreQuery({
       variables: { limit, offset: items.length },
       updateQuery: (prev, { fetchMoreResult }) => {
@@ -57,7 +54,7 @@ export const useFetchLibraryItems = <T, D extends TypedDocumentNode<any, any>>({
         return { ...fetchMoreResult };
       },
     });
-  }, [fetchMoreQuery, items.length, limit, previousItemsLength]);
+  }, [fetchMoreQuery, items.length, limit]);
 
   const refresh = useCallback(
     (event?: CustomEvent<RefresherEventDetail>) => {
