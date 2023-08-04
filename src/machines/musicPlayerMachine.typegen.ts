@@ -23,6 +23,7 @@
 "pause": "PLAY_OR_PAUSE";
 "play": "PLAY_OR_PAUSE";
 "previousPlaybackNo": "PREVIOUS_PLAY";
+"removeTrack": "REMOVE_TRACK";
 "setCurrentPlaybackNo": "REPLACE_AND_PLAY";
 "setTracks": "REPLACE_AND_PLAY";
         };

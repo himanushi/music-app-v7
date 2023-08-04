@@ -197,7 +197,7 @@ const LibraryAlbumTracks = ({
         customScrollParent={scrollElement}
         totalCount={tracks.length}
         itemContent={(index) => (
-          <TrackItem tracks={tracks} track={tracks[index]} />
+          <TrackItem tracks={tracks} track={tracks[index]} index={index} />
         )}
       />
     </IonList>

@@ -169,7 +169,12 @@ const PlaylistTracks = ({
         customScrollParent={scrollElement}
         totalCount={tracks.length}
         itemContent={(index) => (
-          <TrackItem tracks={tracks} track={tracks[index]} displayThumbnail />
+          <TrackItem
+            index={index}
+            tracks={tracks}
+            track={tracks[index]}
+            displayThumbnail
+          />
         )}
       />
     </IonList>

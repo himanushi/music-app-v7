@@ -21,6 +21,7 @@ const schema = {
     | { type: "PLAY_OR_PAUSE" }
     | { type: "CHANGE_REPEAT" }
     | { type: "REORDER"; from: number; to: number; }
+    | { type: "REMOVE_TRACK"; index: number }
 
     | { type: "PLAYING" }
     | { type: "PAUSED" }
@@ -155,6 +156,8 @@ const machine = createMachine(
 
       REORDER: { actions: "moveTracks" },
 
+      REMOVE_TRACK: { actions: "removeTrack" },
+
       NEXT_PLAY: [
         {
           actions: ["nextPlaybackNo", "changeCurrentTrack"],
@@ -234,6 +237,12 @@ const machine = createMachine(
           }
         },
         tracks: ({ tracks }, event) => move(tracks, event.from, event.to)
+      }),
+
+      removeTrack: assign({
+        currentPlaybackNo: (context, event) =>
+          context.currentPlaybackNo > event.index ? context.currentPlaybackNo - 1 : context.currentPlaybackNo,
+        tracks: (context, event) => context.tracks.filter((_, index) => index !== event.index),
       }),
 
       play: (context, event) => CapacitorMusicKit.play({}),

@@ -445,10 +445,11 @@ const Queue = () => {
       <IonContent color="dark-gray" forceOverscroll={false}>
         <IonList>
           <IonReorderGroup disabled={false} onIonItemReorder={reorder}>
-            {tracks.map((track) => (
+            {tracks.map((track, index) => (
               <TrackItem
                 displayThumbnail
                 reorder
+                index={index}
                 track={track}
                 tracks={tracks}
                 key={track.id}

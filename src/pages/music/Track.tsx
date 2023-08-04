@@ -92,6 +92,7 @@ const TrackInfo = ({ track }: { track?: TrackObject }) => {
             </IonNote>
           </IonItem>
           <TrackItem
+            index={0}
             tracks={[toTrack(track)]}
             track={toTrack(track)}
             displayThumbnail

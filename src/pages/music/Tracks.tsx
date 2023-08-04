@@ -38,6 +38,7 @@ import {
   useMenu,
   useNestedState,
   useScrollElement,
+  useStartedServiceContext,
   useStartedServiceState,
   useVariablesItems,
 } from "~/hooks";
@@ -152,7 +153,12 @@ export const Tracks = () => {
           totalCount={items.length}
           endReached={() => items.length >= limit && fetchMore()}
           itemContent={(index) => (
-            <TrackItem tracks={tracks} track={tracks[index]} displayThumbnail />
+            <TrackItem
+              index={index}
+              tracks={tracks}
+              track={tracks[index]}
+              displayThumbnail
+            />
           )}
         />
         <FooterPadding />
@@ -162,11 +168,13 @@ export const Tracks = () => {
 };
 
 export const TrackItem = ({
+  index,
   track,
   tracks,
   displayThumbnail = false,
   reorder = false,
 }: {
+  index: number;
   track: Track;
   tracks: Track[];
   displayThumbnail?: boolean;
@@ -174,7 +182,6 @@ export const TrackItem = ({
 }) => {
   useStartedServiceState(musicPlayerService);
 
-  const index = tracks.findIndex((t) => t.appleMusicId === track.appleMusicId);
   const onClick = useCallback(async () => {
     musicPlayerService.send({
       type: "REPLACE_AND_PLAY",
@@ -205,8 +212,28 @@ export const TrackItem = ({
         <IonNote slot="start">{track.trackNumber}</IonNote>
       )}
       <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
-      <TrackItemButtons track={track} />
-      {reorder && <IonReorder slot="end" />}
+      {reorder ? (
+        <IonButtons
+          slot="end"
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+          }}
+        >
+          <FavoriteButton type="trackIds" id={track.id} size="s" />
+          <IonButton
+            color="main"
+            onClick={() =>
+              musicPlayerService.send({ type: "REMOVE_TRACK", index })
+            }
+          >
+            <Icon name="delete" slot="icon-only" color="red" size="s" />
+          </IonButton>
+          <IonReorder />
+        </IonButtons>
+      ) : (
+        <TrackItemButtons track={track} />
+      )}
     </IonItem>
   );
 };
