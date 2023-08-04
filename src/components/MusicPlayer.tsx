@@ -206,12 +206,7 @@ const OpenModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
       <IonHeader>
         <IonToolbar style={{ "--border-width": 0 }} color="dark-gray" />
       </IonHeader>
-      <IonContent
-        color="dark-gray"
-        scrollY={false}
-        forceOverscroll={false}
-        fullscreen
-      >
+      <IonContent color="dark-gray" forceOverscroll={false}>
         {page === "player" ? <Player /> : <Queue />}
       </IonContent>
       <IonFooter>
@@ -374,8 +369,6 @@ const PlayerController = () => {
   const { repeat } = useStartedServiceContext(musicPlayerService);
   const playing = state?.matches("playing");
   const loading = state?.matches("loading");
-
-  console.log(repeat);
 
   return (
     <>
