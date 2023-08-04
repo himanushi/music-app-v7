@@ -34,9 +34,8 @@ import { convertImageUrl } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { TrackItem } from "~/pages";
 
-// 1 にしてしまうとドラッグしても閉じない
-const max = 0.95;
-const min = 0.18;
+const max = 1;
+const min = 0.17;
 
 export const FooterModal = () => {
   const modal = useRef<HTMLIonModalElement>(null);
@@ -65,7 +64,7 @@ export const FooterModal = () => {
       onIonBreakpointDidChange={bcreakpointDidChange}
     >
       {open ? (
-        <OpenModal />
+        <OpenModal switchBreakpoint={switchBreakpoint} />
       ) : (
         <CloseModal switchBreakpoint={switchBreakpoint} />
       )}
@@ -199,12 +198,20 @@ const Tab = () => {
   );
 };
 
-const OpenModal = () => {
+const OpenModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
   const [page, setPage] = useState<"player" | "queue">("player");
 
   return (
     <>
-      <IonContent color="dark-gray" scrollY={false} forceOverscroll={false}>
+      <IonHeader>
+        <IonToolbar style={{ "--border-width": 0 }} color="dark-gray" />
+      </IonHeader>
+      <IonContent
+        color="dark-gray"
+        scrollY={false}
+        forceOverscroll={false}
+        fullscreen
+      >
         {page === "player" ? <Player /> : <Queue />}
       </IonContent>
       <IonFooter>
@@ -234,9 +241,15 @@ const OpenModal = () => {
                 リスト
               </IonLabel>
             </IonSegmentButton>
+            <IonSegmentButton onClick={() => switchBreakpoint()}>
+              <IonButton>
+                <Icon name="close" slot="start" />
+              </IonButton>
+              <IonLabel>閉じる</IonLabel>
+            </IonSegmentButton>
           </IonButtons>
         </IonToolbar>
-        <IonToolbar style={{ height: "60px" }} />
+        <IonToolbar style={{ height: "10px" }} />
       </IonFooter>
     </>
   );
@@ -439,27 +452,20 @@ const Queue = () => {
 
   return (
     <>
-      <IonHeader>
-        <IonToolbar />
-      </IonHeader>
-      <IonContent color="dark-gray" forceOverscroll={false}>
-        <IonList>
-          <IonReorderGroup disabled={false} onIonItemReorder={reorder}>
-            {tracks.map((track, index) => (
-              <TrackItem
-                displayThumbnail
-                reorder
-                index={index}
-                track={track}
-                tracks={tracks}
-                key={track.id}
-              />
-            ))}
-          </IonReorderGroup>
-        </IonList>
-        <IonItem lines="none" color="dark-gray" />
-        <IonItem lines="none" color="dark-gray" />
-      </IonContent>
+      <IonList>
+        <IonReorderGroup disabled={false} onIonItemReorder={reorder}>
+          {tracks.map((track, index) => (
+            <TrackItem
+              displayThumbnail
+              reorder
+              index={index}
+              track={track}
+              tracks={tracks}
+              key={track.id}
+            />
+          ))}
+        </IonReorderGroup>
+      </IonList>
     </>
   );
 };
