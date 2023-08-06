@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useMusicKit } from ".";
 
-const replaceName = (name: string) =>
+export const replaceName = (name: string) =>
   // 名前が長すぎる場合は検索で引っかからないのでなるべく短い名前にする
   // eslint-disable-next-line prefer-named-capture-group
-  name.replace(/(?!^)(\[|\(|-|:|〜|~|,|\s).*/gu, "");
+  name.replace(/(?!^)(\[|\(|:|〜|~|,|\s).*/gu, "");
 
 export const useSearchLibraryAlbum = ({
   catalogAlbumName,
