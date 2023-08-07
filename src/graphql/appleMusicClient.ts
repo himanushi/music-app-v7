@@ -3,7 +3,7 @@ import type { Operation } from "@apollo/client/core";
 import { Observable } from "@apollo/client/utilities";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 
-const applyDefaultFields = (obj: any, defaultValues: any) => {
+export const applyDefaultFields = (obj: any, defaultValues: any) => {
   for (const key in defaultValues) {
     if (typeof defaultValues[key] === "object" && defaultValues[key] !== null) {
       if (typeof obj[key] !== "object" || obj[key] === null) {
@@ -104,7 +104,7 @@ const libraryTracksObservable = ({
               attributes: newAttributes,
               id: catalogId,
             };
-            catalogTrack.attributes.playParams.libraryId = item.id;
+            catalogTrack.attributes.playParams.id = item.id;
             CatalogTracks.push(catalogTrack);
           }
 
@@ -158,6 +158,13 @@ export const capacitorLink = new ApolloLink((operation, forward) => {
       operation,
       libraryFields: libraryTracksFields,
       typeName: "LibraryTrack",
+    });
+  } else if (operation.operationName === "CatalogTracks") {
+    return libraryItemsObservable({
+      musicKitFunction: (params) => CapacitorMusicKit.api({ url: "/v1/catalog/jp/songs", params }),
+      operation,
+      libraryFields: libraryTracksFields,
+      typeName: "CatalogTrack",
     });
   } else if (operation.operationName === "LibraryArtists") {
     return libraryItemsObservable({
@@ -250,7 +257,7 @@ export const LibraryTracksDocument = gql`
   }
 `;
 
-const libraryTracksFields = {
+export const libraryTracksFields = {
   artwork: {
     url: "",
   },
@@ -266,6 +273,17 @@ const libraryTracksFields = {
     libraryId: "",
   },
 } as any;
+
+export const CatalogTracksDocument = gql`
+  query CatalogTracks($limit: Int, $offset: Int, $albumId: String) {
+    items: CatalogTracks(limit: $limit, offset: $offset, albumId: $albumId) {
+      ${LibraryTracksAttributes}
+    }
+    meta: CatalogTrackMeta(albumId: $albumId) {
+      total
+    }
+  }
+`;
 
 export const LibraryArtistsDocument = gql`
   query LibraryArtists($limit: Int, $offset: Int, $albumId: String) {

@@ -1,7 +1,10 @@
+import { gql } from "@apollo/client";
 import { PluginListenerHandle } from "@capacitor/core";
-import { CapacitorMusicKit, PlaybackStateDidChangeListener } from "capacitor-plugin-musickit";
+import { ApiResult, CapacitorMusicKit, PlaybackStateDidChangeListener } from "capacitor-plugin-musickit";
 import { Sender, assign, createMachine, interpret } from "xstate";
-import { LibraryTracksAttributes } from "~/graphql/appleMusicClient";
+import { CatalogTracksDocument, LibraryTracksAttributes, applyDefaultFields, libraryTracksFields, } from "~/graphql/appleMusicClient";
+import { client } from "~/graphql/client";
+import { replaceName } from "~/hooks";
 import { getApolloData } from "~/lib";
 
 export type Track = {
@@ -67,28 +70,75 @@ const machine = createMachine(
                   return;
                 }
 
-                let appleMusicId = currentTrack.appleMusicId;
-
-                // ライブラリの曲ではない場合は、カタログから取得する
-                if (!currentTrack.appleMusicId.startsWith("l.")) {
-                  const catalogTrack = getApolloData<MusicKit.LibrarySongs>({
-                    typeName: "CatalogTrack",
-                    id: currentTrack.appleMusicId,
-                    attributes: LibraryTracksAttributes,
-                  });
-
-                  appleMusicId = catalogTrack?.attributes?.playParams?.id ?? currentTrack.appleMusicId
-                }
-
-                console.log("appleMusicId", appleMusicId);
-
                 const cleaner = setEvents(callback, [["playing", { type: "PLAYING" }]]);
 
                 (async () => {
+                  if (!client.current) {
+                    callback({ type: "NEXT_PLAY" });
+                    return;
+                  }
+
                   await CapacitorMusicKit.stop();
+
+                  let appleMusicId = currentTrack.appleMusicId;
+
+                  // ライブラリの曲ではない場合は、カタログから取得する
+                  if (!appleMusicId.startsWith("l.")) {
+                    // 1. キャッシュから取得
+                    const catalogTrack = getApolloData<MusicKit.LibrarySongs>({
+                      typeName: "CatalogTrack",
+                      id: appleMusicId,
+                      attributes: LibraryTracksAttributes,
+                    });
+
+                    let catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
+
+                    // 2. キャッシュから取得できなかった場合は、カタログから取得する
+                    if (!catalogAppleMusicId) {
+                      try {
+                        const result = await client.current.query<ApiResult<MusicKit.Songs>>({ query: CatalogTracksDocument, variables: { ids: [appleMusicId] } })
+                        if ("data" in result.data) {
+                          const catalogTrack = result.data.data[0];
+                          catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
+                        }
+                      } catch (e) {
+                        // Apple Music サブスクリプション契約なしの場合は、カタログから取得できない
+                        catalogAppleMusicId = appleMusicId
+                      }
+                    }
+
+                    // 3. カタログから取得できなかった場合(購入していて現在は非公開になっているなど)は、ライブラリから検索してキャッシュする
+                    if (!catalogAppleMusicId) {
+                      const track = await recursionSearchTrack({ track: currentTrack, appleMusicId: appleMusicId })
+                      if (track) {
+                        const data = {
+                          __typename: "CatalogTrack",
+                          ...track,
+                          attributes: applyDefaultFields({ ...track.attributes }, libraryTracksFields),
+                        };
+
+                        data.attributes.playParams.id = track.id;
+
+                        client.current.writeFragment({
+                          id: `CatalogTrack:${appleMusicId}`,
+                          fragment: gql`
+                            fragment Fragment on CatalogTrack {
+                              ${LibraryTracksAttributes}
+                            }
+                          `,
+                          data,
+                        });
+
+                        catalogAppleMusicId = track.id;
+                      }
+                    }
+
+                    if (catalogAppleMusicId) appleMusicId = catalogAppleMusicId;
+                  }
+
                   await CapacitorMusicKit.setQueue({ ids: [appleMusicId] });
                   await CapacitorMusicKit.play({});
-                })()
+                })();
 
                 return cleaner;
               }
@@ -282,4 +332,44 @@ const move = (arr: any[], from: number, to: number) => {
   return result;
 }
 
-window.musicPlayerService = musicPlayerService;
+const searchTrack = async ({ track, appleMusicId }: { track: Track, appleMusicId: string }) => {
+  const result = await CapacitorMusicKit.api<any>({
+    url: "/v1/me/library/search",
+    params: {
+      types: "library-songs",
+      limit: 25,
+      term: replaceName(track.name),
+    },
+  });
+
+  let findTrack = undefined;
+  let hasNext = false;
+  const tracks =
+    "results" in result
+      ? result.results["library-songs"]
+      : undefined;
+  if (tracks) {
+    findTrack = tracks.data.find(
+      (track) => track.attributes.playParams?.purchasedId === appleMusicId
+    );
+    hasNext = tracks.next !== undefined;
+  }
+
+  return { track: findTrack, hasNext };
+}
+
+const recursionSearchTrack =
+  async ({ track, appleMusicId }: { track: Track, appleMusicId: string }):
+    Promise<MusicKit.LibraryAlbums | undefined> => {
+    const { track: findTrack, hasNext } = await searchTrack({ track, appleMusicId });
+
+    if (findTrack) {
+      return findTrack;
+    } else if (hasNext) {
+      return await recursionSearchTrack({ track, appleMusicId });
+    } else {
+      return undefined;
+    }
+  };
+
+// window.musicPlayerService = musicPlayerService;
