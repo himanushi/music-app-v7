@@ -93,43 +93,40 @@ const machine = createMachine(
 
                     let catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
 
-                    // 2. キャッシュから取得できなかった場合は、カタログから取得する
-                    if (!catalogAppleMusicId) {
-                      try {
+                    if ((await CapacitorMusicKit.hasMusicSubscription()).result) {
+                      // 2. キャッシュから取得できなかった場合は、カタログから取得する
+                      if (!catalogAppleMusicId) {
                         const result = await client.current.query<ApiResult<MusicKit.Songs>>({ query: CatalogTracksDocument, variables: { ids: [appleMusicId] } })
                         if ("data" in result.data) {
                           const catalogTrack = result.data.data[0];
                           catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
                         }
-                      } catch (e) {
-                        // Apple Music サブスクリプション契約なしの場合は、カタログから取得できない
-                        catalogAppleMusicId = appleMusicId
                       }
-                    }
 
-                    // 3. カタログから取得できなかった場合(購入していて現在は非公開になっているなど)は、ライブラリから検索してキャッシュする
-                    if (!catalogAppleMusicId) {
-                      const track = await recursionSearchTrack({ track: currentTrack, appleMusicId: appleMusicId })
-                      if (track) {
-                        const data = {
-                          __typename: "CatalogTrack",
-                          ...track,
-                          attributes: applyDefaultFields({ ...track.attributes }, libraryTracksFields),
-                        };
+                      // 3. カタログから取得できなかった場合(購入していて現在は非公開になっているなど)は、ライブラリから検索してキャッシュする
+                      if (!catalogAppleMusicId) {
+                        const track = await recursionSearchTrack({ track: currentTrack, appleMusicId: appleMusicId })
+                        if (track) {
+                          const data = {
+                            __typename: "CatalogTrack",
+                            ...track,
+                            attributes: applyDefaultFields({ ...track.attributes }, libraryTracksFields),
+                          };
 
-                        data.attributes.playParams.id = track.id;
+                          data.attributes.playParams.id = track.id;
 
-                        client.current.writeFragment({
-                          id: `CatalogTrack:${appleMusicId}`,
-                          fragment: gql`
-                            fragment Fragment on CatalogTrack {
-                              ${LibraryTracksAttributes}
-                            }
-                          `,
-                          data,
-                        });
+                          client.current.writeFragment({
+                            id: `CatalogTrack:${appleMusicId}`,
+                            fragment: gql`
+                              fragment Fragment on CatalogTrack {
+                                ${LibraryTracksAttributes}
+                              }
+                            `,
+                            data,
+                          });
 
-                        catalogAppleMusicId = track.id;
+                          catalogAppleMusicId = track.id;
+                        }
                       }
                     }
 
@@ -371,5 +368,9 @@ const recursionSearchTrack =
       return undefined;
     }
   };
+
+musicPlayerService.subscribe((state) => {
+  console.log(state)
+});
 
 // window.musicPlayerService = musicPlayerService;
