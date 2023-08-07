@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { PluginListenerHandle } from "@capacitor/core";
 import { ApiResult, CapacitorMusicKit, PlaybackStateDidChangeListener } from "capacitor-plugin-musickit";
-import { Sender, assign, createMachine, interpret } from "xstate";
+import { Sender, assign, createMachine, interpret, raise, send, sendTo } from "xstate";
 import { CatalogTracksDocument, LibraryTracksAttributes, applyDefaultFields, libraryTracksFields, } from "~/graphql/appleMusicClient";
 import { client } from "~/graphql/client";
 import { replaceName } from "~/hooks";
@@ -63,6 +63,8 @@ const machine = createMachine(
           },
 
           loadingPlay: {
+            // 5秒間再生できない音楽はスキップ
+            after: { 5000: { actions: raise({ type: "NEXT_PLAY" }) } },
             invoke: {
               src: ({ currentTrack }) => (callback) => {
                 if (!currentTrack) {
@@ -93,19 +95,17 @@ const machine = createMachine(
 
                     let catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
 
-                    if ((await CapacitorMusicKit.hasMusicSubscription()).result) {
+                    if (!catalogAppleMusicId && (await CapacitorMusicKit.hasMusicSubscription()).result) {
                       // 2. キャッシュから取得できなかった場合は、カタログから取得する
-                      if (!catalogAppleMusicId) {
-                        const result = await client.current.query<ApiResult<MusicKit.Songs>>({ query: CatalogTracksDocument, variables: { ids: [appleMusicId] } })
-                        if ("data" in result.data) {
-                          const catalogTrack = result.data.data[0];
-                          catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
-                        }
+                      const result = await client.current.query<ApiResult<MusicKit.Songs>>({ query: CatalogTracksDocument, variables: { ids: [appleMusicId] } })
+                      if ("data" in result.data) {
+                        const catalogTrack = result.data.data[0];
+                        catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
                       }
 
                       // 3. カタログから取得できなかった場合(購入していて現在は非公開になっているなど)は、ライブラリから検索してキャッシュする
                       if (!catalogAppleMusicId) {
-                        const track = await recursionSearchTrack({ track: currentTrack, appleMusicId: appleMusicId })
+                        const track = await recursionSearchTrack({ track: currentTrack, appleMusicId: appleMusicId, offset: 0 })
                         if (track) {
                           const data = {
                             __typename: "CatalogTrack",
@@ -329,12 +329,13 @@ const move = (arr: any[], from: number, to: number) => {
   return result;
 }
 
-const searchTrack = async ({ track, appleMusicId }: { track: Track, appleMusicId: string }) => {
+const searchTrack = async ({ track, appleMusicId, offset = 0 }: { track: Track, appleMusicId: string, offset: number }) => {
   const result = await CapacitorMusicKit.api<any>({
     url: "/v1/me/library/search",
     params: {
       types: "library-songs",
       limit: 25,
+      offset,
       term: replaceName(track.name),
     },
   });
@@ -356,21 +357,21 @@ const searchTrack = async ({ track, appleMusicId }: { track: Track, appleMusicId
 }
 
 const recursionSearchTrack =
-  async ({ track, appleMusicId }: { track: Track, appleMusicId: string }):
+  async ({ track, appleMusicId, offset }: { track: Track, appleMusicId: string, offset: number }):
     Promise<MusicKit.LibraryAlbums | undefined> => {
-    const { track: findTrack, hasNext } = await searchTrack({ track, appleMusicId });
+    const { track: findTrack, hasNext } = await searchTrack({ track, appleMusicId, offset });
 
     if (findTrack) {
       return findTrack;
     } else if (hasNext) {
-      return await recursionSearchTrack({ track, appleMusicId });
+      return await recursionSearchTrack({ track, appleMusicId, offset: offset + 25 });
     } else {
       return undefined;
     }
   };
 
-musicPlayerService.subscribe((state) => {
-  console.log(state)
-});
+// musicPlayerService.subscribe((state) => {
+//   console.log(state)
+// });
 
 // window.musicPlayerService = musicPlayerService;
