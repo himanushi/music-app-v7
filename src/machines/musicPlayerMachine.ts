@@ -162,8 +162,8 @@ const machine = createMachine(
         invoke: {
           src: () => (callback) => setEvents(callback, [
             ["completed", { type: "NEXT_PLAY" }],
-            ["stopped", { type: "STOPPED" }],
-            ["ended", { type: "STOPPED" }],
+            ["stopped", { type: "NEXT_PLAY" }],
+            ["ended", { type: "NEXT_PLAY" }],
             ["playing", { type: "PLAYING" }],
             ["loading", { type: "WAITING" }],
           ]),
