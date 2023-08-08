@@ -63,8 +63,8 @@ const machine = createMachine(
           },
 
           loadingPlay: {
-            // 3秒間再生できない音楽はスキップ
-            after: { 3000: { actions: raise({ type: "NEXT_PLAY" }) } },
+            // 10秒間再生できない音楽はスキップ
+            after: { 10000: { actions: raise({ type: "NEXT_PLAY" }) } },
             invoke: {
               src: ({ currentTrack }) => (callback) => {
                 if (!currentTrack) {
