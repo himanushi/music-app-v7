@@ -4,7 +4,7 @@ PODS:
   - CapacitorCordova (5.1.1)
   - CapacitorFilesystem (5.1.0):
     - Capacitor
-  - CapacitorPluginMusickit (0.0.78):
+  - CapacitorPluginMusickit (0.0.79):
     - Capacitor
   - CapacitorPreferences (5.0.5):
     - Capacitor
@@ -32,7 +32,7 @@ SPEC CHECKSUMS:
   Capacitor: 55956e1199b63efcd7f2dedffa5c6b9129c45aae
   CapacitorCordova: b31a46ad379c93a5c04e0598a6164e8cb90c2bb2
   CapacitorFilesystem: 071f1ea81928a56c62c231f9f48f96983cf0eada
-  CapacitorPluginMusickit: 16e92d9a7991f48c5764c39433189526a18d556f
+  CapacitorPluginMusickit: 18800d168297d616fdbf40a7230fbc4fed997ac5
   CapacitorPreferences: c4764b0b3beae28c625c87b1a80504d9b24947ec
 
 PODFILE CHECKSUM: 04c991eebdd1091be6c452038c0edcdca389668d
