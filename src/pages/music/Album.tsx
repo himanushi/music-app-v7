@@ -117,7 +117,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               key={album.id}
             >
               <Icon name="art_track" size="s" slot="start" color="red" />
-              <IonLabel>購入済みライブラリアルバムを聴く</IonLabel>
+              <IonLabel>ライブラリアルバムを聴く</IonLabel>
             </IonItem>
           )}
           <IonItem lines="none">
