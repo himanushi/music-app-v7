@@ -89,7 +89,7 @@ const ClosePlayer = ({
   switchBreakpoint: () => void;
 }) => {
   const { state } = useStartedServiceState(musicPlayerService);
-  const track = musicPlayerService.getSnapshot().context.currentTrack;
+  const { currentTrack: track } = useStartedServiceContext(musicPlayerService);
   const isLoading = state?.matches("loading");
 
   return (
@@ -284,12 +284,19 @@ const PlayerInfo = () => {
 };
 
 const PlayerSeekBar = () => {
-  useStartedServiceState(musicPlayerService);
-  const track = musicPlayerService.getSnapshot().context.currentTrack;
+  const { state } = useStartedServiceState(musicPlayerService);
+  const { currentTrack: track } = useStartedServiceContext(musicPlayerService);
 
   const [seek, setSeek] = useState(0);
   const [seeking, setSeeking] = useState(false);
   const [seekValue, setSeekValue] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    CapacitorMusicKit.getCurrentPlaybackDuration().then((result) => {
+      setDuration(result.time * 1000);
+    });
+  }, [track?.id, state.value]);
 
   // デフォルト値
   useEffect(() => {
@@ -338,13 +345,13 @@ const PlayerSeekBar = () => {
     <>
       <IonItem color="dark-gray" lines="none">
         <IonNote slot="start">{toMMSS(seek)}</IonNote>
-        <IonNote slot="end">{toMMSS(track?.durationMs ?? 0)}</IonNote>
+        <IonNote slot="end">{toMMSS(duration)}</IonNote>
       </IonItem>
       <IonRange
         pinFormatter={toMMSS}
         class="player-seek-bar ion-no-padding"
         value={seekValue}
-        max={track?.durationMs ?? 0}
+        max={duration}
         min={0}
         pin
         onIonKnobMoveStart={onStart}
