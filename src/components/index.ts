@@ -8,3 +8,4 @@ export * from "./FavoriteButton";
 export * from "./AddPlaylistItemsModal";
 export * from "./SkeletonItems";
 export * from "./Refresher";
+export * from "./JoinAppleMusicItem";

@@ -10,7 +10,7 @@ import {
 } from "@ionic/react";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { useEffect, useState } from "react";
-import { Icon } from "~/components";
+import { Icon, JoinAppleMusicItem } from "~/components";
 import { useMusicKit } from "~/hooks";
 
 export const Library = () => {
@@ -74,6 +74,7 @@ export const Library = () => {
             <Icon name="queue_music" slot="start" color="red" />
             <IonLabel>ライブラリプレイリスト</IonLabel>
           </IonItem>
+          {!hasSubscription && <JoinAppleMusicItem />}
         </IonList>
       </IonContent>
     </IonPage>
