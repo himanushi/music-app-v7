@@ -80,7 +80,7 @@ const machine = createMachine(
                     return;
                   }
 
-                  await CapacitorMusicKit.stop();
+                  await CapacitorMusicKit.pause();
 
                   let appleMusicId = currentTrack.appleMusicId;
 
@@ -162,8 +162,8 @@ const machine = createMachine(
         invoke: {
           src: () => (callback) => setEvents(callback, [
             ["completed", { type: "NEXT_PLAY" }],
-            ["stopped", { type: "NEXT_PLAY" }],
-            ["ended", { type: "NEXT_PLAY" }],
+            ["stopped", { type: "STOPPED" }],
+            ["ended", { type: "STOPPED" }],
             ["playing", { type: "PLAYING" }],
             ["loading", { type: "WAITING" }],
           ]),
