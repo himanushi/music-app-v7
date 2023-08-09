@@ -8,20 +8,11 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { CapacitorMusicKit } from "capacitor-plugin-musickit";
-import { useEffect, useState } from "react";
 import { Icon, JoinAppleMusicItem } from "~/components";
 import { useMusicKit } from "~/hooks";
 
 export const Library = () => {
-  const { isAuthorized } = useMusicKit();
-  const [hasSubscription, setHasSubscription] = useState(false);
-  useEffect(() => {
-    if (!isAuthorized) return;
-    CapacitorMusicKit.hasMusicSubscription().then((hasSubscription) => {
-      setHasSubscription(hasSubscription.result);
-    });
-  }, [isAuthorized]);
+  const { hasMusicSubscription } = useMusicKit();
 
   return (
     <IonPage>
@@ -43,7 +34,7 @@ export const Library = () => {
         </IonHeader>
         <IonList>
           <IonItem
-            disabled={!hasSubscription}
+            disabled={!hasMusicSubscription}
             button
             routerLink="/library-artists"
           >
@@ -51,7 +42,7 @@ export const Library = () => {
             <IonLabel>ライブラリアーティスト</IonLabel>
           </IonItem>
           <IonItem
-            disabled={!hasSubscription}
+            disabled={!hasMusicSubscription}
             button
             routerLink="/library-albums"
           >
@@ -59,7 +50,7 @@ export const Library = () => {
             <IonLabel>ライブラリアルバム</IonLabel>
           </IonItem>
           <IonItem
-            disabled={!hasSubscription}
+            disabled={!hasMusicSubscription}
             button
             routerLink="/library-tracks"
           >
@@ -67,14 +58,14 @@ export const Library = () => {
             <IonLabel>ライブラリ曲</IonLabel>
           </IonItem>
           <IonItem
-            disabled={!hasSubscription}
+            disabled={!hasMusicSubscription}
             button
             routerLink="/library-playlists"
           >
             <Icon name="queue_music" slot="start" color="red" />
             <IonLabel>ライブラリプレイリスト</IonLabel>
           </IonItem>
-          {!hasSubscription && <JoinAppleMusicItem />}
+          <JoinAppleMusicItem />
         </IonList>
       </IonContent>
     </IonPage>

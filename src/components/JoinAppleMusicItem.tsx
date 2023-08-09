@@ -3,8 +3,15 @@ import { LogoIcon } from "./LogoIcon";
 import { Capacitor } from "@capacitor/core";
 import { appleAffiliateToken } from "~/lib/variable";
 import { Icon } from ".";
+import { useMusicKit } from "~/hooks";
 
 export const JoinAppleMusicItem = () => {
+  const { hasMusicSubscription } = useMusicKit();
+
+  if (hasMusicSubscription) {
+    return <></>;
+  }
+
   let token = "";
   if (appleAffiliateToken) {
     token = `&at=${appleAffiliateToken}`;
@@ -30,9 +37,8 @@ export const JoinAppleMusicItem = () => {
       <IonItem lines="none">
         <Icon name="info" slot="start" color="blue" />
         <IonLabel className="ion-text-wrap">
-          Apple Music
-          に加入すると、ライブラリの曲を再生できるようになります。Voice
-          プランは対象外です。
+          Apple Music に加入すると、ライブラリと Apple Music
+          の曲がフルで再生できるようになります。なお Voice プランは対象外です。
         </IonLabel>
       </IonItem>
     </>

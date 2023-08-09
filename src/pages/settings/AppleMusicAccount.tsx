@@ -5,7 +5,7 @@ import { mergeMeta } from "~/lib";
 import { appleMusicAccountService } from "~/machines";
 import { Capacitor } from "@capacitor/core";
 import { ReactNode } from "react";
-import { Icon } from "~/components";
+import { Icon, JoinAppleMusicItem } from "~/components";
 
 export const AppleMusicAccount = () => {
   useStartedServiceState(appleMusicAccountService);
@@ -23,6 +23,7 @@ export const AppleMusicAccount = () => {
         <IonLabel>Apple Music {label}</IonLabel>
       </IonItem>
       <Info />
+      <JoinAppleMusicItem />
     </IonList>
   );
 };
@@ -48,7 +49,7 @@ const Info = () => {
   }
   if (service.matches("unauthorized")) {
     contents.push(
-      "Apple Music にログインすると、フル再生やプレイリスト追加などが出来るようになります。ログインしない場合は30秒の試聴再生となります。"
+      "Apple Music にログインすると、フル再生などが出来るようになります。ログインしない場合は30秒の試聴再生となります。"
     );
   }
 
