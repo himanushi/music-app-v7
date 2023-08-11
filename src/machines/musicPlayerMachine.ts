@@ -85,7 +85,7 @@ const machine = createMachine(
                   let appleMusicId = currentTrack.appleMusicId;
 
                   // ライブラリの曲ではない場合は、カタログから取得する
-                  if (!appleMusicId.startsWith("l.")) {
+                  if (!appleMusicId.startsWith("i.")) {
                     // 1. キャッシュから取得
                     const catalogTrack = getApolloData<MusicKit.LibrarySongs>({
                       typeName: "CatalogTrack",
