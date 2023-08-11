@@ -158,7 +158,7 @@ export const LibraryAlbums = () => {
           ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <Refresher refresh={refresh} />
         <Virtuoso
           useWindowScroll

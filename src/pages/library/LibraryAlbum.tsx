@@ -63,7 +63,7 @@ export const LibraryAlbum: React.FC<
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <LibraryAlbumInfo libraryAlbum={album} key={album?.id} />
         {match.params.id ? (
           <LibraryAlbumTracks

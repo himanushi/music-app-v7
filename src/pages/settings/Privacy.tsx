@@ -10,7 +10,7 @@ export const Privacy = () => {
       <IonHeader class="ion-no-border">
         <IonToolbar />
       </IonHeader>
-      <IonContent>
+      <IonContent fullscreen>
         {typeof html === "string" && (
           <div
             className="ion-padding"

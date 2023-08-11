@@ -15,12 +15,12 @@ export const Library = () => {
 
   return (
     <Page>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar
           style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
         />
       </IonHeader>
-      <IonContent>
+      <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle style={{ paddingBottom: "0px" }} size="large">

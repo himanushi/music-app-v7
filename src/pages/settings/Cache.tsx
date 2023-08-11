@@ -32,7 +32,7 @@ export const Cache = () => {
           <IonTitle>Apollo Client Cache</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent fullscreen>
         <IonCard>
           <IonCardHeader>
             <IonCardTitle>Cache Data</IonCardTitle>

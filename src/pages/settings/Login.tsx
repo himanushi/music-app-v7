@@ -62,7 +62,7 @@ export const Login = () => {
       <IonHeader>
         <IonToolbar />
       </IonHeader>
-      <IonContent>
+      <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle style={{ paddingBottom: "0px" }} size="large">

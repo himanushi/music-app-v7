@@ -58,7 +58,7 @@ export const Playlist: React.FC<
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <PlaylistInfo playlist={playlist as PlaylistObject} />
         {playlist && (
           <PlaylistTracks tracks={tracks} scrollElement={scrollElement} />

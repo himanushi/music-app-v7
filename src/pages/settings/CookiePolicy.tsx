@@ -10,7 +10,7 @@ export const CookiePolicy = () => {
       <IonHeader class="ion-no-border">
         <IonToolbar />
       </IonHeader>
-      <IonContent>
+      <IonContent fullscreen>
         {typeof html === "string" && (
           <div
             className="ion-padding"

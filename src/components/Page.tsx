@@ -7,7 +7,7 @@ export const Page = ({ children }: { children: ReactNode }) => {
       {children}
       <IonFooter
         style={{
-          height: "calc(var(--ion-safe-area-bottom, 0px) + 130px)",
+          height: "calc(var(--ion-safe-area-bottom, 0px) + 118px)",
         }}
       />
     </IonPage>
