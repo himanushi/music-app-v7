@@ -9,7 +9,6 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonModal,
   IonNote,
   IonRange,
   IonReorderGroup,
@@ -37,7 +36,7 @@ import { TrackItem } from "~/pages";
 const max = 1;
 const min = 0.17;
 
-export const FooterModal = () => {
+export const Footer = () => {
   const modal = useRef<HTMLIonModalElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -54,21 +53,10 @@ export const FooterModal = () => {
   );
 
   return (
-    <IonModal
-      ref={modal}
-      isOpen={true}
-      initialBreakpoint={min}
-      breakpoints={[min, max]}
-      backdropDismiss={false}
-      backdropBreakpoint={0.5}
-      onIonBreakpointDidChange={bcreakpointDidChange}
-    >
-      {open ? (
-        <OpenModal switchBreakpoint={switchBreakpoint} />
-      ) : (
-        <CloseModal switchBreakpoint={switchBreakpoint} />
-      )}
-    </IonModal>
+    <IonFooter translucent>
+      <ClosePlayer switchBreakpoint={switchBreakpoint} />
+      <Tab />
+    </IonFooter>
   );
 };
 
@@ -109,7 +97,10 @@ const ClosePlayer = ({
         </IonButtons>
       ) : (
         <IonButtons onClick={(event) => event.stopPropagation()} slot="end">
-          <IonButton onClick={() => musicPlayerService.send("PLAY_OR_PAUSE")}>
+          <IonButton
+            disabled={!track}
+            onClick={() => musicPlayerService.send("PLAY_OR_PAUSE")}
+          >
             <Icon
               size="s"
               color="white"
@@ -117,7 +108,10 @@ const ClosePlayer = ({
               name={state?.matches("playing") ? "pause" : "play_arrow"}
             />
           </IonButton>
-          <IonButton onClick={() => musicPlayerService.send("NEXT_PLAY")}>
+          <IonButton
+            disabled={!track}
+            onClick={() => musicPlayerService.send("NEXT_PLAY")}
+          >
             <Icon size="s" color="white" slot="icon-only" name="fast_forward" />
           </IonButton>
         </IonButtons>

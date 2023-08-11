@@ -6,21 +6,17 @@ import {
   IonLabel,
   IonList,
   IonNote,
-  IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { Me } from ".";
 import { AppleMusicAccount } from "./AppleMusicAccount";
-import { FooterPadding } from "~/components";
+import { Page } from "~/components";
 
 export const Settings = () => {
   return (
-    <IonPage>
+    <Page>
       <IonHeader>
-        <IonToolbar
-          style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
-        />
         <IonToolbar
           style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
         />
@@ -53,8 +49,7 @@ export const Settings = () => {
             <IonNote>キャッシュ</IonNote>
           </IonItem>
         </IonList>
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };

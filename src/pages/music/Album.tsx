@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import {
-  IonPage,
   IonContent,
   IonHeader,
   IonToolbar,
@@ -19,8 +18,8 @@ import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
   FavoriteButton,
-  FooterPadding,
   Icon,
+  Page,
   SkeletonItems,
   SpotifyItem,
   SquareImage,
@@ -60,11 +59,11 @@ export const Album: React.FC<
   const tracks: Track[] = (album?.tracks ?? []).map((track) => toTrack(track));
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <AlbumInfo album={album as AlbumObject} />
         {album ? (
           <>
@@ -74,9 +73,8 @@ export const Album: React.FC<
         ) : (
           <SkeletonItems count={10} />
         )}
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

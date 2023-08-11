@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   IonContent,
   IonHeader,
-  IonPage,
   IonToolbar,
   IonCard,
   IonCardHeader,
@@ -13,7 +12,7 @@ import {
 } from "@ionic/react";
 import { client } from "~/graphql/client";
 import { NormalizedCacheObject } from "@apollo/client";
-import { FooterPadding } from "~/components";
+import { Page } from "~/components";
 
 export const Cache = () => {
   const [cacheData, setCacheData] = useState<NormalizedCacheObject>({});
@@ -27,7 +26,7 @@ export const Cache = () => {
   };
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Apollo Client Cache</IonTitle>
@@ -48,8 +47,7 @@ export const Cache = () => {
             </pre>
           </IonCardContent>
         </IonCard>
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };

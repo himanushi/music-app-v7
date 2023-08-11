@@ -1,4 +1,3 @@
-import { Capacitor } from "@capacitor/core";
 import {
   IonAvatar,
   IonButton,
@@ -9,19 +8,13 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonPage,
   IonPopover,
   IonSearchbar,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { Virtuoso } from "react-virtuoso";
-import {
-  FavoriteButton,
-  FooterPadding,
-  Refresher,
-  SquareImage,
-} from "~/components";
+import { FavoriteButton, Page, Refresher, SquareImage } from "~/components";
 import {
   ArtistObject,
   ArtistsDocument,
@@ -80,9 +73,8 @@ export const Artists = () => {
     });
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent className="ion-no-border">
-        {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
           <IonTitle>アーティスト</IonTitle>
           <IonButtons slot="start">
@@ -169,7 +161,7 @@ export const Artists = () => {
           ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <Refresher refresh={refresh} />
         <Virtuoso
           key={JSON.stringify(variables)}
@@ -179,9 +171,8 @@ export const Artists = () => {
           endReached={() => items.length >= limit && fetchMore()}
           itemContent={(index) => <ArtistItem artist={items[index]} />}
         />
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

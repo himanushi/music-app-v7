@@ -9,7 +9,6 @@ import {
   IonLabel,
   IonList,
   IonNote,
-  IonPage,
   IonPopover,
   IonReorder,
   IonSearchbar,
@@ -23,8 +22,8 @@ import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
   FavoriteButton,
-  FooterPadding,
   Icon,
+  Page,
   Refresher,
   SquareImage,
 } from "~/components";
@@ -38,7 +37,6 @@ import {
   useMenu,
   useNestedState,
   useScrollElement,
-  useStartedServiceContext,
   useStartedServiceState,
   useVariablesItems,
 } from "~/hooks";
@@ -80,7 +78,7 @@ export const Tracks = () => {
   });
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent className="ion-no-border">
         {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
@@ -161,9 +159,8 @@ export const Tracks = () => {
             />
           )}
         />
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

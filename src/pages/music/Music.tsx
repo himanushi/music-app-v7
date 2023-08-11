@@ -17,9 +17,6 @@ export const Music = () => {
         <IonToolbar
           style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
         />
-        <IonToolbar
-          style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
-        />
       </IonHeader>
       <IonContent>
         <IonHeader collapse="condense">

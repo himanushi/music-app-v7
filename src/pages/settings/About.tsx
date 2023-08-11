@@ -1,12 +1,12 @@
-import { IonContent, IonHeader, IonPage, IonToolbar } from "@ionic/react";
-import { FooterPadding } from "~/components";
+import { IonContent, IonHeader, IonToolbar } from "@ionic/react";
+import { Page } from "~/components";
 import { markdown } from "~/lib";
 
 export const About = () => {
   const html = markdown(content({ version: "0.0.1" }));
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader class="ion-no-border">
         <IonToolbar />
       </IonHeader>
@@ -17,9 +17,8 @@ export const About = () => {
             dangerouslySetInnerHTML={{ __html: html }}
           />
         )}
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

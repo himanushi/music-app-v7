@@ -1,5 +1,4 @@
 import {
-  IonPage,
   IonContent,
   IonHeader,
   IonToolbar,
@@ -18,8 +17,8 @@ import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
-  FooterPadding,
   Icon,
+  Page,
   SkeletonItems,
   SquareImage,
 } from "~/components";
@@ -60,7 +59,7 @@ export const LibraryAlbum: React.FC<
   const album: MusicKit.LibraryAlbums = useMemo(() => items[0], [items]);
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
@@ -82,9 +81,8 @@ export const LibraryAlbum: React.FC<
         ) : (
           <SkeletonItems count={10} />
         )}
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

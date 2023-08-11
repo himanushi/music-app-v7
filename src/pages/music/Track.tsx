@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import {
-  IonPage,
   IonContent,
   IonHeader,
   IonToolbar,
@@ -14,7 +13,7 @@ import {
 } from "@ionic/react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, SkeletonItems, SquareImage } from "~/components";
+import { Page, SkeletonItems, SquareImage } from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -26,7 +25,6 @@ import {
 import { useFetchItems, useScrollElement } from "~/hooks";
 import { convertImageUrl, convertTime, toMs, toTrack } from "~/lib";
 import { AlbumItem, ArtistItem, TrackItem } from ".";
-import { Track as TrackType } from "~/machines/musicPlayerMachine";
 
 export const Track: React.FC<
   RouteComponentProps<{
@@ -43,7 +41,7 @@ export const Track: React.FC<
   const track = data?.track;
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
@@ -57,9 +55,8 @@ export const Track: React.FC<
         ) : (
           <SkeletonItems count={10} />
         )}
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

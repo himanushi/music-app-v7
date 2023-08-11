@@ -7,7 +7,6 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonPage,
   IonPopover,
   IonSearchbar,
   IonThumbnail,
@@ -17,7 +16,7 @@ import {
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-import { FooterPadding, Refresher, SquareImage } from "~/components";
+import { Page, Refresher, SquareImage } from "~/components";
 import { LibraryAlbumsDocument } from "~/graphql/appleMusicClient";
 import { useFetchLibraryItems, useMusicKit, useScrollElement } from "~/hooks";
 import { convertImageUrl } from "~/lib";
@@ -120,7 +119,7 @@ export const LibraryAlbums = () => {
   );
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent className="ion-no-border">
         {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
@@ -167,9 +166,8 @@ export const LibraryAlbums = () => {
           totalCount={albums.length}
           itemContent={(index) => <LibraryAlbumItem album={albums[index]} />}
         />
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

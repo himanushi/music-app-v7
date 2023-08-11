@@ -6,14 +6,13 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonPage,
   IonTitle,
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Icon } from "~/components";
+import { Icon, Page } from "~/components";
 import { LoginDocument, MeDocument } from "~/graphql/types";
 import { useErrorMessages } from "~/hooks";
 
@@ -59,7 +58,7 @@ export const Login = () => {
   }, [dismiss, errorMessages, present]);
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader>
         <IonToolbar />
       </IonHeader>
@@ -99,6 +98,6 @@ export const Login = () => {
           </IonItem>
         </IonList>
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };

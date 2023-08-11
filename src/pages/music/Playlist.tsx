@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import {
-  IonPage,
   IonContent,
   IonHeader,
   IonToolbar,
@@ -19,29 +18,22 @@ import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
   FavoriteButton,
-  FooterPadding,
   Icon,
+  Page,
   SkeletonItems,
   SpotifyItem,
   SquareImage,
 } from "~/components";
-import { PlaylistDocument, PlaylistObject, TrackObject } from "~/graphql/types";
-import {
-  useMenu,
-  useMusicKit,
-  useMusicKitAPI,
-  useScrollElement,
-} from "~/hooks";
+import { PlaylistDocument, PlaylistObject } from "~/graphql/types";
+import { useMenu, useScrollElement } from "~/hooks";
 import {
   convertDate,
   convertImageUrl,
   convertTime,
-  playableTrackIds,
   toMs,
   toTrack,
 } from "~/lib";
 import { TrackItem } from ".";
-import { useEffect, useState } from "react";
 import { Track } from "~/machines/musicPlayerMachine";
 
 export const Playlist: React.FC<
@@ -62,7 +54,7 @@ export const Playlist: React.FC<
   );
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
@@ -71,9 +63,8 @@ export const Playlist: React.FC<
         {playlist && (
           <PlaylistTracks tracks={tracks} scrollElement={scrollElement} />
         )}
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

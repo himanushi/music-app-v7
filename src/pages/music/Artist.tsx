@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import {
-  IonPage,
   IonContent,
   IonHeader,
   IonToolbar,
@@ -15,12 +14,7 @@ import {
 } from "@ionic/react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import {
-  FavoriteButton,
-  FooterPadding,
-  SkeletonItems,
-  SquareImage,
-} from "~/components";
+import { FavoriteButton, Page, SkeletonItems, SquareImage } from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -46,20 +40,19 @@ export const Artist: React.FC<
   const artist = data?.artist;
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent class="ion-no-border" collapse="fade">
         <IonToolbar />
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent fullscreen ref={contentRef}>
         <ArtistInfo artist={artist as ArtistObject} />
         {artist ? (
           <ArtistAlbums artistId={artist.id} scrollElement={scrollElement} />
         ) : (
           <SkeletonItems count={10} />
         )}
-        <FooterPadding />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

@@ -4,22 +4,18 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { Icon, JoinAppleMusicItem } from "~/components";
+import { Icon, JoinAppleMusicItem, Page } from "~/components";
 import { useMusicKit } from "~/hooks";
 
 export const Library = () => {
   const { hasMusicSubscription } = useMusicKit();
 
   return (
-    <IonPage>
+    <Page>
       <IonHeader>
-        <IonToolbar
-          style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
-        />
         <IonToolbar
           style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
         />
@@ -68,6 +64,6 @@ export const Library = () => {
           <JoinAppleMusicItem />
         </IonList>
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
