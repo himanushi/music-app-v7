@@ -13,6 +13,7 @@ import {
   IonThumbnail,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
@@ -53,10 +54,21 @@ export const LibraryAlbums = () => {
     refreshId: "LibraryAlbums:{}",
   });
 
+  const [open, close] = useIonToast();
+
   useEffect(() => {
     if (!isAuthorized) return;
-    if (meta.total > 0 && meta.total > items.length) fetchMore();
-  }, [meta.total, items.length, fetchMore, isAuthorized]);
+    if (meta.total > 0 && meta.total > items.length) {
+      fetchMore();
+      open({
+        message: `ライブラリアルバム同期中...`,
+        position: "bottom",
+        color: "main",
+      });
+    } else {
+      close();
+    }
+  }, [meta.total, items.length, fetchMore, isAuthorized, open, close]);
 
   useEffect(() => {
     if (items.length > 0) {
