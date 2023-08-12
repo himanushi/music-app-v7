@@ -4,6 +4,7 @@
 
 ion-img::part(image) {
   border-radius: 6px;
+  width: auto;
 }
 
 .clickable {

@@ -23,6 +23,8 @@ export const SquareImage = ({
         marginLeft: "auto",
         marginRight: "auto",
         maxWidth,
+        display: "flex",
+        justifyContent: "center"
       }}
     />
   );
