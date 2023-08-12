@@ -24,7 +24,8 @@ export const SquareImage = ({
         marginRight: "auto",
         maxWidth,
         display: "flex",
-        justifyContent: "center"
+        justifyContent: "center",
+        borderRadius: "6px"
       }}
     />
   );

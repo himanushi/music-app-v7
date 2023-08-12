@@ -60,8 +60,8 @@ export const LibraryAlbums = () => {
     if (meta.total > 0 && meta.total > items.length) {
       fetchMore();
       open({
-        message: `ライブラリアルバム同期中...`,
-        position: "bottom",
+        message: "ライブラリアルバム同期中...",
+        position: "top",
         color: "main",
       });
     } else {
