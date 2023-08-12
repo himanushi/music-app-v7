@@ -21,8 +21,8 @@ import {
   Page,
   SkeletonItems,
   SquareImage,
+  AppleMusicPlayButton
 } from "~/components";
-import { AppleMusicItem } from "~/components/searchItem/appleMusicItem";
 import {
   LibraryAlbumsDocument,
   LibraryArtistsDocument,
@@ -120,7 +120,7 @@ const LibraryAlbumInfo = ({
             </IonLabel>
           </IonItem>
           {album && (
-            <AppleMusicItem
+            <AppleMusicPlayButton
               isAppleMusic={!!album.attributes.playParams}
               appleMusicId={album.id}
             />

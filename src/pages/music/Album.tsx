@@ -25,8 +25,9 @@ import {
   SpotifyItem,
   SquareImage,
   SwitchTitle,
+  AppleMusicPlayButton,
+  ActionButton
 } from "~/components";
-import { AppleMusicItem } from "~/components/searchItem/appleMusicItem";
 import {
   AlbumDocument,
   AlbumObject,
@@ -124,10 +125,30 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
             }}>{album.name}</IonLabel>
           </IonItem>
           <SwitchTitle />
-          <AppleMusicItem
-            isAppleMusic={album.appleMusicPlayable}
-            appleMusicId={album.appleMusicId}
-          />
+          <IonGrid fixed>
+            <IonRow>
+              <IonCol>
+                <AppleMusicPlayButton
+                  isAppleMusic={album.appleMusicPlayable}
+                  appleMusicId={album.appleMusicId}
+                />
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <ActionButton color="dark-gray" expand="block">
+                  <Icon name="play_arrow" size="s" slot="icon-only" color="red" />
+                  <IonLabel color="red">再生</IonLabel>
+                </ActionButton>
+              </IonCol>
+              <IonCol>
+                <ActionButton color="dark-gray" expand="block">
+                  <Icon name="shuffle" size="s" slot="icon-only" color="red" />
+                  <IonLabel color="red">シャッフル</IonLabel>
+                </ActionButton>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
           {libraryAlbum && (
             <IonItem
               routerLink={`/library-albums/${libraryAlbum.id}`}
@@ -135,7 +156,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               key={album.id}
             >
               <Icon name="art_track" size="s" slot="start" color="red" />
-              <IonLabel>ライブラリアルバムを聴く</IonLabel>
+              <IonLabel>ライブラリで聴く</IonLabel>
             </IonItem>
           )}
           {album.status !== "ACTIVE" && (
@@ -143,6 +164,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               {album.status}
             </IonItem>
           )}
+          <IonItem className="text-select" style={{ height: "0px" }} />
         </IonList>
       ) : (
         <SkeletonItems count={5} lines="none" />
