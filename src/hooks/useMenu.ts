@@ -9,6 +9,6 @@ export const useMenu = ({
     onDismiss: () => dismiss(),
   });
 
-  const open = (event: any) => present({ event, side: "left" });
+  const open = (event: any) => present({ event, side: "left", alignment: "start", arrow: false });
   return { open, close: dismiss };
 };

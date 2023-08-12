@@ -4,9 +4,11 @@ import { useState } from "react";
 export const SquareImage = ({
   src: imgSrc,
   maxWidth = "500px",
+  circle = false
 }: {
   src?: string;
   maxWidth?: string;
+  circle?: boolean;
 }) => {
   const [src, setSrc] = useState(imgSrc ?? "/assets/no-image.png");
   return (
@@ -25,7 +27,7 @@ export const SquareImage = ({
         maxWidth,
         display: "flex",
         justifyContent: "center",
-        borderRadius: "6px"
+        borderRadius: circle ? "" : "6px"
       }}
     />
   );
