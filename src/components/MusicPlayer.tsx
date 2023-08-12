@@ -9,6 +9,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonModal,
   IonNote,
   IonRange,
   IonReorderGroup,
@@ -27,14 +28,14 @@ import type {
   ModalBreakpointChangeEventDetail,
 } from "@ionic/core";
 import { useHistory, useLocation } from "react-router-dom";
-import { useStartedServiceContext, useStartedServiceState } from "~/hooks";
+import { useMusicKit, useStartedServiceContext, useStartedServiceState } from "~/hooks";
 import { musicPlayerService } from "~/machines/musicPlayerMachine";
 import { convertImageUrl } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
 import { TrackItem } from "~/pages";
 
 const max = 1;
-const min = 0.17;
+const min = 0.001;
 
 export const Footer = () => {
   const modal = useRef<HTMLIonModalElement>(null);
@@ -45,7 +46,7 @@ export const Footer = () => {
     setOpen((prevOpen) => !prevOpen);
   }, [open]);
 
-  const bcreakpointDidChange = useCallback(
+  const breakpointDidChange = useCallback(
     (event: IonModalCustomEvent<ModalBreakpointChangeEventDetail>) => {
       setOpen(event.detail.breakpoint === max);
     },
@@ -56,18 +57,17 @@ export const Footer = () => {
     <IonFooter translucent>
       <ClosePlayer switchBreakpoint={switchBreakpoint} />
       <Tab />
+      <IonModal
+        ref={modal}
+        isOpen={true}
+        initialBreakpoint={min}
+        breakpoints={[min, max]}
+        backdropBreakpoint={0.5}
+        onIonBreakpointDidChange={breakpointDidChange}
+      >
+        <OpenModal switchBreakpoint={switchBreakpoint} />
+      </IonModal>
     </IonFooter>
-  );
-};
-
-const CloseModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
-  return (
-    <IonContent color="dark-gray" forceOverscroll={false} class="clickable">
-      <IonHeader class="ion-no-border">
-        <ClosePlayer switchBreakpoint={switchBreakpoint} />
-        <Tab />
-      </IonHeader>
-    </IonContent>
   );
 };
 
@@ -193,7 +193,10 @@ const Tab = () => {
 };
 
 const OpenModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
+  const { isReady } = useMusicKit()
   const [page, setPage] = useState<"player" | "queue">("player");
+
+  if (!isReady) return <></>;
 
   return (
     <>

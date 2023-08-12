@@ -44,7 +44,7 @@ import {
 } from "~/lib";
 import { ArtistItem, TrackItem } from ".";
 import { useSearchLibraryAlbum } from "~/hooks";
-import { Track } from "~/machines/musicPlayerMachine";
+import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
 
 export const Album: React.FC<
   RouteComponentProps<{
@@ -121,7 +121,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
         <IonList>
           <IonItem className="text-select" lines="none">
             <IonLabel className="ion-text-wrap" style={{
-              fontWeight: "700", textAlign: "center", fontSize: "16px"
+              fontWeight: "700", textAlign: "center", fontSize: "18px"
             }}>{album.name}</IonLabel>
           </IonItem>
           <SwitchTitle />
@@ -133,32 +133,37 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
                   appleMusicId={album.appleMusicId}
                 />
               </IonCol>
+              {libraryAlbum && (
+                <IonCol>
+                  <ActionButton routerLink={`/library-albums/${libraryAlbum.id}`} color="red" expand="block">
+                    <IonLabel>ライブラリで表示</IonLabel>
+                  </ActionButton>
+                </IonCol>
+              )}
             </IonRow>
             <IonRow>
               <IonCol>
-                <ActionButton color="dark-gray" expand="block">
-                  <Icon name="play_arrow" size="s" slot="icon-only" color="red" />
-                  <IonLabel color="red">再生</IonLabel>
+                <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
+                  type: "REPLACE_AND_PLAY",
+                  tracks: album.tracks.map((t) => toTrack(t)),
+                  currentPlaybackNo: 0,
+                })}>
+                  <Icon name="play_arrow" size="s" slot="icon-only" color="main" />
+                  <IonLabel color="main">再生</IonLabel>
                 </ActionButton>
               </IonCol>
               <IonCol>
-                <ActionButton color="dark-gray" expand="block">
-                  <Icon name="shuffle" size="s" slot="icon-only" color="red" />
-                  <IonLabel color="red">シャッフル</IonLabel>
+                <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
+                  type: "REPLACE_AND_PLAY",
+                  tracks: album.tracks.map((t) => toTrack(t)),
+                  currentPlaybackNo: 0,
+                })}>
+                  <Icon name="shuffle" size="s" slot="icon-only" color="main" />
+                  <IonLabel color="main">シャッフル</IonLabel>
                 </ActionButton>
               </IonCol>
             </IonRow>
           </IonGrid>
-          {libraryAlbum && (
-            <IonItem
-              routerLink={`/library-albums/${libraryAlbum.id}`}
-              lines="none"
-              key={album.id}
-            >
-              <Icon name="art_track" size="s" slot="start" color="red" />
-              <IonLabel>ライブラリで聴く</IonLabel>
-            </IonItem>
-          )}
           {album.status !== "ACTIVE" && (
             <IonItem color={album.status === "PENDING" ? "yellow" : "red"}>
               {album.status}
