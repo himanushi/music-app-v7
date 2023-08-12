@@ -28,7 +28,7 @@ import type {
   ModalBreakpointChangeEventDetail,
 } from "@ionic/core";
 import { useHistory, useLocation } from "react-router-dom";
-import { useMusicKit, useStartedServiceContext, useStartedServiceState } from "~/hooks";
+import { useApp, useMusicKit, useStartedServiceContext, useStartedServiceState } from "~/hooks";
 import { musicPlayerService } from "~/machines/musicPlayerMachine";
 import { convertImageUrl } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
@@ -283,6 +283,8 @@ const PlayerInfo = () => {
 const PlayerSeekBar = () => {
   const { state } = useStartedServiceState(musicPlayerService);
   const { currentTrack: track } = useStartedServiceContext(musicPlayerService);
+  const { isActive } = useApp();
+  const isPlaying = state.matches("playing");
 
   const [seek, setSeek] = useState(0);
   const [seeking, setSeeking] = useState(false);
@@ -303,13 +305,14 @@ const PlayerSeekBar = () => {
   }, []);
 
   useEffect(() => {
+    if (!isPlaying || !isActive) return;
     const interval = setInterval(async () => {
       if (seeking) return;
       const result = await CapacitorMusicKit.getCurrentPlaybackTime();
       setSeek(result.time * 1000);
     }, 1000);
     return () => clearInterval(interval);
-  }, [seeking]);
+  }, [seeking, isPlaying, isActive]);
 
   useEffect(() => {
     if (seeking) return;

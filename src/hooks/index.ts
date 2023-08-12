@@ -13,3 +13,4 @@ export * from "./useMusicKit";
 export * from "./useMusicKitAPI";
 export * from "./useFetchLibraryItems";
 export * from "./useSearchLibraryAlbum";
+export * from "./useApp";

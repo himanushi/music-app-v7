@@ -1,6 +1,8 @@
 PODS:
   - Capacitor (5.1.1):
     - CapacitorCordova
+  - CapacitorApp (5.0.6):
+    - Capacitor
   - CapacitorCordova (5.1.1)
   - CapacitorFilesystem (5.1.0):
     - Capacitor
@@ -11,6 +13,7 @@ PODS:
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
   - CapacitorPluginMusickit (from `../../node_modules/capacitor-plugin-musickit`)
@@ -19,6 +22,8 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   Capacitor:
     :path: "../../node_modules/@capacitor/ios"
+  CapacitorApp:
+    :path: "../../node_modules/@capacitor/app"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorFilesystem:
@@ -30,11 +35,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Capacitor: 55956e1199b63efcd7f2dedffa5c6b9129c45aae
+  CapacitorApp: 024e1b1bea5f883d79f6330d309bc441c88ad04a
   CapacitorCordova: b31a46ad379c93a5c04e0598a6164e8cb90c2bb2
   CapacitorFilesystem: 071f1ea81928a56c62c231f9f48f96983cf0eada
   CapacitorPluginMusickit: 18800d168297d616fdbf40a7230fbc4fed997ac5
   CapacitorPreferences: c4764b0b3beae28c625c87b1a80504d9b24947ec
 
-PODFILE CHECKSUM: 04c991eebdd1091be6c452038c0edcdca389668d
+PODFILE CHECKSUM: f3e8fd42cb947b07d3704178204e131c206c2785
 
 COCOAPODS: 1.11.3
