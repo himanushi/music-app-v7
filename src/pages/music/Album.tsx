@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   IonContent,
   IonHeader,
@@ -13,6 +13,8 @@ import {
   IonButtons,
   IonButton,
   IonTitle,
+  useIonActionSheet,
+  useIonToast,
 } from "@ionic/react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
@@ -33,8 +35,9 @@ import {
   AlbumObject,
   ArtistObject,
   ArtistsDocument,
+  ChangeAlbumStatusDocument,
 } from "~/graphql/types";
-import { useFetchItems, useMenu, useScrollElement } from "~/hooks";
+import { useFetchItems, useMe, useMenu, useScrollElement } from "~/hooks";
 import {
   convertDate,
   convertImageUrl,
@@ -182,8 +185,9 @@ const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
   const { open } = useMenu({
     component: ({ onDismiss }) => (
       <IonContent onClick={() => onDismiss()}>
-        <AddPlaylistMenuItem trackIds={album?.tracks.map((t) => t.id) ?? []} />
+        <AddPlaylistMenuItem trackIds={album.tracks.map((t) => t.id) ?? []} />
         <SpotifyItem name={album.name} />
+        <AlbumChangeStatusItem album={album} />
       </IonContent>
     ),
   });
@@ -197,6 +201,64 @@ const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
     </IonButtons>
   );
 };
+
+const AlbumChangeStatusItem = ({ album }: { album: AlbumObject }) => {
+  const { isAllowed } = useMe();
+  const [open] = useIonActionSheet();
+  const [change] = useMutation(ChangeAlbumStatusDocument, {
+    refetchQueries: [AlbumDocument],
+  });
+  const [toast] = useIonToast();
+
+  if (!isAllowed("changeAlbumStatus")) return <></>;
+
+  return <IonItem color="dark-gray" onClick={() => open({
+    header: 'Change Status',
+    buttons: [{
+      text: '有効',
+      data: {
+        action: 'ACTIVE',
+      },
+    },
+    {
+      text: '保留',
+      data: {
+        action: 'PENDING',
+      },
+    },
+    {
+      text: '除外',
+      data: {
+        action: 'IGNORE',
+      },
+    },
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      data: {
+        action: 'CANCEL',
+      },
+    }],
+    onDidDismiss: async ({ detail }) => {
+      if (detail.data.action === 'CANCEL') return;
+      await change({
+        variables: {
+          input: {
+            id: album.id,
+            status: detail.data.action,
+            tweet: false
+          }
+        },
+      })
+      await toast({
+        message: 'ステータスを変更しました',
+        duration: 3000,
+      })
+    }
+  })}>
+    ステータス変更
+  </IonItem >
+}
 
 const AlbumTracks = ({
   tracks,

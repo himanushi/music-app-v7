@@ -1,0 +1,5 @@
+mutation ChangeAlbumStatus($input: ChangeAlbumStatusInput!) {
+  changeAlbumStatus(input: $input) {
+    result
+  }
+}
