@@ -2,6 +2,10 @@
 /* ref: https://tailwindcss.com/docs/customizing-colors */
 /* color theme ref: https://material.io/resources/color */
 
+ion-img::part(image) {
+  border-radius: 6px;
+}
+
 .clickable {
   cursor: pointer;
 }

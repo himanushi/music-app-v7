@@ -12,8 +12,11 @@ import {
 import { Me } from ".";
 import { AppleMusicAccount } from "./AppleMusicAccount";
 import { Page } from "~/components";
+import { useMe } from "~/hooks";
 
 export const Settings = () => {
+  const { isAllowed } = useMe();
+
   return (
     <Page>
       <IonHeader>
@@ -48,6 +51,11 @@ export const Settings = () => {
           <IonItem button routerLink="/cache">
             <IonNote>キャッシュ</IonNote>
           </IonItem>
+          {
+            isAllowed("console") && <IonItem button routerLink="/console">
+              <IonLabel>コンソール</IonLabel>
+            </IonItem>
+          }
         </IonList>
       </IonContent>
     </Page>

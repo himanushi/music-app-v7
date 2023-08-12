@@ -9,3 +9,4 @@ export * from "./SkeletonItems";
 export * from "./Refresher";
 export * from "./JoinAppleMusicItem";
 export * from "./Page";
+export * from "./SwitchTitle";

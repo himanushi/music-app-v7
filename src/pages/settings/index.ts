@@ -6,3 +6,4 @@ export * from "./Terms";
 export * from "./Privacy";
 export * from "./CookiePolicy";
 export * from "./Cache";
+export * from "./Console";

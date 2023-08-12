@@ -121,7 +121,6 @@ export const LibraryAlbums = () => {
   return (
     <Page>
       <IonHeader translucent className="ion-no-border">
-        {Capacitor.isNativePlatform() && <IonToolbar />}
         <IonToolbar>
           <IonTitle>ライブラリアルバム</IonTitle>
           <IonButtons slot="end">

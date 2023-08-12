@@ -12,6 +12,7 @@ import {
   IonNote,
   IonButtons,
   IonButton,
+  IonTitle,
 } from "@ionic/react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
@@ -23,6 +24,7 @@ import {
   SkeletonItems,
   SpotifyItem,
   SquareImage,
+  SwitchTitle,
 } from "~/components";
 import { AppleMusicItem } from "~/components/searchItem/appleMusicItem";
 import {
@@ -55,19 +57,33 @@ export const Album: React.FC<
     fetchPolicy: "cache-first",
   });
 
-  const album = data?.album;
+  const album = data?.album as AlbumObject | undefined;
   const tracks: Track[] = (album?.tracks ?? []).map((track) => toTrack(track));
 
   return (
     <Page>
-      <IonHeader translucent class="ion-no-border" collapse="fade">
-        <IonToolbar />
+      <IonHeader translucent>
+        <IonToolbar>
+          {
+            album && (<>
+              <IonTitle>{album.name}</IonTitle>
+              <AlbumMenuButtons album={album} />
+            </>)
+          }
+        </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
-        <AlbumInfo album={album as AlbumObject} />
+        <AlbumInfo album={album} />
         {album ? (
           <>
             <AlbumTracks tracks={tracks} scrollElement={scrollElement} />
+            <IonItem className="text-select" lines="none">
+              <IonNote style={{ fontSize: "14px" }}>
+                {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
+                {convertTime(toMs(album.tracks.map((t) => t.durationMs)))}<br />
+                {album.copyright}
+              </IonNote>
+            </IonItem>
             <AlbumArtists albumId={album.id} scrollElement={scrollElement} />
           </>
         ) : (
@@ -95,15 +111,19 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
                 px: 300,
                 url: album?.artworkL?.url,
               })}
+              maxWidth="300px"
             />
           </IonCol>
         </IonRow>
       </IonGrid>
       {album ? (
         <IonList>
-          <IonItem className="ion-text-wrap text-select" lines="none">
-            <IonLabel>{album.name}</IonLabel>
+          <IonItem className="text-select" lines="none">
+            <IonLabel className="ion-text-wrap" style={{
+              fontWeight: "700", textAlign: "center", fontSize: "16px"
+            }}>{album.name}</IonLabel>
           </IonItem>
+          <SwitchTitle />
           <AppleMusicItem
             isAppleMusic={album.appleMusicPlayable}
             appleMusicId={album.appleMusicId}
@@ -118,18 +138,6 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               <IonLabel>ライブラリアルバムを聴く</IonLabel>
             </IonItem>
           )}
-          <IonItem lines="none">
-            <AlbumMenuButtons album={album as AlbumObject} />
-          </IonItem>
-          <IonItem className="ion-text-wrap text-select" lines="none">
-            <IonNote slot="end">{album.copyright}</IonNote>
-          </IonItem>
-          <IonItem className="ion-text-wrap text-select">
-            <IonNote slot="end">
-              {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
-              {convertTime(toMs(album.tracks.map((t) => t.durationMs)))}
-            </IonNote>
-          </IonItem>
           {album.status !== "ACTIVE" && (
             <IonItem color={album.status === "PENDING" ? "yellow" : "red"}>
               {album.status}
