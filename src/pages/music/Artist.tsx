@@ -12,7 +12,6 @@ import {
   IonNote,
   IonButtons,
   IonTitle,
-  IonAvatar,
   IonButton,
   useIonActionSheet,
   useIonToast,
@@ -21,12 +20,10 @@ import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, Icon, Page, SkeletonItems, SquareImage, SwitchTitle } from "~/components";
 import {
-  AlbumDocument,
   AlbumObject,
   AlbumsDocument,
   ArtistDocument,
   ArtistObject,
-  ChangeAlbumStatusDocument,
   ChangeArtistStatusDocument,
 } from "~/graphql/types";
 import { useFetchItems, useMe, useMenu, useScrollElement } from "~/hooks";
