@@ -1,4 +1,3 @@
-import { Capacitor } from "@capacitor/core";
 import {
   IonButton,
   IonButtons,

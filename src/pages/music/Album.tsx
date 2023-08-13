@@ -28,7 +28,8 @@ import {
   SquareImage,
   SwitchTitle,
   AppleMusicPlayButton,
-  ActionButton
+  ActionButton,
+  ShareButton
 } from "~/components";
 import {
   AlbumDocument,
@@ -193,12 +194,24 @@ const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
   });
 
   return (
-    <IonButtons slot="end">
-      <FavoriteButton type="albumIds" id={album?.id} size="s" />
-      <IonButton onClick={(event) => open(event)}>
-        <Icon name="more_horiz" slot="icon-only" />
-      </IonButton>
-    </IonButtons>
+    <>
+      <IonButtons slot="start">
+        <ShareButton
+          path={`/albums/${album.id}`}
+          text={`「${album.name}」`}
+          hashtags={[
+            "ゲーム音楽",
+            album.appleMusicPlayable ? "AppleMusic" : "iTunes",
+          ]}
+        />
+      </IonButtons>
+      <IonButtons slot="end">
+        <FavoriteButton type="albumIds" id={album?.id} size="s" />
+        <IonButton onClick={(event) => open(event)}>
+          <Icon name="more_horiz" slot="icon-only" />
+        </IonButton>
+      </IonButtons>
+    </>
   );
 };
 

@@ -11,3 +11,4 @@ export * from "./JoinAppleMusicItem";
 export * from "./Page";
 export * from "./SwitchTitle";
 export * from "./ActionButton";
+export * from "./ShareButton";
