@@ -1,0 +1,5 @@
+mutation ChangeArtistStatus($input: ChangeArtistStatusInput!) {
+  changeArtistStatus(input: $input) {
+    result
+  }
+}

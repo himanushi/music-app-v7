@@ -288,6 +288,7 @@ const AlbumArtists = ({
   albumId: string;
   scrollElement: HTMLElement | undefined;
 }) => {
+  const { isAllowed } = useMe();
   const limit = 100;
   const { items: artists } = useFetchItems<
     ArtistObject,
@@ -296,7 +297,10 @@ const AlbumArtists = ({
     limit,
     doc: ArtistsDocument,
     variables: {
-      conditions: { albumIds: [albumId] },
+      conditions: {
+        albumIds: [albumId],
+        status: isAllowed("changeArtistStatus") ? ["ACTIVE", "IGNORE", "PENDING"] : ["ACTIVE"]
+      },
       cursor: { limit, offset: 0 },
       sort: { direction: "DESC", order: "POPULARITY" },
     },
