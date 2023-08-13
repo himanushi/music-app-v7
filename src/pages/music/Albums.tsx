@@ -178,7 +178,8 @@ export const Albums = () => {
 
 export const AlbumItem = ({ album }: { album: AlbumObject }) => {
   return (
-    <IonItem button detail={false} routerLink={`/albums/${album.id}`}>
+    <IonItem button detail={false} routerLink={`/albums/${album.id}`}
+      color={album.status === "PENDING" ? "yellow" : album.status === "IGNORE" ? "red" : ""}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <SquareImage
           key={album.id}

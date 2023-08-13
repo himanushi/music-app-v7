@@ -1,5 +1,5 @@
-import { IonHeader, IonToolbar, IonContent } from "@ionic/react";
-import { Page } from "~/components";
+import { IonHeader, IonToolbar, IonContent, IonItem } from "@ionic/react";
+import { Icon, Page } from "~/components";
 
 export const Console = () => {
   return <Page>
@@ -7,7 +7,14 @@ export const Console = () => {
       <IonToolbar />
     </IonHeader>
     <IonContent fullscreen>
-      aa
+      <ClearCacheItem />
     </IonContent>
   </Page>;
 };
+
+const ClearCacheItem = () => {
+  return <IonItem >
+    <Icon name="delete" slot="start" color="red" />
+    キャッシュクリア
+  </IonItem>;
+}

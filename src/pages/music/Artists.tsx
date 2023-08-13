@@ -178,7 +178,8 @@ export const Artists = () => {
 
 export const ArtistItem = ({ artist }: { artist: ArtistObject }) => {
   return (
-    <IonItem button detail={false} routerLink={`/artists/${artist.id}`}>
+    <IonItem button detail={false} routerLink={`/artists/${artist.id}`}
+      color={artist.status === "PENDING" ? "yellow" : artist.status === "IGNORE" ? "red" : ""}>
       <IonAvatar slot="start" style={{ height: "50px", width: "50px" }}>
         <SquareImage
           circle
