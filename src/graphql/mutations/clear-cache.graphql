@@ -1,0 +1,5 @@
+mutation ClearCache($input: ClearCacheInput!) {
+  clearCache(input: $input) {
+    result
+  }
+}
