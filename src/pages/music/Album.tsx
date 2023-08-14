@@ -138,7 +138,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
                 />
               </IonCol>
               {libraryAlbum && (
-                <IonCol>
+                <IonCol key={libraryAlbum.id}>
                   <ActionButton routerLink={`/library-albums/${libraryAlbum.id}`} color="red" expand="block">
                     <IonLabel>ライブラリで表示</IonLabel>
                   </ActionButton>

@@ -11,6 +11,7 @@ import {
   IonNote,
   IonButton,
   IonButtons,
+  IonTitle,
 } from "@ionic/react";
 import { useEffect, useMemo } from "react";
 import { RouteComponentProps } from "react-router-dom";
@@ -21,7 +22,9 @@ import {
   Page,
   SkeletonItems,
   SquareImage,
-  AppleMusicPlayButton
+  AppleMusicPlayButton,
+  SwitchTitle,
+  ActionButton
 } from "~/components";
 import {
   LibraryAlbumsDocument,
@@ -37,6 +40,7 @@ import {
 } from "~/hooks";
 import { convertImageUrl, convertTime, toMs, toTrack } from "~/lib";
 import { TrackItem } from "..";
+import { musicPlayerService } from "~/machines/musicPlayerMachine";
 
 export const LibraryAlbum: React.FC<
   RouteComponentProps<{
@@ -60,8 +64,15 @@ export const LibraryAlbum: React.FC<
 
   return (
     <Page>
-      <IonHeader translucent class="ion-no-border" collapse="fade">
-        <IonToolbar />
+      <IonHeader translucent>
+        <IonToolbar>
+          {
+            album && (<>
+              <IonTitle>{album.attributes.name}</IonTitle>
+              <LibraryAlbumMenuButtons album={album} />
+            </>)
+          }
+        </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <LibraryAlbumInfo libraryAlbum={album} key={album?.id} />
@@ -108,6 +119,7 @@ const LibraryAlbumInfo = ({
                 px: 500,
                 url: libraryAlbum?.attributes?.artwork?.url,
               })}
+              maxWidth="300px"
             />
           </IonCol>
         </IonRow>
@@ -115,19 +127,23 @@ const LibraryAlbumInfo = ({
       {libraryAlbum ? (
         <IonList>
           <IonItem className="ion-text-wrap text-select" lines="none">
-            <IonLabel className="ion-text-wrap text-select">
-              {libraryAlbum.attributes.name}
-            </IonLabel>
+            <IonLabel className="ion-text-wrap" style={{
+              fontWeight: "700", textAlign: "center", fontSize: "18px"
+            }}>{libraryAlbum.attributes.name}</IonLabel>
           </IonItem>
+          <SwitchTitle />
           {album && (
-            <AppleMusicPlayButton
-              isAppleMusic={!!album.attributes.playParams}
-              appleMusicId={album.id}
-            />
+            <IonGrid fixed>
+              <IonRow>
+                <IonCol>
+                  <AppleMusicPlayButton
+                    isAppleMusic={!!album.attributes.playParams}
+                    appleMusicId={album.id}
+                  />
+                </IonCol>
+              </IonRow>
+            </IonGrid>
           )}
-          <IonItem lines="none">
-            <LibraryAlbumMenuButtons album={libraryAlbum} />
-          </IonItem>
         </IonList>
       ) : (
         <SkeletonItems count={5} lines="none" />
@@ -184,12 +200,30 @@ const LibraryAlbumTracks = ({
 
   return (
     <IonList>
-      <IonItem className="ion-text-wrap text-select">
-        <IonNote slot="end">
-          {items.length}曲,{" "}
-          {convertTime(toMs(items.map((t) => t.attributes.durationInMillis)))}
-        </IonNote>
-      </IonItem>
+      <IonGrid fixed>
+        <IonRow>
+          <IonCol>
+            <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
+              type: "REPLACE_AND_PLAY",
+              tracks,
+              currentPlaybackNo: 0,
+            })}>
+              <Icon name="play_arrow" size="s" slot="icon-only" color="red" />
+              <IonLabel color="red">再生</IonLabel>
+            </ActionButton>
+          </IonCol>
+          <IonCol>
+            <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
+              type: "REPLACE_AND_PLAY",
+              tracks,
+              currentPlaybackNo: 0,
+            })}>
+              <Icon name="shuffle" size="s" slot="icon-only" color="red" />
+              <IonLabel color="red">シャッフル</IonLabel>
+            </ActionButton>
+          </IonCol>
+        </IonRow>
+      </IonGrid>
       <Virtuoso
         useWindowScroll
         customScrollParent={scrollElement}
@@ -198,6 +232,12 @@ const LibraryAlbumTracks = ({
           <TrackItem tracks={tracks} track={tracks[index]} index={index} />
         )}
       />
+      <IonItem className="ion-text-wrap text-select">
+        <IonNote style={{ fontSize: "14px" }}>
+          {items.length}曲,{" "}
+          {convertTime(toMs(items.map((t) => t.attributes.durationInMillis)))}
+        </IonNote>
+      </IonItem>
     </IonList>
   );
 };
