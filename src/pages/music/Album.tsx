@@ -253,7 +253,7 @@ const AlbumChangeStatusItem = ({ album }: { album: AlbumObject }) => {
       },
     }],
     onDidDismiss: async ({ detail }) => {
-      if (detail.data.action === 'CANCEL') return;
+      if (!['ACTIVE', 'PENDING', 'IGNORE'].includes(detail.data?.action)) return;
       await change({
         variables: {
           input: {

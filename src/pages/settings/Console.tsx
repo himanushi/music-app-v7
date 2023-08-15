@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { IonHeader, IonToolbar, IonContent, IonItem, useIonToast, IonTitle } from "@ionic/react";
+import { IonHeader, IonToolbar, IonContent, IonItem, useIonToast, IonTitle, useIonActionSheet } from "@ionic/react";
 import { Icon, Page } from "~/components";
 import { ClearCacheDocument } from "~/graphql/types";
 
@@ -17,19 +17,40 @@ export const Console = () => {
 };
 
 const ClearCacheItem = () => {
+  const [open] = useIonActionSheet();
   const [clear] = useMutation(ClearCacheDocument);
-  const [present] = useIonToast();
+  const [toast] = useIonToast();
 
-  return <IonItem button onClick={async () => {
-    await clear({
-      variables: { input: {} },
-    });
-    await present({
-      message: "キャッシュをクリアしました",
-      duration: 2000,
-      position: "top",
-    })
-  }}>
+  return <IonItem button
+    onClick={() => open({
+      buttons: [
+        {
+          text: 'キャッシュクリア',
+          role: 'destructive',
+          data: {
+            action: 'CLEAR',
+          },
+        },
+        {
+          text: 'キャンセル',
+          role: 'cancel',
+          data: {
+            action: 'CANCEL',
+          },
+        }],
+      onDidDismiss: async ({ detail }) => {
+        if (!['CLEAR'].includes(detail.data?.action)) return;
+        await clear({
+          variables: { input: {} },
+        });
+        await toast({
+          message: "キャッシュをクリアしました",
+          duration: 2000,
+          position: "top",
+        })
+      }
+    })}
+  >
     <Icon name="delete" slot="start" color="red" />
     キャッシュクリア
   </IonItem>;

@@ -48,14 +48,14 @@ export const Settings = () => {
           <IonItem button routerLink="/cookie-policy">
             <IonLabel>クッキーポリシー</IonLabel>
           </IonItem>
+          {
+            isAllowed("console") && <IonItem button routerLink="/console">
+              <IonLabel color="red">コンソール</IonLabel>
+            </IonItem>
+          }
           <IonItem button routerLink="/cache">
             <IonNote>キャッシュ</IonNote>
           </IonItem>
-          {
-            isAllowed("console") && <IonItem button routerLink="/console">
-              <IonLabel>コンソール</IonLabel>
-            </IonItem>
-          }
         </IonList>
       </IonContent>
     </Page>
