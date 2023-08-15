@@ -130,7 +130,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
           </IonItem>
           <SwitchTitle />
           <IonGrid fixed>
-            <IonRow>
+            <IonRow key={album.id}>
               <IonCol>
                 <AppleMusicPlayButton
                   isAppleMusic={album.appleMusicPlayable}
@@ -138,7 +138,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
                 />
               </IonCol>
               {libraryAlbum && (
-                <IonCol key={libraryAlbum.id}>
+                <IonCol>
                   <ActionButton routerLink={`/library-albums/${libraryAlbum.id}`} color="red" expand="block">
                     <IonLabel>ライブラリで表示</IonLabel>
                   </ActionButton>
