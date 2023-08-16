@@ -119,8 +119,11 @@ export const Role: React.FC<
               color="main"
               checked={checkedActions.indexOf(action) !== -1}
               onIonChange={onChecked(action)}
-            />
-            <IonLabel>{action}</IonLabel>
+              labelPlacement="end"
+              justify="start"
+            >
+              {action}
+            </IonCheckbox>
           </IonItem>
         ))}
         <IonItem onClick={onSave}>
