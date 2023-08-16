@@ -22,6 +22,7 @@ export const Console = () => {
       <IonContent fullscreen>
         <ClearCacheItem />
         <IonItem button routerLink="/roles">
+          <Icon name="key" slot="start" color="blue" />
           権限
         </IonItem>
       </IonContent>
