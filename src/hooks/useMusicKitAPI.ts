@@ -11,21 +11,20 @@ export const useMusicKitAPI = <T>({
 }) => {
   const { isAuthorized } = useMusicKit();
   const [items, setItems] = useState<T[]>([]);
-  const isFirstRun = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!isAuthorized || skip) {
       return;
     }
-    if (!isFirstRun.current[url]) {
-      isFirstRun.current[url] = true;
+    if (items.length > 0) {
       return;
     }
     CapacitorMusicKit.api<T>({ url }).then((res) => {
-      if (res && "data" in res && res.data && res.data.length > 0)
+      if (res && "data" in res && res.data && res.data.length > 0) {
         setItems(res.data);
+      }
     });
-  }, [isAuthorized, url, skip]);
+  }, [isAuthorized, url, skip, items.length]);
 
   return { items };
 };
