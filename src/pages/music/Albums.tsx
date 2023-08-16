@@ -161,7 +161,7 @@ export const Albums = () => {
           ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen ref={contentRef}>
+      <IonContent fullscreen forceOverscroll={false} ref={contentRef}>
         <Refresher refresh={refresh} />
         <Virtuoso
           key={JSON.stringify(variables)}
@@ -178,8 +178,18 @@ export const Albums = () => {
 
 export const AlbumItem = ({ album }: { album: AlbumObject }) => {
   return (
-    <IonItem button detail={false} routerLink={`/albums/${album.id}`}
-      color={album.status === "PENDING" ? "yellow" : album.status === "IGNORE" ? "red" : ""}>
+    <IonItem
+      button
+      detail={false}
+      routerLink={`/albums/${album.id}`}
+      color={
+        album.status === "PENDING"
+          ? "yellow"
+          : album.status === "IGNORE"
+          ? "red"
+          : ""
+      }
+    >
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <SquareImage
           key={album.id}
