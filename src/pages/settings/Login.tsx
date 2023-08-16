@@ -34,8 +34,8 @@ export const Login = () => {
         await dismiss();
         await present({
           message: "ログインしました",
-          duration: 5000,
-          position: "middle",
+          duration: 2000,
+          position: "top",
           color: "main",
         });
       })();
@@ -50,7 +50,7 @@ export const Login = () => {
         await present({
           message: errorMessages["_"][0],
           duration: 5000,
-          position: "middle",
+          position: "top",
           color: "red",
         });
       })();

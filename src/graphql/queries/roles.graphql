@@ -1,0 +1,8 @@
+query Roles {
+  roles {
+    id
+    name
+    description
+    allowedActions
+  }
+}

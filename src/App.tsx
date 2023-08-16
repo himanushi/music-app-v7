@@ -23,6 +23,8 @@ import {
   Cache,
   LibraryAlbum,
   Console,
+  Roles,
+  Role,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { Footer } from "~/components";
@@ -102,6 +104,8 @@ function App() {
                 <Route path="/cookie-policy" component={CookiePolicy} />
                 <Route path="/cache" component={Cache} />
                 <Route path="/console" component={Console} />
+                <Route path="/roles/:id" component={Role} />
+                <Route path="/roles" exact component={Roles} />
                 <Route path="/settings" component={Settings} />
 
                 <Route exact path="/" component={Albums} />

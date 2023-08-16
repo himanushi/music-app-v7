@@ -18,7 +18,14 @@ import {
 } from "@ionic/react";
 import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, Icon, Page, SkeletonItems, SquareImage, SwitchTitle } from "~/components";
+import {
+  FavoriteButton,
+  Icon,
+  Page,
+  SkeletonItems,
+  SquareImage,
+  SwitchTitle,
+} from "~/components";
 import {
   AlbumObject,
   AlbumsDocument,
@@ -48,12 +55,12 @@ export const Artist: React.FC<
     <Page>
       <IonHeader translucent>
         <IonToolbar>
-          {
-            artist && (<>
+          {artist && (
+            <>
               <IonTitle>{artist.name}</IonTitle>
               <ArtistMenuButtons artist={artist} />
-            </>)
-          }
+            </>
+          )}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
@@ -119,13 +126,11 @@ const ArtistMenuButtons = ({ artist }: { artist: ArtistObject }) => {
   return (
     <IonButtons slot="end">
       <FavoriteButton type="artistIds" id={artist?.id} size="s" />
-      {
-        isAllowed("changeAlbumStatus") && (
-          <IonButton onClick={(event) => open(event)}>
-            <Icon name="more_horiz" slot="icon-only" />
-          </IonButton>
-        )
-      }
+      {isAllowed("changeAlbumStatus") && (
+        <IonButton onClick={(event) => open(event)}>
+          <Icon name="more_horiz" slot="icon-only" />
+        </IonButton>
+      )}
     </IonButtons>
   );
 };
@@ -137,52 +142,62 @@ const ChangeStatusItem = ({ artist }: { artist: ArtistObject }) => {
   });
   const [toast] = useIonToast();
 
-  return <IonItem color="dark-gray" onClick={() => open({
-    header: 'Change Status',
-    buttons: [{
-      text: '有効',
-      data: {
-        action: 'ACTIVE',
-      },
-    },
-    {
-      text: '保留',
-      data: {
-        action: 'PENDING',
-      },
-    },
-    {
-      text: '除外',
-      data: {
-        action: 'IGNORE',
-      },
-    },
-    {
-      text: 'Cancel',
-      role: 'cancel',
-      data: {
-        action: 'CANCEL',
-      },
-    }],
-    onDidDismiss: async ({ detail }) => {
-      if (!['ACTIVE', 'PENDING', 'IGNORE'].includes(detail.data?.action)) return;
-      await change({
-        variables: {
-          input: {
-            id: artist.id,
-            status: detail.data.action,
-          }
-        },
-      })
-      await toast({
-        message: 'ステータスを変更しました',
-        duration: 3000,
-      })
-    }
-  })}>
-    ステータス変更
-  </IonItem >
-}
+  return (
+    <IonItem
+      color="dark-gray"
+      onClick={() =>
+        open({
+          header: "Change Status",
+          buttons: [
+            {
+              text: "有効",
+              data: {
+                action: "ACTIVE",
+              },
+            },
+            {
+              text: "保留",
+              data: {
+                action: "PENDING",
+              },
+            },
+            {
+              text: "除外",
+              data: {
+                action: "IGNORE",
+              },
+            },
+            {
+              text: "Cancel",
+              role: "cancel",
+              data: {
+                action: "CANCEL",
+              },
+            },
+          ],
+          onDidDismiss: async ({ detail }) => {
+            if (!["ACTIVE", "PENDING", "IGNORE"].includes(detail.data?.action))
+              return;
+            await change({
+              variables: {
+                input: {
+                  id: artist.id,
+                  status: detail.data.action,
+                },
+              },
+            });
+            await toast({
+              message: "ステータスを変更しました",
+              duration: 3000,
+            });
+          },
+        })
+      }
+    >
+      ステータス変更
+    </IonItem>
+  );
+};
 
 const ArtistAlbums = ({
   artistId,
@@ -202,7 +217,9 @@ const ArtistAlbums = ({
     variables: {
       conditions: {
         artistIds: [artistId],
-        status: isAllowed("changeArtistStatus") ? ["ACTIVE", "IGNORE", "PENDING"] : ["ACTIVE"]
+        status: isAllowed("changeArtistStatus")
+          ? ["ACTIVE", "IGNORE", "PENDING"]
+          : ["ACTIVE"],
       },
       cursor: { limit, offset: 0 },
       sort: { order: "RELEASE", direction: "DESC" },
