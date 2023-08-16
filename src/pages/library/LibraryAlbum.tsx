@@ -24,7 +24,7 @@ import {
   SquareImage,
   AppleMusicPlayButton,
   SwitchTitle,
-  ActionButton
+  ActionButton,
 } from "~/components";
 import {
   LibraryAlbumsDocument,
@@ -66,12 +66,12 @@ export const LibraryAlbum: React.FC<
     <Page>
       <IonHeader translucent>
         <IonToolbar>
-          {
-            album && (<>
+          {album && (
+            <>
               <IonTitle>{album.attributes.name}</IonTitle>
               <LibraryAlbumMenuButtons album={album} />
-            </>)
-          }
+            </>
+          )}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
@@ -127,12 +127,19 @@ const LibraryAlbumInfo = ({
       {libraryAlbum ? (
         <IonList>
           <IonItem className="ion-text-wrap text-select" lines="none">
-            <IonLabel className="ion-text-wrap" style={{
-              fontWeight: "700", textAlign: "center", fontSize: "18px"
-            }}>{libraryAlbum.attributes.name}</IonLabel>
+            <IonLabel
+              className="ion-text-wrap"
+              style={{
+                fontWeight: "700",
+                textAlign: "center",
+                fontSize: "18px",
+              }}
+            >
+              {libraryAlbum.attributes.name}
+            </IonLabel>
           </IonItem>
           <SwitchTitle />
-          {album && (
+          {album ? (
             <IonGrid fixed>
               <IonRow>
                 <IonCol>
@@ -143,6 +150,8 @@ const LibraryAlbumInfo = ({
                 </IonCol>
               </IonRow>
             </IonGrid>
+          ) : (
+            <></>
           )}
         </IonList>
       ) : (
@@ -203,21 +212,33 @@ const LibraryAlbumTracks = ({
       <IonGrid fixed>
         <IonRow>
           <IonCol>
-            <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
-              type: "REPLACE_AND_PLAY",
-              tracks,
-              currentPlaybackNo: 0,
-            })}>
+            <ActionButton
+              color="dark-gray"
+              expand="block"
+              onClick={() =>
+                musicPlayerService.send({
+                  type: "REPLACE_AND_PLAY",
+                  tracks,
+                  currentPlaybackNo: 0,
+                })
+              }
+            >
               <Icon name="play_arrow" size="s" slot="icon-only" color="red" />
               <IonLabel color="red">再生</IonLabel>
             </ActionButton>
           </IonCol>
           <IonCol>
-            <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
-              type: "REPLACE_AND_PLAY",
-              tracks,
-              currentPlaybackNo: 0,
-            })}>
+            <ActionButton
+              color="dark-gray"
+              expand="block"
+              onClick={() =>
+                musicPlayerService.send({
+                  type: "REPLACE_AND_PLAY",
+                  tracks,
+                  currentPlaybackNo: 0,
+                })
+              }
+            >
               <Icon name="shuffle" size="s" slot="icon-only" color="red" />
               <IonLabel color="red">シャッフル</IonLabel>
             </ActionButton>
