@@ -7,9 +7,14 @@ import {
   useIonToast,
   IonTitle,
   useIonActionSheet,
+  useIonLoading,
 } from "@ionic/react";
 import { Icon, Page } from "~/components";
-import { ClearCacheDocument } from "~/graphql/types";
+import {
+  ClearCacheDocument,
+  IgnoreAlbumsDocument,
+  IgnoreArtistsDocument,
+} from "~/graphql/types";
 
 export const Console = () => {
   return (
@@ -21,6 +26,7 @@ export const Console = () => {
       </IonHeader>
       <IonContent fullscreen>
         <ClearCacheItem />
+        <AllIgnoresItem />
         <IonItem button routerLink="/roles">
           <Icon name="key" slot="start" color="blue" />
           権限
@@ -72,6 +78,55 @@ const ClearCacheItem = () => {
     >
       <Icon name="delete" slot="start" color="red" />
       キャッシュクリア
+    </IonItem>
+  );
+};
+
+const AllIgnoresItem = () => {
+  const [loading, loaded] = useIonLoading();
+  const [open] = useIonActionSheet();
+  const [ignoreArtists] = useMutation(IgnoreArtistsDocument);
+  const [ignoreAlbums] = useMutation(IgnoreAlbumsDocument);
+  const [toast] = useIonToast();
+
+  return (
+    <IonItem
+      button
+      onClick={() =>
+        open({
+          buttons: [
+            {
+              text: "除外する",
+              role: "destructive",
+              data: {
+                action: "CLEAR",
+              },
+            },
+            {
+              text: "キャンセル",
+              role: "cancel",
+              data: {
+                action: "CANCEL",
+              },
+            },
+          ],
+          onDidDismiss: async ({ detail }) => {
+            if (!["CLEAR"].includes(detail.data?.action)) return;
+            await loading();
+            await ignoreArtists({ variables: { input: {} } });
+            await ignoreAlbums({ variables: { input: {} } });
+            await loaded();
+            await toast({
+              message: "除外しました",
+              duration: 2000,
+              position: "top",
+            });
+          },
+        })
+      }
+    >
+      <Icon name="info" slot="start" color="red" />
+      アーティストとアルバムの保留を全て除外する
     </IonItem>
   );
 };

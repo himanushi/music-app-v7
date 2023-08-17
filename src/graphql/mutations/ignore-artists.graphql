@@ -1,0 +1,5 @@
+mutation IgnoreArtists($input: IgnoreArtistsInput!) {
+  ignoreArtists(input: $input) {
+    result
+  }
+}
