@@ -86,7 +86,11 @@ const ClosePlayer = ({
   const isLoading = state?.matches("loading");
 
   return (
-    <IonToolbar onClick={switchBreakpoint} color="dark-gray" class="clickable">
+    <IonToolbar
+      onClick={() => track && switchBreakpoint()}
+      color="dark-gray"
+      class="clickable"
+    >
       <IonThumbnail>
         <SquareImage
           key={track?.artworkUrl}
