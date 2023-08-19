@@ -28,7 +28,12 @@ import type {
   ModalBreakpointChangeEventDetail,
 } from "@ionic/core";
 import { useHistory, useLocation } from "react-router-dom";
-import { useApp, useMusicKit, useStartedServiceContext, useStartedServiceState } from "~/hooks";
+import {
+  useApp,
+  useMusicKit,
+  useStartedServiceContext,
+  useStartedServiceState,
+} from "~/hooks";
 import { musicPlayerService } from "~/machines/musicPlayerMachine";
 import { convertImageUrl } from "~/lib";
 import { CapacitorMusicKit } from "capacitor-plugin-musickit";
@@ -193,7 +198,7 @@ const Tab = () => {
 };
 
 const OpenModal = ({ switchBreakpoint }: { switchBreakpoint: () => void }) => {
-  const { isReady } = useMusicKit()
+  const { isReady } = useMusicKit();
   const [page, setPage] = useState<"player" | "queue">("player");
 
   if (!isReady) return <></>;
