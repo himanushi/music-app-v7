@@ -1,8 +1,17 @@
 import { gql } from "@apollo/client";
 import { PluginListenerHandle } from "@capacitor/core";
-import { ApiResult, CapacitorMusicKit, PlaybackStateDidChangeListener } from "capacitor-plugin-musickit";
-import { Sender, assign, createMachine, interpret, raise, send, sendTo } from "xstate";
-import { CatalogTracksDocument, LibraryTracksAttributes, applyDefaultFields, libraryTracksFields, } from "~/graphql/appleMusicClient";
+import {
+  ApiResult,
+  CapacitorMusicKit,
+  PlaybackStateDidChangeListener,
+} from "capacitor-plugin-musickit";
+import { Sender, assign, createMachine, interpret, raise } from "xstate";
+import {
+  CatalogTracksDocument,
+  LibraryTracksAttributes,
+  applyDefaultFields,
+  libraryTracksFields,
+} from "~/graphql/appleMusicClient";
 import { client } from "~/graphql/client";
 import { replaceName } from "~/hooks";
 import { getApolloData } from "~/lib";
@@ -18,14 +27,13 @@ export type Track = {
 
 const schema = {
   events: {} as
-    | { type: "REPLACE_AND_PLAY", tracks: Track[], currentPlaybackNo: number }
+    | { type: "REPLACE_AND_PLAY"; tracks: Track[]; currentPlaybackNo: number }
     | { type: "NEXT_PLAY" }
     | { type: "PREVIOUS_PLAY" }
     | { type: "PLAY_OR_PAUSE" }
     | { type: "CHANGE_REPEAT" }
-    | { type: "REORDER"; from: number; to: number; }
+    | { type: "REORDER"; from: number; to: number }
     | { type: "REMOVE_TRACK"; index: number }
-
     | { type: "PLAYING" }
     | { type: "PAUSED" }
     | { type: "STOPPED" }
@@ -58,7 +66,8 @@ const machine = createMachine(
         states: {
           waiting: {
             invoke: {
-              src: () => (callback) => setEvents(callback, [["playing", { type: "PLAYING" }]]),
+              src: () => (callback) =>
+                setEvents(callback, [["playing", { type: "PLAYING" }]]),
             },
           },
 
@@ -66,91 +75,115 @@ const machine = createMachine(
             // 10秒間再生できない音楽はスキップ
             after: { 10000: { actions: raise({ type: "NEXT_PLAY" }) } },
             invoke: {
-              src: ({ currentTrack }) => (callback) => {
-                if (!currentTrack) {
-                  callback({ type: "NEXT_PLAY" });
-                  return;
-                }
-
-                const cleaner = setEvents(callback, [["playing", { type: "PLAYING" }]]);
-
-                (async () => {
-                  if (!client.current) {
+              src:
+                ({ currentTrack }) =>
+                (callback) => {
+                  if (!currentTrack) {
                     callback({ type: "NEXT_PLAY" });
                     return;
                   }
 
-                  await CapacitorMusicKit.pause();
+                  const cleaner = setEvents(callback, [
+                    ["playing", { type: "PLAYING" }],
+                  ]);
 
-                  let appleMusicId = currentTrack.appleMusicId;
+                  (async () => {
+                    if (!client.current) {
+                      callback({ type: "NEXT_PLAY" });
+                      return;
+                    }
 
-                  // ライブラリの曲ではない場合は、カタログから取得する
-                  if (!appleMusicId.startsWith("i.")) {
-                    // 1. キャッシュから取得
-                    const catalogTrack = getApolloData<MusicKit.LibrarySongs>({
-                      typeName: "CatalogTrack",
-                      id: appleMusicId,
-                      attributes: LibraryTracksAttributes,
-                    });
+                    await CapacitorMusicKit.pause();
 
-                    let catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
+                    let appleMusicId = currentTrack.appleMusicId;
 
-                    if (!catalogAppleMusicId && (await CapacitorMusicKit.hasMusicSubscription()).result) {
-                      // 2. キャッシュから取得できなかった場合は、カタログから取得する
-                      const result = await client.current.query<ApiResult<MusicKit.Songs>>({ query: CatalogTracksDocument, variables: { ids: [appleMusicId] } })
-                      if ("data" in result.data) {
-                        const catalogTrack = result.data.data[0];
-                        catalogAppleMusicId = catalogTrack?.attributes?.playParams?.id;
-                      }
+                    // ライブラリの曲ではない場合は、カタログから取得する
+                    if (!appleMusicId.startsWith("i.")) {
+                      // 1. キャッシュから取得
+                      const catalogTrack = getApolloData<MusicKit.LibrarySongs>(
+                        {
+                          typeName: "CatalogTrack",
+                          id: appleMusicId,
+                          attributes: LibraryTracksAttributes,
+                        }
+                      );
 
-                      // 3. カタログから取得できなかった場合(購入していて現在は非公開になっているなど)は、ライブラリから検索してキャッシュする
-                      if (!catalogAppleMusicId) {
-                        const track = await recursionSearchTrack({ track: currentTrack, appleMusicId: appleMusicId, offset: 0 })
-                        if (track) {
-                          const data = {
-                            __typename: "CatalogTrack",
-                            ...track,
-                            attributes: applyDefaultFields({ ...track.attributes }, libraryTracksFields),
-                          };
+                      let catalogAppleMusicId =
+                        catalogTrack?.attributes?.playParams?.id;
 
-                          data.attributes.playParams.id = track.id;
+                      if (
+                        !catalogAppleMusicId &&
+                        (await CapacitorMusicKit.hasMusicSubscription()).result
+                      ) {
+                        // 2. キャッシュから取得できなかった場合は、カタログから取得する
+                        const result = await client.current.query<
+                          ApiResult<MusicKit.Songs>
+                        >({
+                          query: CatalogTracksDocument,
+                          variables: { ids: [appleMusicId] },
+                        });
+                        if ("data" in result.data) {
+                          const catalogTrack = result.data.data[0];
+                          catalogAppleMusicId =
+                            catalogTrack?.attributes?.playParams?.id;
+                        }
 
-                          client.current.writeFragment({
-                            id: `CatalogTrack:${appleMusicId}`,
-                            fragment: gql`
+                        // 3. カタログから取得できなかった場合(購入していて現在は非公開になっているなど)は、ライブラリから検索してキャッシュする
+                        if (!catalogAppleMusicId) {
+                          const track = await recursionSearchTrack({
+                            track: currentTrack,
+                            appleMusicId: appleMusicId,
+                            offset: 0,
+                          });
+                          if (track) {
+                            const data = {
+                              __typename: "CatalogTrack",
+                              ...track,
+                              attributes: applyDefaultFields(
+                                { ...track.attributes },
+                                libraryTracksFields
+                              ),
+                            };
+
+                            data.attributes.playParams.id = track.id;
+
+                            client.current.writeFragment({
+                              id: `CatalogTrack:${appleMusicId}`,
+                              fragment: gql`
                               fragment Fragment on CatalogTrack {
                                 ${LibraryTracksAttributes}
                               }
                             `,
-                            data,
-                          });
+                              data,
+                            });
 
-                          catalogAppleMusicId = track.id;
+                            catalogAppleMusicId = track.id;
+                          }
                         }
                       }
+
+                      if (catalogAppleMusicId)
+                        appleMusicId = catalogAppleMusicId;
                     }
+                    await CapacitorMusicKit.setQueue({ ids: [appleMusicId] });
+                    await CapacitorMusicKit.play({});
+                  })();
 
-                    if (catalogAppleMusicId) appleMusicId = catalogAppleMusicId;
-                  }
-
-                  await CapacitorMusicKit.setQueue({ ids: [appleMusicId] });
-                  await CapacitorMusicKit.play({});
-                })();
-
-                return cleaner;
-              }
-            }
-          }
-        }
+                  return cleaner;
+                },
+            },
+          },
+        },
       },
 
       playing: {
         invoke: {
-          src: () => (callback) => setEvents(callback, [
-            ["completed", { type: "NEXT_PLAY" }],
-            ["paused", { type: "PAUSED" }],
-            ["waiting", { type: "WAITING" }],
-          ])
+          src: () => (callback) =>
+            setEvents(callback, [
+              ["completed", { type: "NEXT_PLAY" }],
+              ["paused", { type: "PAUSED" }],
+              ["waiting", { type: "WAITING" }],
+            ]),
         },
 
         on: {
@@ -160,13 +193,14 @@ const machine = createMachine(
 
       paused: {
         invoke: {
-          src: () => (callback) => setEvents(callback, [
-            ["completed", { type: "NEXT_PLAY" }],
-            ["stopped", { type: "STOPPED" }],
-            ["ended", { type: "STOPPED" }],
-            ["playing", { type: "PLAYING" }],
-            ["loading", { type: "WAITING" }],
-          ]),
+          src: () => (callback) =>
+            setEvents(callback, [
+              ["completed", { type: "NEXT_PLAY" }],
+              ["stopped", { type: "STOPPED" }],
+              ["ended", { type: "STOPPED" }],
+              ["playing", { type: "PLAYING" }],
+              ["loading", { type: "WAITING" }],
+            ]),
         },
         on: {
           PLAY_OR_PAUSE: { actions: "play" },
@@ -178,12 +212,13 @@ const machine = createMachine(
           PLAY_OR_PAUSE: "loading.loadingPlay",
         },
         invoke: {
-          src: () => (callback) => setEvents(callback, [
-            ["completed", { type: "NEXT_PLAY" }],
-            ["playing", { type: "PLAYING" }],
-            ["paused", { type: "PAUSED" }],
-            ["loading", { type: "WAITING" }],
-          ]),
+          src: () => (callback) =>
+            setEvents(callback, [
+              ["completed", { type: "NEXT_PLAY" }],
+              ["playing", { type: "PLAYING" }],
+              ["paused", { type: "PAUSED" }],
+              ["loading", { type: "WAITING" }],
+            ]),
         },
       },
     },
@@ -198,7 +233,7 @@ const machine = createMachine(
 
       REPLACE_AND_PLAY: {
         actions: ["setTracks", "setCurrentPlaybackNo", "changeCurrentTrack"],
-        target: "loading.loadingPlay"
+        target: "loading.loadingPlay",
       },
 
       REORDER: { actions: "moveTracks" },
@@ -238,18 +273,30 @@ const machine = createMachine(
     actions: {
       setTracks: assign({ tracks: (_, event) => event.tracks }),
 
-      setCurrentPlaybackNo: assign({ currentPlaybackNo: (_, event) => event.currentPlaybackNo }),
+      setCurrentPlaybackNo: assign({
+        currentPlaybackNo: (_, event) => event.currentPlaybackNo,
+      }),
 
-      changeCurrentTrack: assign(({ tracks, currentPlaybackNo }) => ({ currentTrack: tracks[currentPlaybackNo] })),
+      changeCurrentTrack: assign(({ tracks, currentPlaybackNo }) => ({
+        currentTrack: tracks[currentPlaybackNo],
+      })),
 
       nextPlaybackNo: assign({
         currentPlaybackNo: ({ repeat, tracks, currentPlaybackNo }) =>
-          repeat === "one" ? currentPlaybackNo : currentPlaybackNo + 1 === tracks.length ? 0 : currentPlaybackNo + 1
+          repeat === "one"
+            ? currentPlaybackNo
+            : currentPlaybackNo + 1 === tracks.length
+            ? 0
+            : currentPlaybackNo + 1,
       }),
 
       previousPlaybackNo: assign({
         currentPlaybackNo: ({ repeat, currentPlaybackNo }) =>
-          repeat === "one" ? currentPlaybackNo : currentPlaybackNo === 0 ? 0 : currentPlaybackNo - 1,
+          repeat === "one"
+            ? currentPlaybackNo
+            : currentPlaybackNo === 0
+            ? 0
+            : currentPlaybackNo - 1,
       }),
 
       changeRepeat: assign({
@@ -262,7 +309,7 @@ const machine = createMachine(
             case "one":
               return "none";
           }
-        }
+        },
       }),
 
       moveTracks: assign({
@@ -283,13 +330,16 @@ const machine = createMachine(
             return currentPlaybackNo;
           }
         },
-        tracks: ({ tracks }, event) => move(tracks, event.from, event.to)
+        tracks: ({ tracks }, event) => move(tracks, event.from, event.to),
       }),
 
       removeTrack: assign({
         currentPlaybackNo: (context, event) =>
-          context.currentPlaybackNo > event.index ? context.currentPlaybackNo - 1 : context.currentPlaybackNo,
-        tracks: (context, event) => context.tracks.filter((_, index) => index !== event.index),
+          context.currentPlaybackNo > event.index
+            ? context.currentPlaybackNo - 1
+            : context.currentPlaybackNo,
+        tracks: (context, event) =>
+          context.tracks.filter((_, index) => index !== event.index),
       }),
 
       play: (context, event) => CapacitorMusicKit.play({}),
@@ -298,7 +348,9 @@ const machine = createMachine(
     },
     services: {},
     guards: {
-      canNextPlay: ({ repeat, tracks, currentPlaybackNo }) => ["all", "one"].includes(repeat) || currentPlaybackNo + 1 !== tracks.length,
+      canNextPlay: ({ repeat, tracks, currentPlaybackNo }) =>
+        ["all", "one"].includes(repeat) ||
+        currentPlaybackNo + 1 !== tracks.length,
       canPreviousPlay: ({ currentPlaybackNo }) => currentPlaybackNo !== 0,
     },
     delays: {},
@@ -307,13 +359,18 @@ const machine = createMachine(
 
 export const musicPlayerService = interpret(machine).start();
 
-const setEvents = (callback: Sender<typeof schema.events>, events: [string, typeof schema.events][]) => {
+const setEvents = (
+  callback: Sender<typeof schema.events>,
+  events: [string, typeof schema.events][]
+) => {
   const didChange: PlaybackStateDidChangeListener = (state) => {
     events.forEach((event) => state.state === event[0] && callback(event[1]));
-  }
+  };
 
   let listener: PluginListenerHandle;
-  CapacitorMusicKit.addListener("playbackStateDidChange", didChange).then((cleaner) => listener = cleaner);
+  CapacitorMusicKit.addListener("playbackStateDidChange", didChange).then(
+    (cleaner) => (listener = cleaner)
+  );
 
   return () => listener?.remove();
 };
@@ -327,9 +384,17 @@ const move = (arr: any[], from: number, to: number) => {
   }
 
   return result;
-}
+};
 
-const searchTrack = async ({ track, appleMusicId, offset = 0 }: { track: Track, appleMusicId: string, offset: number }) => {
+const searchTrack = async ({
+  track,
+  appleMusicId,
+  offset = 0,
+}: {
+  track: Track;
+  appleMusicId: string;
+  offset: number;
+}) => {
   const result = await CapacitorMusicKit.api<any>({
     url: "/v1/me/library/search",
     params: {
@@ -343,9 +408,7 @@ const searchTrack = async ({ track, appleMusicId, offset = 0 }: { track: Track, 
   let findTrack = undefined;
   let hasNext = false;
   const tracks =
-    "results" in result
-      ? result.results["library-songs"]
-      : undefined;
+    "results" in result ? result.results["library-songs"] : undefined;
   if (tracks) {
     findTrack = tracks.data.find(
       (track) => track.attributes.playParams?.purchasedId === appleMusicId
@@ -354,24 +417,32 @@ const searchTrack = async ({ track, appleMusicId, offset = 0 }: { track: Track, 
   }
 
   return { track: findTrack, hasNext };
-}
+};
 
-const recursionSearchTrack =
-  async ({ track, appleMusicId, offset }: { track: Track, appleMusicId: string, offset: number }):
-    Promise<MusicKit.LibraryAlbums | undefined> => {
-    const { track: findTrack, hasNext } = await searchTrack({ track, appleMusicId, offset });
+const recursionSearchTrack = async ({
+  track,
+  appleMusicId,
+  offset,
+}: {
+  track: Track;
+  appleMusicId: string;
+  offset: number;
+}): Promise<MusicKit.LibraryAlbums | undefined> => {
+  const { track: findTrack, hasNext } = await searchTrack({
+    track,
+    appleMusicId,
+    offset,
+  });
 
-    if (findTrack) {
-      return findTrack;
-    } else if (hasNext) {
-      return await recursionSearchTrack({ track, appleMusicId, offset: offset + 25 });
-    } else {
-      return undefined;
-    }
-  };
-
-// musicPlayerService.subscribe((state) => {
-//   console.log(state)
-// });
-
-// window.musicPlayerService = musicPlayerService;
+  if (findTrack) {
+    return findTrack;
+  } else if (hasNext) {
+    return await recursionSearchTrack({
+      track,
+      appleMusicId,
+      offset: offset + 25,
+    });
+  } else {
+    return undefined;
+  }
+};
