@@ -41,7 +41,11 @@ export const Music = () => {
           </IonItem>
           <IonItem button routerLink="/playlists">
             <Icon name="queue_music" slot="start" color="main" />
-            <IonLabel>プレイリスト</IonLabel>
+            <IonLabel>共有プレイリスト</IonLabel>
+          </IonItem>
+          <IonItem button routerLink="/my-playlists">
+            <Icon name="queue_music" slot="start" color="main" />
+            <IonLabel>マイプレイリスト</IonLabel>
           </IonItem>
         </IonList>
       </IonContent>

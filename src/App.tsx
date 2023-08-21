@@ -89,6 +89,7 @@ function App() {
                 <Route path="/tracks/:id" component={Track} />
                 <Route path="/tracks" exact component={Tracks} />
                 <Route path="/playlists" exact component={Playlists} />
+                <Route path="/my-playlists" component={Playlists} />
                 <Route path="/playlists/:id" component={Playlist} />
                 <Route path="/music" component={Music} />
 

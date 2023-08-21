@@ -13,6 +13,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { RouteComponentProps, useLocation } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { FavoriteButton, Page, Refresher, SquareImage } from "~/components";
 import {
@@ -39,10 +40,12 @@ const sortOptions = [
 ];
 
 export const Playlists = () => {
+  const location = useLocation();
+  const isMine = location.pathname === "/my-playlists";
   const { contentRef, scrollElement } = useScrollElement();
 
   const [variables, setNestedState] = useNestedState<PlaylistsQueryVariables>({
-    conditions: {},
+    conditions: { isMine },
     cursor: { limit, offset: 0 },
     sort: { order: "UPDATE", direction: "DESC" },
   });
@@ -66,7 +69,7 @@ export const Playlists = () => {
     <Page>
       <IonHeader translucent className="ion-no-border">
         <IonToolbar>
-          <IonTitle>プレイリスト</IonTitle>
+          <IonTitle>{isMine ? "マイ" : "共有"}プレイリスト</IonTitle>
           <IonButtons slot="start">
             <IonButton id="playlist-filter-button" color="main">
               フィルター
