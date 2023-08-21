@@ -10,7 +10,7 @@ export const Refresher = ({
   refresh: (event: CustomEvent<RefresherEventDetail>) => void;
 }) => {
   return (
-    <IonRefresher slot="fixed" onIonRefresh={refresh}>
+    <IonRefresher slot="fixed" onIonRefresh={refresh} style={{ zIndex: 1 }}>
       <IonRefresherContent pullingIcon="lines" />
     </IonRefresher>
   );

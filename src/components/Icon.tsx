@@ -14,9 +14,12 @@ export const Icon = ({
 }: {
   name: IconNames;
   color?: string;
-  size?: "s" | "m" | "l";
+  size?: "s" | "m" | "l" | number;
   slot?: "start" | "end" | "icon-only";
 }) => {
+  const fontSize =
+    typeof size === "number" ? `${size}px` : `${sizeMap[size]}px`;
+
   return (
     <IonLabel
       class="material-symbols-rounded-fill"
@@ -25,7 +28,7 @@ export const Icon = ({
         flex: "none",
         width: "1em",
         height: "1em",
-        fontSize: `${sizeMap[size]}px`,
+        fontSize,
       }}
       color={color}
     >

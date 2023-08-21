@@ -24,7 +24,9 @@ const customizer = (objValue: any, srcValue: any) => {
   return undefined;
 };
 
-const buildErrorMessages = (error: ApolloError): Record<string, string[]> => {
+export const buildErrorMessages = (
+  error: ApolloError
+): Record<string, string[]> => {
   const labels = error.graphQLErrors.map((err) => {
     let path: string;
 

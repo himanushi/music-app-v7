@@ -14,3 +14,4 @@ export * from "./useMusicKitAPI";
 export * from "./useFetchLibraryItems";
 export * from "./useSearchLibraryAlbum";
 export * from "./useApp";
+export * from "./useNewPlaylist";

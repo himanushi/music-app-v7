@@ -13,9 +13,15 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { RouteComponentProps, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
-import { FavoriteButton, Page, Refresher, SquareImage } from "~/components";
+import {
+  NewPlaylistButton,
+  FavoriteButton,
+  Page,
+  Refresher,
+  SquareImage,
+} from "~/components";
 import {
   PlaylistObject,
   PlaylistsDocument,
@@ -131,6 +137,7 @@ export const Playlists = () => {
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
         <Refresher refresh={refresh} />
+        <NewPlaylistButton />
         <Virtuoso
           key={JSON.stringify(variables)}
           useWindowScroll
