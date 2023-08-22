@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import {
   IonHeader,
   IonToolbar,
@@ -8,13 +8,18 @@ import {
   IonTitle,
   useIonActionSheet,
   useIonLoading,
+  useIonAlert,
 } from "@ionic/react";
 import { Icon, Page } from "~/components";
+import { LogoIcon } from "~/components/LogoIcon";
 import {
+  AddAlbumDocument,
+  AddAlbumInput,
   ClearCacheDocument,
   IgnoreAlbumsDocument,
   IgnoreArtistsDocument,
 } from "~/graphql/types";
+import { buildErrorMessages } from "~/hooks";
 
 export const Console = () => {
   return (
@@ -25,6 +30,7 @@ export const Console = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <AddAlbumItem />
         <ClearCacheItem />
         <AllIgnoresItem />
         <IonItem button routerLink="/roles">
@@ -33,6 +39,89 @@ export const Console = () => {
         </IonItem>
       </IonContent>
     </Page>
+  );
+};
+
+const AddAlbumItem = () => {
+  const [open] = useIonAlert();
+  const [add] = useMutation(AddAlbumDocument);
+  const [toast] = useIonToast();
+  const [loading, loaded] = useIonLoading();
+
+  return (
+    <IonItem
+      button
+      onClick={() =>
+        open({
+          header: "Apple Music ID でアルバムを追加します",
+          inputs: [
+            {
+              name: "appleMusicId",
+              placeholder: "Apple Music ID",
+              type: "text",
+            },
+          ],
+          buttons: [
+            {
+              cssClass: "secondary",
+              handler: () => true,
+              role: "cancel",
+              text: "キャンセル",
+            },
+            {
+              handler: (values: AddAlbumInput) => {
+                (async () => {
+                  try {
+                    if (values.appleMusicId && values.appleMusicId !== "") {
+                      await loading();
+
+                      const result = await add({
+                        variables: { input: values },
+                      });
+
+                      if (result.data?.addAlbum?.album) {
+                        // const album = result.data.addAlbum.album;
+                        // $goto(`/albums/${album.id}`);
+
+                        toast({
+                          color: "light-green",
+                          duration: 5000,
+                          message: "追加しました",
+                        });
+                      } else {
+                        toast({
+                          color: "light-blue",
+                          duration: 5000,
+                          message: "一致するアルバムがありませんでした",
+                        });
+                      }
+                    }
+                  } catch (error) {
+                    if (error instanceof ApolloError) {
+                      const messages = buildErrorMessages(error);
+
+                      toast({
+                        color: "light-red",
+                        message: `エラーが発生しました。[${messages._?.join(
+                          ", "
+                        )}]`,
+                        duration: 10000,
+                      });
+                    }
+                  } finally {
+                    await loaded();
+                  }
+                })();
+              },
+              text: "追加",
+            },
+          ],
+        })
+      }
+    >
+      <LogoIcon name="apple-music" slot="start" />
+      アルバム追加
+    </IonItem>
   );
 };
 
