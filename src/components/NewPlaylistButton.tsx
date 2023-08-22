@@ -18,8 +18,12 @@ import { useMutation } from "@apollo/client";
 import { PlaylistsDocument, UpsertPlaylistDocument } from "~/graphql/types";
 import { useCallback, useState } from "react";
 
-export const NewPlaylistButton = () => {
-  const { open } = useNewPlaylist({ trackIds: [] });
+export const NewPlaylistButton = ({
+  trackIds = [],
+}: {
+  trackIds?: string[];
+}) => {
+  const { open } = useNewPlaylist({ trackIds: trackIds });
 
   return (
     <IonItem onClick={open}>
@@ -33,7 +37,13 @@ export const NewPlaylistButton = () => {
   );
 };
 
-export const NewPlaylistModal = ({ onDismiss }: { onDismiss: () => void }) => {
+export const NewPlaylistModal = ({
+  onDismiss,
+  trackIds,
+}: {
+  onDismiss: () => void;
+  trackIds: string[];
+}) => {
   const [upsert] = useMutation(UpsertPlaylistDocument, {
     refetchQueries: [PlaylistsDocument],
   });
@@ -52,7 +62,7 @@ export const NewPlaylistModal = ({ onDismiss }: { onDismiss: () => void }) => {
             name,
             description,
             publicType,
-            trackIds: [],
+            trackIds,
           },
         },
       });
@@ -82,10 +92,9 @@ export const NewPlaylistModal = ({ onDismiss }: { onDismiss: () => void }) => {
     onDismiss,
     publicType,
     toast,
+    trackIds,
     upsert,
   ]);
-
-  console.log(name);
 
   return (
     <>

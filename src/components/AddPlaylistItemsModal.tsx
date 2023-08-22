@@ -13,7 +13,7 @@ import {
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistItemsDocument,
@@ -21,7 +21,7 @@ import {
   PlaylistsDocument,
 } from "~/graphql/types";
 import { useFetchItems, useScrollElement } from "~/hooks";
-import { SquareImage } from ".";
+import { NewPlaylistButton, SquareImage } from ".";
 
 export const AddPlaylistItemsModal = ({
   trackIds,
@@ -34,15 +34,15 @@ export const AddPlaylistItemsModal = ({
     <IonPage>
       <IonHeader translucent>
         <IonToolbar>
-          <IonTitle>プレイリストに{trackIds.length}曲追加</IonTitle>
-          <IonButtons slot="end">
+          <IonButtons slot="start">
             <IonButton onClick={() => onDismiss()} color="main">
-              閉じる
+              キャンセル
             </IonButton>
           </IonButtons>
+          <IonTitle>プレイリストに追加</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <Playlists trackIds={trackIds} />
+      <Playlists trackIds={trackIds} onDismiss={onDismiss} />
       <IonFooter>
         <IonToolbar />
       </IonFooter>
@@ -52,7 +52,13 @@ export const AddPlaylistItemsModal = ({
 
 const limit = 100;
 
-const Playlists = ({ trackIds }: { trackIds: string[] }) => {
+const Playlists = ({
+  trackIds,
+  onDismiss,
+}: {
+  trackIds: string[];
+  onDismiss: () => void;
+}) => {
   const {
     items: playlists,
     fetchMore,
@@ -75,6 +81,9 @@ const Playlists = ({ trackIds }: { trackIds: string[] }) => {
 
   return (
     <IonContent fullscreen ref={contentRef}>
+      <div onClick={onDismiss}>
+        <NewPlaylistButton trackIds={trackIds} />
+      </div>
       <Virtuoso
         key={playlists[0]?.id}
         useWindowScroll
@@ -82,7 +91,11 @@ const Playlists = ({ trackIds }: { trackIds: string[] }) => {
         totalCount={playlists.length}
         endReached={() => playlists.length >= limit && fetchMore()}
         itemContent={(index) => (
-          <PlaylistItem playlist={playlists[index]} trackIds={trackIds} />
+          <PlaylistItem
+            playlist={playlists[index]}
+            trackIds={trackIds}
+            onDismiss={onDismiss}
+          />
         )}
       />
     </IonContent>
@@ -92,15 +105,15 @@ const Playlists = ({ trackIds }: { trackIds: string[] }) => {
 const PlaylistItem = ({
   playlist,
   trackIds,
+  onDismiss,
 }: {
   playlist: PlaylistObject;
   trackIds: string[];
+  onDismiss: () => void;
 }) => {
   const [add] = useMutation(AddPlaylistItemsDocument);
-  const [disabled, setDisabled] = useState(false);
   const [toast] = useIonToast();
   const onClick = useCallback(async () => {
-    setDisabled(true);
     try {
       await add({
         variables: {
@@ -112,10 +125,11 @@ const PlaylistItem = ({
       });
       toast({
         message: "追加しました",
-        duration: 1000,
+        duration: 3000,
         position: "bottom",
         color: "main",
       });
+      onDismiss();
     } catch (error: any) {
       toast({
         color: "light-red",
@@ -123,18 +137,14 @@ const PlaylistItem = ({
         message: `エラーが発生しました。${error.message}`,
       });
     }
-    setDisabled(false);
-  }, [add, playlist.id, toast, trackIds]);
+  }, [add, onDismiss, playlist.id, toast, trackIds]);
 
   return (
-    <IonItem color="dark-gray" key={playlist.id}>
-      <IonThumbnail slot="start">
+    <IonItem key={playlist.id} onClick={onClick}>
+      <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <SquareImage src={playlist.track?.artworkM.url} />
       </IonThumbnail>
       <IonLabel>{playlist.name}</IonLabel>
-      <IonButton disabled={disabled} slot="end" color="white" onClick={onClick}>
-        追加する
-      </IonButton>
     </IonItem>
   );
 };
