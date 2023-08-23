@@ -140,7 +140,7 @@ const PlaylistItem = ({
   }, [add, onDismiss, playlist.id, toast, trackIds]);
 
   return (
-    <IonItem key={playlist.id} onClick={onClick}>
+    <IonItem button detail={false} key={playlist.id} onClick={onClick}>
       <IonThumbnail slot="start" style={{ height: "110px", width: "110px" }}>
         <SquareImage src={playlist.track?.artworkM.url} />
       </IonThumbnail>

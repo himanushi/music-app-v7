@@ -26,7 +26,7 @@ export const NewPlaylistButton = ({
   const { open } = useNewPlaylist({ trackIds: trackIds });
 
   return (
-    <IonItem onClick={open}>
+    <IonItem onClick={open} button detail={false}>
       <IonButtons slot="start">
         <IonButton style={{ height: "110px", width: "110px" }}>
           <Icon name="add_circle" slot="icon-only" size={60} color="main" />

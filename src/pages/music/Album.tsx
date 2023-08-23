@@ -29,7 +29,7 @@ import {
   SwitchTitle,
   AppleMusicPlayButton,
   ActionButton,
-  ShareButton
+  ShareButton,
 } from "~/components";
 import {
   AlbumDocument,
@@ -69,12 +69,12 @@ export const Album: React.FC<
     <Page>
       <IonHeader translucent>
         <IonToolbar>
-          {
-            album && (<>
+          {album && (
+            <>
               <IonTitle>{album.name}</IonTitle>
               <AlbumMenuButtons album={album} />
-            </>)
-          }
+            </>
+          )}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen ref={contentRef}>
@@ -85,7 +85,8 @@ export const Album: React.FC<
             <IonItem className="text-select" lines="none">
               <IonNote style={{ fontSize: "14px" }}>
                 {convertDate(album.releaseDate)}, {album.tracks.length}曲,{" "}
-                {convertTime(toMs(album.tracks.map((t) => t.durationMs)))}<br />
+                {convertTime(toMs(album.tracks.map((t) => t.durationMs)))}
+                <br />
                 {album.copyright}
               </IonNote>
             </IonItem>
@@ -124,9 +125,16 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
       {album ? (
         <IonList>
           <IonItem className="text-select" lines="none">
-            <IonLabel className="ion-text-wrap" style={{
-              fontWeight: "700", textAlign: "center", fontSize: "18px"
-            }}>{album.name}</IonLabel>
+            <IonLabel
+              className="ion-text-wrap"
+              style={{
+                fontWeight: "700",
+                textAlign: "center",
+                fontSize: "18px",
+              }}
+            >
+              {album.name}
+            </IonLabel>
           </IonItem>
           <SwitchTitle />
           <IonGrid fixed>
@@ -139,7 +147,11 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
               </IonCol>
               {libraryAlbum && (
                 <IonCol>
-                  <ActionButton routerLink={`/library-albums/${libraryAlbum.id}`} color="red" expand="block">
+                  <ActionButton
+                    routerLink={`/library-albums/${libraryAlbum.id}`}
+                    color="red"
+                    expand="block"
+                  >
                     <IonLabel>ライブラリで表示</IonLabel>
                   </ActionButton>
                 </IonCol>
@@ -147,21 +159,38 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
-                  type: "REPLACE_AND_PLAY",
-                  tracks: album.tracks.map((t) => toTrack(t)),
-                  currentPlaybackNo: 0,
-                })}>
-                  <Icon name="play_arrow" size="s" slot="icon-only" color="main" />
+                <ActionButton
+                  color="dark-gray"
+                  expand="block"
+                  onClick={() =>
+                    musicPlayerService.send({
+                      type: "REPLACE_AND_PLAY",
+                      tracks: album.tracks.map((t) => toTrack(t)),
+                      currentPlaybackNo: 0,
+                    })
+                  }
+                >
+                  <Icon
+                    name="play_arrow"
+                    size="s"
+                    slot="icon-only"
+                    color="main"
+                  />
                   <IonLabel color="main">再生</IonLabel>
                 </ActionButton>
               </IonCol>
               <IonCol>
-                <ActionButton color="dark-gray" expand="block" onClick={() => musicPlayerService.send({
-                  type: "REPLACE_AND_PLAY",
-                  tracks: album.tracks.map((t) => toTrack(t)),
-                  currentPlaybackNo: 0,
-                })}>
+                <ActionButton
+                  color="dark-gray"
+                  expand="block"
+                  onClick={() =>
+                    musicPlayerService.send({
+                      type: "REPLACE_AND_PLAY",
+                      tracks: album.tracks.map((t) => toTrack(t)),
+                      currentPlaybackNo: 0,
+                    })
+                  }
+                >
                   <Icon name="shuffle" size="s" slot="icon-only" color="main" />
                   <IonLabel color="main">シャッフル</IonLabel>
                 </ActionButton>
@@ -225,53 +254,63 @@ const AlbumChangeStatusItem = ({ album }: { album: AlbumObject }) => {
 
   if (!isAllowed("changeAlbumStatus")) return <></>;
 
-  return <IonItem color="dark-gray" onClick={() => open({
-    header: 'Change Status',
-    buttons: [{
-      text: '有効',
-      data: {
-        action: 'ACTIVE',
-      },
-    },
-    {
-      text: '保留',
-      data: {
-        action: 'PENDING',
-      },
-    },
-    {
-      text: '除外',
-      data: {
-        action: 'IGNORE',
-      },
-    },
-    {
-      text: 'Cancel',
-      role: 'cancel',
-      data: {
-        action: 'CANCEL',
-      },
-    }],
-    onDidDismiss: async ({ detail }) => {
-      if (!['ACTIVE', 'PENDING', 'IGNORE'].includes(detail.data?.action)) return;
-      await change({
-        variables: {
-          input: {
-            id: album.id,
-            status: detail.data.action,
-            tweet: false
-          }
-        },
-      })
-      await toast({
-        message: 'ステータスを変更しました',
-        duration: 3000,
-      })
-    }
-  })}>
-    ステータス変更
-  </IonItem >
-}
+  return (
+    <IonItem
+      color="dark-gray"
+      onClick={() =>
+        open({
+          header: "Change Status",
+          buttons: [
+            {
+              text: "有効",
+              data: {
+                action: "ACTIVE",
+              },
+            },
+            {
+              text: "保留",
+              data: {
+                action: "PENDING",
+              },
+            },
+            {
+              text: "除外",
+              data: {
+                action: "IGNORE",
+              },
+            },
+            {
+              text: "Cancel",
+              role: "cancel",
+              data: {
+                action: "CANCEL",
+              },
+            },
+          ],
+          onDidDismiss: async ({ detail }) => {
+            if (!["ACTIVE", "PENDING", "IGNORE"].includes(detail.data?.action))
+              return;
+            await change({
+              variables: {
+                input: {
+                  id: album.id,
+                  status: detail.data.action,
+                  tweet: false,
+                },
+              },
+            });
+            await toast({
+              message: "ステータスを変更しました",
+              duration: 3000,
+            });
+          },
+        })
+      }
+    >
+      ステータス変更
+    </IonItem>
+  );
+};
 
 const AlbumTracks = ({
   tracks,
@@ -312,7 +351,9 @@ const AlbumArtists = ({
     variables: {
       conditions: {
         albumIds: [albumId],
-        status: isAllowed("changeArtistStatus") ? ["ACTIVE", "IGNORE", "PENDING"] : ["ACTIVE"]
+        status: isAllowed("changeArtistStatus")
+          ? ["ACTIVE", "IGNORE", "PENDING"]
+          : ["ACTIVE"],
       },
       cursor: { limit, offset: 0 },
       sort: { direction: "DESC", order: "POPULARITY" },

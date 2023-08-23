@@ -80,6 +80,7 @@ const PlaylistInfo = ({ playlist }: { playlist?: PlaylistObject }) => {
                 px: 300,
                 url: playlist?.track?.artworkL?.url,
               })}
+              maxWidth="300px"
             />
           </IonCol>
         </IonRow>
