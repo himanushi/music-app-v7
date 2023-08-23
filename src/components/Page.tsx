@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 export const Page = ({ children }: { children: ReactNode }) => {
   return (
-    <IonPage>
+    <IonPage className="pc-safe-area">
       {children}
       <IonFooter
         style={{

@@ -59,7 +59,7 @@ export const Footer = () => {
   );
 
   return (
-    <IonFooter translucent>
+    <IonFooter translucent className="pc-safe-area">
       <ClosePlayer switchBreakpoint={switchBreakpoint} />
       <Tab />
       <IonModal
