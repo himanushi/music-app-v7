@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonToolbar } from "@ionic/react";
+import { IonContent, IonHeader, IonItem, IonToolbar } from "@ionic/react";
 import { Page } from "~/components";
 import { markdown } from "~/lib";
 
@@ -11,12 +11,14 @@ export const Privacy = () => {
         <IonToolbar />
       </IonHeader>
       <IonContent fullscreen>
-        {typeof html === "string" && (
-          <div
-            className="ion-padding"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
-        )}
+        <IonItem lines="none">
+          {typeof html === "string" && (
+            <div
+              className="ion-padding"
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+          )}
+        </IonItem>
       </IonContent>
     </Page>
   );

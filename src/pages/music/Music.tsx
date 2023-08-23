@@ -4,15 +4,14 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { Icon } from "~/components";
+import { Icon, Page } from "~/components";
 
 export const Music = () => {
   return (
-    <IonPage>
+    <Page>
       <IonHeader translucent>
         <IonToolbar
           style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
@@ -49,6 +48,6 @@ export const Music = () => {
           </IonItem>
         </IonList>
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
