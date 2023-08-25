@@ -25,6 +25,7 @@ import {
   Console,
   Roles,
   Role,
+  EditPlaylist,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { Footer } from "~/components";
@@ -88,9 +89,10 @@ function App() {
                 <Route path="/albums" exact component={Albums} />
                 <Route path="/tracks/:id" component={Track} />
                 <Route path="/tracks" exact component={Tracks} />
-                <Route path="/playlists" exact component={Playlists} />
                 <Route path="/my-playlists" component={Playlists} />
+                <Route path="/playlists" exact component={Playlists} />
                 <Route path="/playlists/:id" component={Playlist} />
+                <Route path="/playlists/:id/edit" component={EditPlaylist} />
                 <Route path="/music" component={Music} />
 
                 <Route path="/library-albums/:id" component={LibraryAlbum} />

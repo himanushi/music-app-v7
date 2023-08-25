@@ -77,12 +77,15 @@ export const Playlists = () => {
         <IonToolbar>
           <IonTitle>{isMine ? "マイ" : "共有"}プレイリスト</IonTitle>
           <IonButtons slot="start">
-            <IonButton id="playlist-filter-button" color="main">
+            <IonButton
+              id={`playlist-filter-button${isMine ? "-my" : ""}`}
+              color="main"
+            >
               フィルター
             </IonButton>
             <IonPopover
               arrow={false}
-              trigger="playlist-filter-button"
+              trigger={`playlist-filter-button${isMine ? "-my" : ""}`}
               side="bottom"
               alignment="start"
               dismissOnSelect={true}
@@ -101,12 +104,15 @@ export const Playlists = () => {
             </IonPopover>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton id="playlist-sort-button" color="main">
+            <IonButton
+              id={`playlist-sort-button${isMine ? "-my" : ""}`}
+              color="main"
+            >
               並び替え
             </IonButton>
             <IonPopover
               arrow={false}
-              trigger="playlist-sort-button"
+              trigger={`playlist-sort-button${isMine ? "-my" : ""}`}
               side="bottom"
               alignment="start"
               dismissOnSelect={true}
