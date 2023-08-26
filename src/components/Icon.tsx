@@ -19,7 +19,7 @@ export const Icon = ({
 }) => {
   const fontSize =
     typeof size === "number" ? `${size}px` : `${sizeMap[size]}px`;
-
+  // todo: add icon
   return (
     <IonLabel
       class="material-symbols-rounded-fill"
