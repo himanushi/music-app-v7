@@ -22,7 +22,7 @@ import {
   Page,
   SkeletonItems,
   SquareImage,
-  AppleMusicPlayButton,
+  AppleMusicViewButton,
   SwitchTitle,
   ActionButton,
 } from "~/components";
@@ -143,7 +143,7 @@ const LibraryAlbumInfo = ({
             <IonGrid fixed>
               <IonRow>
                 <IonCol>
-                  <AppleMusicPlayButton
+                  <AppleMusicViewButton
                     isAppleMusic={!!album.attributes.playParams}
                     appleMusicId={album.id}
                   />

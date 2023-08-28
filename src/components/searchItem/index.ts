@@ -1,2 +1,2 @@
 export * from "./SpotifyItem";
-export * from "./AppleMusicPlayButton";
+export * from "./AppleMusicViewButton";

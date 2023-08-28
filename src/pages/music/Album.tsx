@@ -27,7 +27,7 @@ import {
   SpotifyItem,
   SquareImage,
   SwitchTitle,
-  AppleMusicPlayButton,
+  AppleMusicViewButton,
   ActionButton,
   ShareButton,
 } from "~/components";
@@ -140,7 +140,7 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
           <IonGrid fixed>
             <IonRow key={album.id}>
               <IonCol>
-                <AppleMusicPlayButton
+                <AppleMusicViewButton
                   isAppleMusic={album.appleMusicPlayable}
                   appleMusicId={album.appleMusicId}
                 />
