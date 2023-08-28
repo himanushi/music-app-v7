@@ -12,7 +12,7 @@ import {
   useIonRouter,
   useIonToast,
 } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Icon, Page } from "~/components";
 import {
@@ -121,20 +121,17 @@ const UpdateName = () => {
     if (me) setName(me.name);
   }, [me]);
 
-  useEffect(() => {
-    if (data?.updateMe) {
-      (async () => {
-        await dismiss();
-        await present({
-          message: "変更しました",
-          duration: 2000,
-          position: "top",
-          color: "main",
-        });
-        router.push("/settings");
-      })();
-    }
-  }, [data?.updateMe, dismiss, errorMessages, history, present, router]);
+  const updateName = useCallback(async () => {
+    await update({ variables: { input: { name } } });
+    await dismiss();
+    router.push("/settings");
+    await present({
+      message: "変更しました",
+      duration: 2000,
+      position: "top",
+      color: "main",
+    });
+  }, [update, name, dismiss, router, present]);
 
   useEffect(() => {
     if (errorMessages && errorMessages["_"]) {
@@ -160,10 +157,7 @@ const UpdateName = () => {
           value={name}
         ></IonInput>
       </IonItem>
-      <IonItem
-        button
-        onClick={() => update({ variables: { input: { name } } })}
-      >
+      <IonItem button onClick={updateName}>
         <Icon name="edit" slot="start" color="blue" />
         <IonLabel>変更</IonLabel>
       </IonItem>
