@@ -1,0 +1,5 @@
+mutation ForceIgnoreAlbum($input: ForceIgnoreAlbumInput!) {
+  forceIgnoreAlbum(input: $input) {
+    result
+  }
+}
