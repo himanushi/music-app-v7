@@ -107,9 +107,8 @@ export const EditMe = () => {
 };
 
 const UpdateName = () => {
-  const history = useHistory();
   const [name, setName] = useState("");
-  const [update, { data, error }] = useMutation(UpdateMeDocument, {
+  const [update, { error }] = useMutation(UpdateMeDocument, {
     refetchQueries: [{ query: MeDocument }],
   });
   const { errorMessages } = useErrorMessages(error);
