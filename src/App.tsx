@@ -26,6 +26,7 @@ import {
   Roles,
   Role,
   EditPlaylist,
+  EditMe,
 } from "~/pages";
 import { setupIonicReact } from "@ionic/react";
 import { Footer } from "~/components";
@@ -99,7 +100,7 @@ function App() {
                 <Route path="/library-albums" exact component={LibraryAlbums} />
                 <Route path="/library" component={Library} />
 
-                <Route path="/me" component={Me} />
+                <Route path="/me/edit" component={EditMe} />
                 <Route path="/login" component={Login} />
                 <Route path="/about" component={About} />
                 <Route path="/teams" component={Teams} />
