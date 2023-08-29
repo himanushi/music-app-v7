@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
 import {
+  IonCard,
   IonContent,
   IonHeader,
   IonInput,
@@ -13,7 +14,6 @@ import {
   useIonToast,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { Icon, Page } from "~/components";
 import {
   CurrentUserObject,
@@ -61,28 +61,28 @@ const RegisteredMe = ({ me }: { me: CurrentUserObject }) => {
   const router = useIonRouter();
 
   return (
-    <IonList>
-      <IonItem>
+    <IonCard>
+      <IonItem color="dark-gray">
         <IonLabel>ユーザーID</IonLabel>
         <IonLabel slot="end">{me.username}</IonLabel>
       </IonItem>
-      <IonItem>
+      <IonItem color="dark-gray">
         <IonLabel>名前</IonLabel>
         <IonLabel slot="end">{me.name}</IonLabel>
       </IonItem>
-      <IonItem>
+      <IonItem color="dark-gray">
         <IonLabel>権限</IonLabel>
         <IonNote slot="end">{me.role.description}</IonNote>
       </IonItem>
-      <IonItem button onClick={() => router.push("/me/edit")}>
-        <Icon name="edit" slot="start" color="green" />
+      <IonItem button onClick={() => router.push("/me/edit")} color="dark-gray">
+        <Icon name="edit" slot="start" color="green" size="s" />
         <IonLabel>設定変更</IonLabel>
       </IonItem>
-      <IonItem button onClick={onClick}>
-        <Icon name="logout" slot="start" color="red" />
+      <IonItem button onClick={onClick} color="dark-gray">
+        <Icon name="logout" slot="start" color="red" size="s" />
         <IonLabel>ログアウト</IonLabel>
       </IonItem>
-    </IonList>
+    </IonCard>
   );
 };
 
