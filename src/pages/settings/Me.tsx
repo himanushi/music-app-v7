@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import {
   IonCard,
+  IonCardContent,
   IonContent,
   IonHeader,
   IonInput,
@@ -31,16 +32,16 @@ export const Me = () => {
 
   // 未ログイン
   return (
-    <IonList>
-      <IonItem button routerLink="/login">
+    <IonCard>
+      <IonItem button routerLink="/login" color="dark-gray">
         <Icon name="login" slot="start" color="blue" />
         <IonLabel>ログイン</IonLabel>
       </IonItem>
-      <IonItem button routerLink="/signup">
+      <IonItem button routerLink="/signup" color="dark-gray">
         <Icon name="person_add" slot="start" color="green" />
         <IonLabel>登録する</IonLabel>
       </IonItem>
-    </IonList>
+    </IonCard>
   );
 };
 

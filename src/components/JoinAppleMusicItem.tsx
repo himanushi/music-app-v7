@@ -5,7 +5,7 @@ import { appleAffiliateToken } from "~/lib/variable";
 import { Icon } from ".";
 import { useMusicKit } from "~/hooks";
 
-export const JoinAppleMusicItem = () => {
+export const JoinAppleMusicItem = ({ color = "" }: { color?: string }) => {
   const { hasMusicSubscription } = useMusicKit();
 
   if (hasMusicSubscription) {
@@ -30,11 +30,11 @@ export const JoinAppleMusicItem = () => {
 
   return (
     <>
-      <IonItem button href={href} lines="none">
+      <IonItem button href={href} lines="none" color={color}>
         <LogoIcon name="apple-music" size="s" slot="start" />
         <IonLabel>Apple Music に加入する</IonLabel>
       </IonItem>
-      <IonItem lines="none">
+      <IonItem lines="none" color={color}>
         <Icon name="info" slot="start" color="blue" />
         <IonLabel className="ion-text-wrap">
           Apple Music に加入すると、ライブラリと Apple Music

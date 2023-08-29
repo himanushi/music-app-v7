@@ -1,4 +1,5 @@
 import {
+  IonCard,
   IonContent,
   IonHeader,
   IonItem,
@@ -19,10 +20,12 @@ export const Settings = () => {
 
   return (
     <Page>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar
           style={{ "--border-width": 0, "--ion-color-step-50": "#000" }}
-        />
+        >
+          <IonTitle>設定</IonTitle>
+        </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
@@ -34,29 +37,28 @@ export const Settings = () => {
         </IonHeader>
         <Me />
         <AppleMusicAccount />
-        <IonList>
-          <IonItemDivider>アプリ</IonItemDivider>
-          <IonItem button routerLink="/about">
+        <IonCard>
+          <IonItem button routerLink="/about" color="dark-gray">
             <IonLabel>このアプリについて</IonLabel>
           </IonItem>
-          <IonItem button routerLink="/teams">
+          <IonItem button routerLink="/teams" color="dark-gray">
             <IonLabel>利用規約</IonLabel>
           </IonItem>
-          <IonItem button routerLink="/privacy">
+          <IonItem button routerLink="/privacy" color="dark-gray">
             <IonLabel>プライバシーポリシー</IonLabel>
           </IonItem>
-          <IonItem button routerLink="/cookie-policy">
+          <IonItem button routerLink="/cookie-policy" color="dark-gray">
             <IonLabel>クッキーポリシー</IonLabel>
           </IonItem>
           {isAllowed("console") && (
-            <IonItem button routerLink="/console">
+            <IonItem button routerLink="/console" color="dark-gray">
               <IonLabel color="red">コンソール</IonLabel>
             </IonItem>
           )}
-          <IonItem button routerLink="/cache">
+          <IonItem button routerLink="/cache" color="dark-gray">
             <IonNote>キャッシュ</IonNote>
           </IonItem>
-        </IonList>
+        </IonCard>
       </IonContent>
     </Page>
   );

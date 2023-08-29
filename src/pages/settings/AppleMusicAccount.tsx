@@ -1,4 +1,4 @@
-import { IonList, IonItem, IonLabel } from "@ionic/react";
+import { IonList, IonItem, IonLabel, IonCard } from "@ionic/react";
 import { LogoIcon } from "~/components/LogoIcon";
 import { useStartedServiceState } from "~/hooks";
 import { mergeMeta } from "~/lib";
@@ -17,14 +17,14 @@ export const AppleMusicAccount = () => {
   const label = mergeMeta(appleMusicAccountService.getSnapshot().meta)?.label;
 
   return (
-    <IonList>
-      <IonItem button onClick={onClick} lines="none">
+    <IonCard>
+      <IonItem button onClick={onClick} lines="none" color="dark-gray">
         <LogoIcon name="apple-music" slot="start" />
         <IonLabel>Apple Music {label}</IonLabel>
       </IonItem>
       <Info />
-      <JoinAppleMusicItem />
-    </IonList>
+      <JoinAppleMusicItem color="dark-gray" />
+    </IonCard>
   );
 };
 
@@ -54,7 +54,7 @@ const Info = () => {
   }
 
   return (
-    <IonItem>
+    <IonItem color="dark-gray">
       <Icon color="blue" name="info" slot="start" />
       <IonLabel class="ion-text-wrap">
         <div dangerouslySetInnerHTML={{ __html: contents.join("") }} />
