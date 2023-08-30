@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 import { mergeWith, camelCase } from "lodash";
 
 export const useErrorMessages = (error?: ApolloError) => {
-  const [errorMessages, setErrorMessages] = useState<
-    Record<string, string[]> | undefined
-  >(undefined);
+  const [errorMessages, setErrorMessages] = useState<Record<string, string>>(
+    {}
+  );
 
   useEffect(() => {
     if (error && error instanceof ApolloError) {
       setErrorMessages(buildErrorMessages(error));
     } else {
-      setErrorMessages(undefined);
+      setErrorMessages({});
     }
-    return () => setErrorMessages(undefined);
+    return () => setErrorMessages({});
   }, [error]);
 
   return { errorMessages };
@@ -26,7 +26,7 @@ const customizer = (objValue: any, srcValue: any) => {
 
 export const buildErrorMessages = (
   error: ApolloError
-): Record<string, string[]> => {
+): Record<string, string> => {
   const labels = error.graphQLErrors.map((err) => {
     let path: string;
 
@@ -36,8 +36,8 @@ export const buildErrorMessages = (
       path = "_";
     }
 
-    const label: Record<string, string[]> = {};
-    label[path] = [err.message];
+    const label: Record<string, string> = {};
+    label[path] = err.message;
     return label;
   });
 

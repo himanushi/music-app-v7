@@ -48,7 +48,7 @@ export const Login = () => {
       (async () => {
         await dismiss();
         await present({
-          message: errorMessages["_"][0],
+          message: errorMessages["_"],
           duration: 5000,
           position: "top",
           color: "red",

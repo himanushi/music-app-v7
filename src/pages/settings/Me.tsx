@@ -1,13 +1,11 @@
 import { useMutation } from "@apollo/client";
 import {
   IonCard,
-  IonCardContent,
   IonContent,
   IonHeader,
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
   IonNote,
   IonTitle,
   IonToolbar,
@@ -17,6 +15,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { Icon, Page } from "~/components";
 import {
+  ChangePasswordDocument,
   CurrentUserObject,
   LogoutDocument,
   MeDocument,
@@ -102,6 +101,7 @@ export const EditMe = () => {
           </IonToolbar>
         </IonHeader>
         <UpdateName />
+        <UpdatePassword />
       </IonContent>
     </Page>
   );
@@ -122,8 +122,8 @@ const UpdateName = () => {
   }, [me]);
 
   const updateName = useCallback(async () => {
-    await update({ variables: { input: { name } } });
     await dismiss();
+    await update({ variables: { input: { name } } });
     router.push("/settings");
     await present({
       message: "変更しました",
@@ -138,7 +138,7 @@ const UpdateName = () => {
       (async () => {
         await dismiss();
         await present({
-          message: errorMessages["_"][0],
+          message: errorMessages["_"],
           duration: 5000,
           position: "top",
           color: "red",
@@ -148,8 +148,8 @@ const UpdateName = () => {
   }, [dismiss, errorMessages, present]);
 
   return (
-    <IonList>
-      <IonItem>
+    <IonCard>
+      <IonItem color="dark">
         <IonInput
           label="名前"
           labelPlacement="stacked"
@@ -157,10 +157,90 @@ const UpdateName = () => {
           value={name}
         ></IonInput>
       </IonItem>
-      <IonItem button onClick={updateName}>
-        <Icon name="edit" slot="start" color="blue" />
+      <IonItem button onClick={updateName} color="dark">
+        <Icon name="edit" slot="start" color="blue" size="s" />
         <IonLabel>変更</IonLabel>
       </IonItem>
-    </IonList>
+    </IonCard>
+  );
+};
+
+const UpdatePassword = () => {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newPasswordConfirmation, setNewPasswordConfirmation] = useState("");
+  const [update, { error }] = useMutation(ChangePasswordDocument);
+  const { errorMessages } = useErrorMessages(error);
+  const [present, dismiss] = useIonToast();
+  const router = useIonRouter();
+
+  const updateName = useCallback(async () => {
+    await dismiss();
+    await update({
+      variables: {
+        input: { currentPassword, newPassword, newPasswordConfirmation },
+      },
+    });
+    setCurrentPassword("");
+    setNewPassword("");
+    setNewPasswordConfirmation("");
+    router.push("/settings");
+    await present({
+      message: "変更しました",
+      duration: 2000,
+      position: "top",
+      color: "main",
+    });
+  }, [
+    update,
+    currentPassword,
+    newPassword,
+    newPasswordConfirmation,
+    dismiss,
+    router,
+    present,
+  ]);
+
+  return (
+    <IonCard>
+      <IonItem color="dark">
+        <IonInput
+          label="現在のパスワード"
+          labelPlacement="stacked"
+          onIonInput={(e) => setCurrentPassword(e.detail.value!)}
+          value={currentPassword}
+          className={
+            errorMessages?.currentPassword ? "ion-invalid ion-touched" : ""
+          }
+          errorText={errorMessages?.currentPassword}
+        ></IonInput>
+      </IonItem>
+      <IonItem color="dark">
+        <IonInput
+          label="新しいパスワード"
+          labelPlacement="stacked"
+          onIonInput={(e) => setNewPassword(e.detail.value!)}
+          value={newPassword}
+          className={
+            errorMessages?.newPassword ? "ion-invalid ion-touched" : ""
+          }
+          errorText={errorMessages?.newPassword}
+        ></IonInput>
+      </IonItem>
+      <IonItem color="dark">
+        <IonInput
+          label="新しいパスワードの再確認"
+          labelPlacement="stacked"
+          onIonInput={(e) => setNewPasswordConfirmation(e.detail.value!)}
+          value={newPasswordConfirmation}
+          className={errorMessages?._ ? "ion-invalid ion-touched" : ""}
+          errorText={errorMessages?._}
+        ></IonInput>
+      </IonItem>
+      <IonItem button onClick={updateName} color="dark">
+        <Icon name="edit" slot="start" color="blue" size="s" />
+        <IonLabel>変更</IonLabel>
+      </IonItem>
+    </IonCard>
   );
 };
