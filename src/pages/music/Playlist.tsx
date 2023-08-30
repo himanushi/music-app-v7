@@ -26,7 +26,6 @@ import {
   Icon,
   Page,
   SkeletonItems,
-  SpotifyItem,
   SquareImage,
   SwitchTitle,
 } from "~/components";
@@ -174,7 +173,6 @@ const MenuButtons = ({ playlist }: { playlist: PlaylistObject }) => {
         <AddPlaylistMenuItem
           trackIds={playlist?.items?.map((i) => i.track.id) ?? []}
         />
-        <SpotifyItem name={playlist.name} />
       </IonPopover>
     </IonButtons>
   );

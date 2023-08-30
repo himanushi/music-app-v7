@@ -30,6 +30,7 @@ import {
   AppleMusicViewButton,
   ActionButton,
   ShareButton,
+  AmazonMusicItem,
 } from "~/components";
 import {
   AlbumDocument,
@@ -214,9 +215,10 @@ const AlbumInfo = ({ album }: { album?: AlbumObject }) => {
 const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
   const { open } = useMenu({
     component: ({ onDismiss }) => (
-      <IonContent onClick={() => onDismiss()}>
+      <IonContent onClick={() => onDismiss()} forceOverscroll={false}>
         <AddPlaylistMenuItem trackIds={album.tracks.map((t) => t.id) ?? []} />
         <SpotifyItem name={album.name} />
+        <AmazonMusicItem name={album.name} />
         <AlbumChangeStatusItem album={album} />
       </IonContent>
     ),
@@ -256,7 +258,9 @@ const AlbumChangeStatusItem = ({ album }: { album: AlbumObject }) => {
 
   return (
     <IonItem
-      color="dark-gray"
+      color="dark"
+      button
+      detail={false}
       onClick={() =>
         open({
           header: "Change Status",
