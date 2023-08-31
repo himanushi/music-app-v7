@@ -9,9 +9,11 @@ import {
   useIonActionSheet,
   useIonLoading,
   useIonAlert,
+  IonAlert,
+  useIonRouter,
 } from "@ionic/react";
+import { useRef, useState } from "react";
 import { Icon, Page } from "~/components";
-import { LogoIcon } from "~/components/LogoIcon";
 import {
   AddAlbumDocument,
   AddAlbumInput,
@@ -43,84 +45,81 @@ export const Console = () => {
 };
 
 const AddAlbumItem = () => {
-  const [open] = useIonAlert();
   const [add] = useMutation(AddAlbumDocument);
   const [toast] = useIonToast();
   const [loading, loaded] = useIonLoading();
+  const ref = useRef<HTMLIonAlertElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useIonRouter();
 
   return (
-    <IonItem
-      button
-      onClick={() =>
-        open({
-          header: "Apple Music ID でアルバムを追加します",
-          inputs: [
-            {
-              name: "appleMusicId",
-              placeholder: "Apple Music ID",
-              type: "text",
-            },
-          ],
-          buttons: [
-            {
-              cssClass: "secondary",
-              handler: () => true,
-              role: "cancel",
-              text: "キャンセル",
-            },
-            {
-              handler: (values: AddAlbumInput) => {
-                (async () => {
-                  try {
-                    if (values.appleMusicId && values.appleMusicId !== "") {
-                      await loading();
-
-                      const result = await add({
-                        variables: { input: values },
-                      });
-
-                      if (result.data?.addAlbum?.album) {
-                        // const album = result.data.addAlbum.album;
-                        // $goto(`/albums/${album.id}`);
-
-                        toast({
-                          color: "light-green",
-                          duration: 5000,
-                          message: "追加しました",
-                        });
-                      } else {
-                        toast({
-                          color: "light-blue",
-                          duration: 5000,
-                          message: "一致するアルバムがありませんでした",
-                        });
-                      }
-                    }
-                  } catch (error) {
-                    if (error instanceof ApolloError) {
-                      const messages = buildErrorMessages(error);
-
-                      toast({
-                        color: "light-red",
-                        message: `エラーが発生しました。[${messages._?.join(
-                          ", "
-                        )}]`,
-                        duration: 10000,
-                      });
-                    }
-                  } finally {
-                    await loaded();
-                  }
-                })();
-              },
-              text: "追加",
-            },
-          ],
-        })
-      }
-    >
-      <LogoIcon name="apple-music" slot="start" />
+    <IonItem button onClick={() => setIsOpen(true)}>
+      <Icon name="music_note" slot="start" size="s" />
       アルバム追加
+      <IonAlert
+        ref={ref}
+        onDidDismiss={() => setIsOpen(false)}
+        isOpen={isOpen}
+        header="Apple Music ID でアルバムを追加します"
+        inputs={[
+          {
+            name: "appleMusicId",
+            placeholder: "Apple Music ID",
+            type: "text",
+          },
+        ]}
+        buttons={[
+          {
+            cssClass: "secondary",
+            handler: () => true,
+            role: "cancel",
+            text: "キャンセル",
+          },
+          {
+            handler: (values: AddAlbumInput) => {
+              (async () => {
+                try {
+                  if (values.appleMusicId && values.appleMusicId !== "") {
+                    await loading();
+
+                    const result = await add({
+                      variables: { input: values },
+                    });
+
+                    if (result.data?.addAlbum?.album) {
+                      toast({
+                        color: "light-green",
+                        duration: 2000,
+                        message: "追加しました",
+                      });
+                      router.push(`/albums/${result.data.addAlbum.album.id}`);
+                    } else {
+                      toast({
+                        color: "light-blue",
+                        duration: 5000,
+                        message: "一致するアルバムがありませんでした",
+                      });
+                    }
+                  }
+                } catch (error) {
+                  if (error instanceof ApolloError) {
+                    const messages = buildErrorMessages(error);
+
+                    toast({
+                      color: "light-red",
+                      message: `エラーが発生しました。[${messages._}]`,
+                      duration: 10000,
+                    });
+                  }
+                } finally {
+                  await loaded();
+                }
+              })();
+            },
+            text: "追加",
+          },
+        ]}
+      />
     </IonItem>
   );
 };

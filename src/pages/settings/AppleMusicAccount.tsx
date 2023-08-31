@@ -19,7 +19,7 @@ export const AppleMusicAccount = () => {
   return (
     <IonCard>
       <IonItem button onClick={onClick} lines="none" color="dark-gray">
-        <LogoIcon name="apple-music" slot="start" />
+        <Icon name="music_note" slot="start" color="red" size="s" />
         <IonLabel>Apple Music {label}</IonLabel>
       </IonItem>
       <Info />
@@ -55,7 +55,7 @@ const Info = () => {
 
   return (
     <IonItem color="dark-gray">
-      <Icon color="blue" name="info" slot="start" />
+      <Icon color="blue" name="info" slot="start" size="s" />
       <IonLabel class="ion-text-wrap">
         <div dangerouslySetInnerHTML={{ __html: contents.join("") }} />
       </IonLabel>

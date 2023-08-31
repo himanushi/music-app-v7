@@ -1,5 +1,4 @@
 import { IonItem, IonLabel } from "@ionic/react";
-import { LogoIcon } from "./LogoIcon";
 import { Capacitor } from "@capacitor/core";
 import { appleAffiliateToken } from "~/lib/variable";
 import { Icon } from ".";
@@ -31,13 +30,13 @@ export const JoinAppleMusicItem = ({ color = "" }: { color?: string }) => {
   return (
     <>
       <IonItem button href={href} lines="none" color={color}>
-        <LogoIcon name="apple-music" size="s" slot="start" />
+        <Icon name="music_note" slot="start" color="red" size="s" />
         <IonLabel>Apple Music に加入する</IonLabel>
       </IonItem>
       <IonItem lines="none" color={color}>
-        <Icon name="info" slot="start" color="blue" />
+        <Icon name="info" slot="start" color="blue" size="s" />
         <IonLabel className="ion-text-wrap">
-          Apple Music に加入すると、ライブラリと Apple Music
+          Apple Music サブスクリプションに加入すると、ライブラリと Apple Music
           の曲がフルで再生できるようになります。なお Voice プランは対象外です。
         </IonLabel>
       </IonItem>
