@@ -31,7 +31,7 @@ export const Music = () => {
             <IonLabel>アーティスト</IonLabel>
           </IonItem>
           <IonItem button routerLink="/">
-            <Icon name="art_track" slot="start" color="main" />
+            <Icon name="photo_library" slot="start" color="main" />
             <IonLabel>アルバム</IonLabel>
           </IonItem>
           <IonItem button routerLink="/tracks">

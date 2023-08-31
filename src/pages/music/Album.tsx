@@ -31,6 +31,7 @@ import {
   ActionButton,
   ShareButton,
   AmazonMusicItem,
+  YoutubeMusicItem,
 } from "~/components";
 import {
   AlbumDocument,
@@ -219,6 +220,7 @@ const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
         <AddPlaylistMenuItem trackIds={album.tracks.map((t) => t.id) ?? []} />
         <SpotifyItem name={album.name} />
         <AmazonMusicItem name={album.name} />
+        <YoutubeMusicItem name={album.name} />
         <AlbumChangeStatusItem album={album} />
       </IonContent>
     ),

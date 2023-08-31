@@ -42,7 +42,7 @@ export const Library = () => {
             button
             routerLink="/library-albums"
           >
-            <Icon name="art_track" slot="start" color="red" />
+            <Icon name="photo_library" slot="start" color="red" />
             <IonLabel>ライブラリアルバム</IonLabel>
           </IonItem>
           <IonItem
