@@ -48,16 +48,14 @@ const AddAlbumItem = () => {
   const [add] = useMutation(AddAlbumDocument);
   const [toast] = useIonToast();
   const [loading, loaded] = useIonLoading();
-  const ref = useRef<HTMLIonAlertElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const router = useIonRouter();
 
   return (
     <IonItem button onClick={() => setIsOpen(true)}>
-      <Icon name="music_note" slot="start" size="s" />
+      <Icon name="music_note" slot="start" color="red" />
       アルバム追加
       <IonAlert
-        ref={ref}
         onDidDismiss={() => setIsOpen(false)}
         isOpen={isOpen}
         header="Apple Music ID でアルバムを追加します"
