@@ -24,9 +24,10 @@ export const FavoriteButton = ({
   size?: "s" | "m" | "l";
 }) => {
   const { onClick, isFavorite } = useChangeFavorite(type, id);
+  const isLibrary = id.startsWith("i.");
 
   return (
-    <IonButton onClick={onClick}>
+    <IonButton onClick={onClick} disabled={isLibrary} fill="clear">
       <Icon
         size={size}
         name="favorite"

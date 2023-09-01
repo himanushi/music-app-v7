@@ -191,6 +191,8 @@ export const TrackItem = ({
     musicPlayerService.getSnapshot().context.currentTrack?.appleMusicId ===
     track.appleMusicId;
 
+  const isLibrary = track.id.startsWith("i.");
+
   return (
     <IonItem
       button
@@ -216,8 +218,11 @@ export const TrackItem = ({
             event.stopPropagation();
             event.preventDefault();
           }}
+          key={track.id}
         >
-          <FavoriteButton type="trackIds" id={track.id} size="s" />
+          {!isLibrary && (
+            <FavoriteButton type="trackIds" id={track.id} size="s" />
+          )}
           <IonButton
             color="main"
             onClick={() =>
@@ -253,6 +258,8 @@ const TrackItemButtons = ({ track }: { track: Track }) => {
     ),
   });
 
+  const isLibrary = track.id.startsWith("i.");
+
   return (
     <IonButtons
       slot="end"
@@ -261,7 +268,7 @@ const TrackItemButtons = ({ track }: { track: Track }) => {
         event.preventDefault();
       }}
     >
-      <FavoriteButton type="trackIds" id={track.id} size="s" />
+      {!isLibrary && <FavoriteButton type="trackIds" id={track.id} size="s" />}
       <IonButton onClick={(event) => open(event)}>
         <Icon name="more_horiz" slot="icon-only" />
       </IonButton>

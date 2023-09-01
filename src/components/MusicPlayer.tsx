@@ -21,7 +21,7 @@ import {
   ItemReorderEventDetail,
   RangeKnobMoveStartEventDetail,
 } from "@ionic/react";
-import { Icon, SquareImage } from ".";
+import { FavoriteButton, Icon, SquareImage } from ".";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   IonModalCustomEvent,
@@ -424,9 +424,13 @@ const PlayerController = () => {
       </IonRow>
       <IonRow class="ion-text-center">
         <IonCol>
-          <IonButton color="dark-gray" size="large">
-            <Icon name="favorite" color="red" size="l" slot="icon-only" />
-          </IonButton>
+          {state?.context.currentTrack?.id && (
+            <FavoriteButton
+              id={state?.context.currentTrack?.id || ""}
+              size="l"
+              type="trackIds"
+            />
+          )}
         </IonCol>
         <IonCol>
           <IonButton
