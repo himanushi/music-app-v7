@@ -32,6 +32,7 @@ import {
   ShareButton,
   AmazonMusicItem,
   YoutubeMusicItem,
+  LineMusicItem,
 } from "~/components";
 import {
   AlbumDocument,
@@ -221,6 +222,7 @@ const AlbumMenuButtons = ({ album }: { album: AlbumObject }) => {
         <SpotifyItem name={album.name} />
         <AmazonMusicItem name={album.name} />
         <YoutubeMusicItem name={album.name} />
+        <LineMusicItem name={album.name} />
         <AlbumChangeStatusItem album={album} />
       </IonContent>
     ),
