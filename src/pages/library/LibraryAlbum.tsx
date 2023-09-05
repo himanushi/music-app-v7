@@ -9,17 +9,13 @@ import {
   IonItem,
   IonLabel,
   IonNote,
-  IonButton,
-  IonButtons,
   IonTitle,
-  IonReorder,
   IonThumbnail,
 } from "@ionic/react";
 import { useCallback, useEffect, useMemo } from "react";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
-  AddPlaylistMenuItem,
   Icon,
   Page,
   SkeletonItems,
@@ -27,7 +23,6 @@ import {
   AppleMusicViewButton,
   SwitchTitle,
   ActionButton,
-  FavoriteButton,
 } from "~/components";
 import {
   LibraryAlbumsDocument,
@@ -36,14 +31,12 @@ import {
 } from "~/graphql/appleMusicClient";
 import {
   useFetchLibraryItems,
-  useMenu,
   useMusicKit,
   useMusicKitAPI,
   useScrollElement,
   useStartedServiceState,
 } from "~/hooks";
 import { convertImageUrl, convertTime, toMs, toTrack } from "~/lib";
-import { TrackItem } from "..";
 import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
 
 export const LibraryAlbum: React.FC<
