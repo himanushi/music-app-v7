@@ -12,9 +12,11 @@ import {
   IonButton,
   IonButtons,
   IonTitle,
+  IonReorder,
+  IonThumbnail,
 } from "@ionic/react";
-import { useEffect, useMemo } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { useCallback, useEffect, useMemo } from "react";
+import { RouteComponentProps, useHistory } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import {
   AddPlaylistMenuItem,
@@ -25,6 +27,7 @@ import {
   AppleMusicViewButton,
   SwitchTitle,
   ActionButton,
+  FavoriteButton,
 } from "~/components";
 import {
   LibraryAlbumsDocument,
@@ -37,10 +40,11 @@ import {
   useMusicKit,
   useMusicKitAPI,
   useScrollElement,
+  useStartedServiceState,
 } from "~/hooks";
 import { convertImageUrl, convertTime, toMs, toTrack } from "~/lib";
 import { TrackItem } from "..";
-import { musicPlayerService } from "~/machines/musicPlayerMachine";
+import { Track, musicPlayerService } from "~/machines/musicPlayerMachine";
 
 export const LibraryAlbum: React.FC<
   RouteComponentProps<{
@@ -69,7 +73,6 @@ export const LibraryAlbum: React.FC<
           {album && (
             <>
               <IonTitle>{album.attributes.name}</IonTitle>
-              <LibraryAlbumMenuButtons album={album} />
             </>
           )}
         </IonToolbar>
@@ -161,28 +164,6 @@ const LibraryAlbumInfo = ({
   );
 };
 
-const LibraryAlbumMenuButtons = ({
-  album,
-}: {
-  album: MusicKit.LibraryAlbums;
-}) => {
-  const { open } = useMenu({
-    component: ({ onDismiss }) => (
-      <IonContent onClick={() => onDismiss()}>
-        <AddPlaylistMenuItem trackIds={[]} />
-      </IonContent>
-    ),
-  });
-
-  return (
-    <IonButtons slot="end">
-      <IonButton onClick={(event) => open(event)}>
-        <Icon name="more_horiz" slot="icon-only" />
-      </IonButton>
-    </IonButtons>
-  );
-};
-
 const LibraryAlbumTracks = ({
   albumId,
   scrollElement,
@@ -250,7 +231,11 @@ const LibraryAlbumTracks = ({
         customScrollParent={scrollElement}
         totalCount={tracks.length}
         itemContent={(index) => (
-          <TrackItem tracks={tracks} track={tracks[index]} index={index} />
+          <LibraryTrackItem
+            tracks={tracks}
+            track={tracks[index]}
+            index={index}
+          />
         )}
       />
       <IonItem className="ion-text-wrap text-select">
@@ -260,6 +245,54 @@ const LibraryAlbumTracks = ({
         </IonNote>
       </IonItem>
     </IonList>
+  );
+};
+
+export const LibraryTrackItem = ({
+  index,
+  track,
+  tracks,
+  displayThumbnail = false,
+}: {
+  index: number;
+  track: Track;
+  tracks: Track[];
+  displayThumbnail?: boolean;
+  reorder?: boolean;
+}) => {
+  useStartedServiceState(musicPlayerService);
+
+  const onClick = useCallback(async () => {
+    musicPlayerService.send({
+      type: "REPLACE_AND_PLAY",
+      tracks,
+      currentPlaybackNo: index,
+    });
+  }, [tracks, index]);
+
+  const playing =
+    musicPlayerService.getSnapshot().context.currentTrack?.appleMusicId ===
+    track.appleMusicId;
+
+  return (
+    <IonItem
+      button
+      detail={false}
+      onClick={onClick}
+      color={playing ? "main" : ""}
+    >
+      {displayThumbnail ? (
+        <IonThumbnail slot="start" style={{ height: "50px", width: "50px" }}>
+          <SquareImage
+            key={track.artworkUrl}
+            src={convertImageUrl({ url: track.artworkUrl, px: 50 })}
+          />
+        </IonThumbnail>
+      ) : (
+        <IonNote slot="start">{track.trackNumber}</IonNote>
+      )}
+      <IonLabel class="ion-text-wrap">{track.name}</IonLabel>
+    </IonItem>
   );
 };
 
