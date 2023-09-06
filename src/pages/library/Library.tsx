@@ -32,34 +32,10 @@ export const Library = () => {
           <IonItem
             disabled={!hasMusicSubscription}
             button
-            routerLink="/library-artists"
-          >
-            <Icon name="mic" slot="start" color="red" />
-            <IonLabel>ライブラリアーティスト</IonLabel>
-          </IonItem>
-          <IonItem
-            disabled={!hasMusicSubscription}
-            button
             routerLink="/library-albums"
           >
             <Icon name="photo_library" slot="start" color="red" />
             <IonLabel>ライブラリアルバム</IonLabel>
-          </IonItem>
-          <IonItem
-            disabled={!hasMusicSubscription}
-            button
-            routerLink="/library-tracks"
-          >
-            <Icon name="music_note" slot="start" color="red" />
-            <IonLabel>ライブラリ曲</IonLabel>
-          </IonItem>
-          <IonItem
-            disabled={!hasMusicSubscription}
-            button
-            routerLink="/library-playlists"
-          >
-            <Icon name="queue_music" slot="start" color="red" />
-            <IonLabel>ライブラリプレイリスト</IonLabel>
           </IonItem>
           <JoinAppleMusicItem />
         </IonList>
